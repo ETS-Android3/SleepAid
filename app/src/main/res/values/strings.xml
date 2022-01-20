@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Sleep Aid</string>
+
+    <string name="welcome_text">Welcome to Sleep Aid, your personal sleep hygiene coach!\nWe’ll start by asking you a few questions that will help us personalise your experience and understand your needs.</string>
+    <string name="start_button">Let\'s start&#160;&#160;&#160;></string>
+
+    <string name="next_button">Next&#160;&#160;&#160;></string>
+
+    <string name="question1">What time would you ideally like to go to sleep?</string>
+</resources>
