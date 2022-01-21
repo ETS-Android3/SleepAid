@@ -4,31 +4,33 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class DBHandler extends SQLiteOpenHelper {
+public class DBHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "SleepAid.db";
 
     //initialize the database
-    public DBHandler(Context context, SQLiteDatabase.CursorFactory factory) {
-        super(context, DATABASE_NAME, factory, DATABASE_VERSION);
+    public DBHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_DATABASE = SleepAidContract.CREATE_QUESTION_TABLE +
-                                 SleepAidContract.CREATE_QUESTION_VALUE_TABLE +
-                                 SleepAidContract.CREATE_ANSWER_TABLE;
+        db.execSQL(SleepAidContract.CREATE_QUESTION_TABLE);
+        db.execSQL(SleepAidContract.FILL_QUESTION_TABLE);
 
-        db.execSQL(CREATE_DATABASE);
+        db.execSQL(SleepAidContract.CREATE_QUESTION_VALUE_TABLE);
+        //db.execSQL(SleepAidContract.FILL_QUESTION_VALUE_TABLE);
+
+        db.execSQL(SleepAidContract.CREATE_ANSWER_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        String DELETE_ENTRIES =  SleepAidContract.DELETE_QUESTION_TABLE +
+        String DELETE_DATABASE =  SleepAidContract.DELETE_QUESTION_TABLE +
                                  SleepAidContract.DELETE_QUESTION_VALUE_TABLE +
                                  SleepAidContract.DELETE_ANSWER_TABLE;
 
-        db.execSQL(DELETE_ENTRIES);
+        db.execSQL(DELETE_DATABASE);
         onCreate(db);
     }
 
