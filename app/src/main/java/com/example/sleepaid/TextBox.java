@@ -6,16 +6,16 @@ import android.util.AttributeSet;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-public class InformationBox extends FrameLayout {
+public class TextBox extends FrameLayout {
     TextView text;
 
-    public InformationBox(Context context, AttributeSet attributes) {
+    public TextBox(Context context, AttributeSet attributes) {
         super(context, attributes);
         init(context, attributes);
     }
 
     private void init(Context context, AttributeSet attributes) {
-        inflate(context, R.layout.information_box, this);
+        inflate(context, R.layout.text_box, this);
 
         int[] sets = {R.attr.text};
         TypedArray typedArray = context.obtainStyledAttributes(attributes, sets);

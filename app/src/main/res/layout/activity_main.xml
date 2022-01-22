@@ -8,42 +8,46 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="191dp"
-        android:layout_height="53dp"
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:padding="10dp"
         android:fontFamily="@font/roboto"
         android:text="@string/app_name"
         android:textSize="40sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/information"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.144" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <com.example.sleepaid.InformationBox
-        android:layout_width="339dp"
-        android:layout_height="275dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <com.example.sleepaid.TextBox
+        android:id="@+id/information"
+        android:layout_width="360dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/startButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.446"
+        app:layout_constraintTop_toBottomOf="@+id/name"
         app:text="@string/welcome_text" />
 
     <Button
-        android:id="@+id/button"
-        android:layout_width="140dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="226dp"
-        android:layout_marginTop="571dp"
-        android:layout_marginEnd="27dp"
-        android:layout_marginBottom="232dp"
+        android:id="@+id/startButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:onClick="startQuestionnaire"
+        android:padding="10dp"
         android:text="@string/start_button"
         android:textAlignment="center"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.938"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/information" />
 </androidx.constraintlayout.widget.ConstraintLayout>

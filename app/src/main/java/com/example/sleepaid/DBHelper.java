@@ -18,8 +18,8 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(SleepAidContract.CREATE_QUESTION_TABLE);
         db.execSQL(SleepAidContract.FILL_QUESTION_TABLE);
 
-        db.execSQL(SleepAidContract.CREATE_QUESTION_VALUE_TABLE);
-        //db.execSQL(SleepAidContract.FILL_QUESTION_VALUE_TABLE);
+        db.execSQL(SleepAidContract.CREATE_OPTION_TABLE);
+        db.execSQL(SleepAidContract.FILL_OPTION_TABLE);
 
         db.execSQL(SleepAidContract.CREATE_ANSWER_TABLE);
     }
@@ -27,7 +27,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         String DELETE_DATABASE =  SleepAidContract.DELETE_QUESTION_TABLE +
-                                 SleepAidContract.DELETE_QUESTION_VALUE_TABLE +
+                                 SleepAidContract.DELETE_OPTION_TABLE +
                                  SleepAidContract.DELETE_ANSWER_TABLE;
 
         db.execSQL(DELETE_DATABASE);
