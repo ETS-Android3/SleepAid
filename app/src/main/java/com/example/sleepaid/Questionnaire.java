@@ -38,14 +38,14 @@ public class Questionnaire extends AppCompatActivity {
 
     public void loadNextQuestion(View view) {
         RadioGroup radioGroup = findViewById(R.id.radioGroup);
-        currentAnswers[currentQuestion] = radioGroup.getCheckedRadioButtonId();
+        currentAnswers[currentQuestion] = radioGroup.getCheckedRadioButtonId() == -1 ? 0 : radioGroup.getCheckedRadioButtonId();
 
         loadScreen(currentQuestion + 1);
     }
 
     public void loadPreviousQuestion(View view) {
         RadioGroup radioGroup = findViewById(R.id.radioGroup);
-        currentAnswers[currentQuestion] = radioGroup.getCheckedRadioButtonId();
+        currentAnswers[currentQuestion] = radioGroup.getCheckedRadioButtonId() == -1 ? 0 : radioGroup.getCheckedRadioButtonId();
 
         loadScreen(currentQuestion - 1);
     }
