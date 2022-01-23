@@ -12,68 +12,63 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.example.sleepaid.TextBox
-            android:id="@+id/question"
-            android:layout_width="0dp"
-            app:layout_constraintWidth_max="wrap"
-            app:layout_constraintWidth_percent="0.9"
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
+            android:textColor="@color/white"
+            android:textAlignment="center"
+            android:fontFamily="@font/roboto"
+            android:padding="10dp"
+            android:text="@string/review"
+            android:textSize="40dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <RadioGroup
-            android:id="@+id/radioGroup"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/answers"
+            android:layout_width="0dp"
+            app:layout_constraintWidth_max="wrap"
+            app:layout_constraintWidth_percent="0.9"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_marginTop="30dp"
-            android:maxWidth="360dp"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/question" />
+            app:layout_constraintTop_toBottomOf="@+id/title" />
 
         <Button
             android:id="@+id/backButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="30dp"
             android:onClick="loadPreviousQuestion"
             android:padding="10dp"
             android:text="@string/back_button"
             android:textAlignment="center"
             android:textSize="17dp"
-            app:layout_constraintStart_toStartOf="@+id/question"
-            app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+            app:layout_constraintStart_toStartOf="@+id/answers"
+            app:layout_constraintTop_toBottomOf="@+id/answers"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <Button
-            android:id="@+id/nextButton"
+            android:id="@+id/finishButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:onClick="loadNextQuestion"
-            android:padding="10dp"
-            android:text="@string/next_button"
-            android:textAlignment="center"
-            android:textSize="17dp"
-            app:layout_constraintEnd_toEndOf="@+id/question"
-            app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
-
-        <com.example.sleepaid.TextBox
-            android:id="@+id/information"
-            android:layout_width="0dp"
-            app:layout_constraintWidth_max="wrap"
-            app:layout_constraintWidth_percent="0.9"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:layout_marginBottom="30dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/nextButton"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:text="Info here" />
+            android:onClick="storeAnswers"
+            android:padding="10dp"
+            android:text="@string/finish_button"
+            android:textAlignment="center"
+            android:textSize="17dp"
+            app:layout_constraintEnd_toEndOf="@+id/answers"
+            app:layout_constraintTop_toBottomOf="@+id/answers"
+            app:layout_constraintBottom_toBottomOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

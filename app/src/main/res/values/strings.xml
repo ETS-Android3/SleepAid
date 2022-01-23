@@ -6,6 +6,7 @@
 
     <string name="next_button">Next&#160;&#160;&#160;></string>
     <string name="back_button">&#60;&#160;&#160;&#160;Back</string>
+    <string name="finish_button">Finish&#160;&#160;&#160;></string>
 
-    <string name="question1">What time would you ideally like to go to sleep?</string>
+    <string name="review">Your answers</string>
 </resources>

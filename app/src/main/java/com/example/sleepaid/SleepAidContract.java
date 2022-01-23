@@ -61,6 +61,8 @@ public final class SleepAidContract {
                     "('Between 9 pm and 10 pm.', 1), " +
                     "('Between 10 pm and 11 pm.', 1), " +
                     "('Between 11 pm and 12 am.', 1), " +
+                    "('Between 12 am and 1 am.', 1), " +
+                    "('Between 5 am and 6 am.', 2), " +
                     "('Between 6 am and 7 am.', 2), " +
                     "('Between 7 am and 8 am.', 2), " +
                     "('Between 8 am and 9 am.', 2), " +
