@@ -24,11 +24,11 @@ public class TextBox extends FrameLayout {
 
         int[] sets = {R.attr.text};
         TypedArray typedArray = context.obtainStyledAttributes(sets);
-        CharSequence boxText = typedArray.getText(0);
+        CharSequence text = typedArray.getText(0);
         typedArray.recycle();
 
         initComponents();
-        setText(boxText);
+        setText(text);
     }
 
     private void init(Context context, AttributeSet attributes) {
@@ -36,11 +36,11 @@ public class TextBox extends FrameLayout {
 
         int[] sets = {R.attr.text};
         TypedArray typedArray = context.obtainStyledAttributes(attributes, sets);
-        CharSequence boxText = typedArray.getText(0);
+        CharSequence text = typedArray.getText(0);
         typedArray.recycle();
 
         initComponents();
-        setText(boxText);
+        setText(text);
     }
 
     private void initComponents() {
@@ -51,7 +51,11 @@ public class TextBox extends FrameLayout {
         text.setText(value);
     }
 
-    public void setTextAllignment(int value) {
+    public CharSequence getText() {
+        return text.getText();
+    }
+
+    public void setTextAlignment(int value) {
         text.setTextAlignment(value);
     }
 

@@ -62,22 +62,28 @@ public class DBHelper extends SQLiteOpenHelper {
         return db.rawQuery("SELECT MAX(" + column + ") FROM " + table, null);
     }
 
-    public void add(String column, int value, String table) {
+    public void add(String[] columns, int[] values, String table) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        ContentValues values = new ContentValues();
-        values.put(column, value);
+        ContentValues contentValues = new ContentValues();
 
-        db.insert(table, null, values);
+        for (int i = 0; i < columns.length; i++) {
+            contentValues.put(columns[i], values[i]);
+        }
+
+        db.insert(table, null, contentValues);
     }
 
-    public void add(String column, String value, String table) {
+    public void add(String[] columns, String[] values, String table) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        ContentValues values = new ContentValues();
-        values.put(column, value);
+        ContentValues contentValues = new ContentValues();
 
-        db.insert(table, null, values);
+        for (int i = 0; i < columns.length; i++) {
+            contentValues.put(columns[i], values[i]);
+        }
+
+        db.insert(table, null, contentValues);
     }
 
     public int update(String column, int value, String selection, String[] selectionArgs, String table) {

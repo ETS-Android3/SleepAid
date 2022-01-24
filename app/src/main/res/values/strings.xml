@@ -2,8 +2,17 @@
     <string name="app_name">Sleep Aid</string>
 
     <string name="welcome_text">Welcome to Sleep Aid, your personal sleep hygiene coach!\nWe’ll start by asking you a few questions that will help us personalise your experience and understand your needs.</string>
-    <string name="start_button">Let\'s start&#160;&#160;&#160;></string>
 
+    <string name="exit_questionnaire">Are you sure you want to exit the questionnaire?</string>
+    <string name="question_validation">Please select an option.</string>
+
+    <string name="wakeup_time">Based on this information and your previous choice, your recommended wake up time is&#160;</string>
+
+    <string name="yes_modal">Yes</string>
+    <string name="ok_modal">Ok</string>
+    <string name="cancel_modal">Cancel</string>
+
+    <string name="start_button">Let\'s start&#160;&#160;&#160;></string>
     <string name="next_button">Next&#160;&#160;&#160;></string>
     <string name="back_button">&#60;&#160;&#160;&#160;Back</string>
     <string name="finish_button">Finish&#160;&#160;&#160;></string>

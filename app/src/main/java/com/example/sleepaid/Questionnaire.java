@@ -1,12 +1,9 @@
 package com.example.sleepaid;
 
-import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
@@ -16,9 +13,7 @@ import android.widget.RadioGroup;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatRadioButton;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 
 public class Questionnaire extends AppCompatActivity {
     private DBHelper myDB;
@@ -30,7 +25,10 @@ public class Questionnaire extends AppCompatActivity {
 
     private String[] questions;
     private String[] information;
-    private ArrayList<Map<Integer, String>> options;
+    private int[][] optionIds;
+    private String[][] optionValues;
+
+    private int sizeInDp;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +47,14 @@ public class Questionnaire extends AppCompatActivity {
 
         questions = new String[maxQuestions];
         information = new String[maxQuestions];
-        options = new ArrayList(maxQuestions);
+        optionIds = new int[maxQuestions][];
+        optionValues = new String[maxQuestions][];
+
+        sizeInDp = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                25,
+                getResources().getDisplayMetrics()
+        );
 
         loadAllQuestions();
         loadAllOptions();
@@ -60,36 +65,39 @@ public class Questionnaire extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (currentQuestion == 1) {
-            confirmExit();
+            exitQuestionnaire();
         }
         else {
             loadScreen(currentQuestion - 1);
         }
     }
 
-    private void confirmExit() {
+    private void exitQuestionnaire() {
         Context context = this;
-        AlertDialog.Builder alert = new AlertDialog.Builder(context);
-        alert.setTitle("Are you sure you want to exit the questionnaire?");
 
-        //@TODO fix the styling for the buttons in dark mode
-        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        DialogInterface.OnClickListener exitAction = new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 Intent mainActivity = new Intent(context, MainActivity.class);
                 startActivity(mainActivity);
             }
-        });
+        };
 
-        alert.setNegativeButton("Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {}
-                });
+        DialogInterface.OnClickListener cancelAction = new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {}
+        };
 
-        alert.show();
+        Modal.show(
+                context,
+                getString(R.string.exit_questionnaire),
+                getString(R.string.yes_modal),
+                exitAction,
+                getString(R.string.cancel_modal),
+                cancelAction
+        );
     }
 
     private void loadAllQuestions() {
-        String sortOrder = SleepAidContract.SleepAidEntry.QUESTION_ID + " ASC";
+        String sortOrder = SleepAidContract.SleepAidEntry.QUESTION_ID;
 
         Cursor questionData = myDB.load(
                 SleepAidContract.SleepAidEntry.QUESTION_TABLE,
@@ -112,47 +120,66 @@ public class Questionnaire extends AppCompatActivity {
     }
 
     private void loadAllOptions() {
-        String sortOrder = SleepAidContract.SleepAidEntry.OPTION_ID + " ASC";
+        String selection = SleepAidContract.SleepAidEntry.OPTION_QUESTION_ID + " = ?";
+        String sortOrder = SleepAidContract.SleepAidEntry.OPTION_ID;
 
-        Cursor optionData = myDB.load(
-                SleepAidContract.SleepAidEntry.OPTION_TABLE,   // The table to query
-                null,             // The array of columns to return (pass null to get all)
-                null,              // The columns for the WHERE clause
-                null,          // The values for the WHERE clause
-                sortOrder
-        );
+        for (int i = 0; i < maxQuestions; i++) {
+            String[] selectionArgs = {Integer.toString(i + 1)};
 
-        int previousQuestionId = 0;
-        Map optionMap = new HashMap<Integer, String>();
+            Cursor optionData = myDB.load(
+                    SleepAidContract.SleepAidEntry.OPTION_TABLE,   // The table to query
+                    null,             // The array of columns to return (pass null to get all)
+                    selection,              // The columns for the WHERE clause
+                    selectionArgs,          // The values for the WHERE clause
+                    sortOrder
+            );
 
-        int questionIdIndex = optionData.getColumnIndexOrThrow(SleepAidContract.SleepAidEntry.OPTION_QUESTION_ID);
-        int optionIdIndex = optionData.getColumnIndexOrThrow(SleepAidContract.SleepAidEntry.OPTION_ID);
-        int valueIndex = optionData.getColumnIndexOrThrow(SleepAidContract.SleepAidEntry.OPTION_VALUE);
+            int optionIdIndex = optionData.getColumnIndexOrThrow(SleepAidContract.SleepAidEntry.OPTION_ID);
+            int valueIndex = optionData.getColumnIndexOrThrow(SleepAidContract.SleepAidEntry.OPTION_VALUE);
 
-        while(optionData.moveToNext()) {
-            int questionId = optionData.getInt(questionIdIndex);
-            int optionId = optionData.getInt(optionIdIndex);
+            int maxOptions = optionData.getCount();
+            optionIds[i] = new int[maxOptions];
+            optionValues[i] = new String[maxOptions];
 
-            if (questionId != previousQuestionId) {
-                previousQuestionId = questionId;
+            int j = 0;
 
-                optionMap = new HashMap<Integer, String>();
-                optionMap.put(optionId, optionData.getString(valueIndex));
+            while(optionData.moveToNext()) {
+                optionIds[i][j] = optionData.getInt(optionIdIndex);
+                optionValues[i][j] = optionData.getString(valueIndex);
 
-                options.add(questionId - 1, optionMap);
-            }
-            else {
-                optionMap.put(optionId, optionData.getString(valueIndex));
-                options.set(questionId - 1, optionMap);
+                j++;
             }
         }
     }
 
     public void loadNextQuestion(View view) {
-        loadScreen(currentQuestion + 1);
+        RadioGroup radioGroup = findViewById(R.id.radioGroup);
+        int checkedId = radioGroup.getCheckedRadioButtonId();
+
+        if (checkedId == -1) {
+            DialogInterface.OnClickListener cancelAction = new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {}
+            };
+
+            Modal.show(
+                    this,
+                    getString(R.string.question_validation),
+                    getString(R.string.ok_modal),
+                    cancelAction,
+                    null,
+                    null
+            );
+        }
+        else {
+            loadScreen(currentQuestion + 1);
+        }
     }
 
     public void loadPreviousQuestion(View view) {
+        if (currentQuestion > maxQuestions) {
+            setContentView(R.layout.activity_questionnaire);
+        }
+
         loadScreen(currentQuestion - 1);
     }
 
@@ -164,7 +191,7 @@ public class Questionnaire extends AppCompatActivity {
         }
 
         if (questionId == 0) {
-            confirmExit();
+            exitQuestionnaire();
         }
         else if (questionId == maxQuestions + 1) {
             currentQuestion = questionId;
@@ -173,10 +200,6 @@ public class Questionnaire extends AppCompatActivity {
             loadAllAnswers();
         }
         else {
-            if (currentQuestion > maxQuestions) {
-                setContentView(R.layout.activity_questionnaire);
-            }
-
             findViewById(R.id.scrollView).scrollTo(0, 0);
 
             currentQuestion = questionId;
@@ -184,6 +207,10 @@ public class Questionnaire extends AppCompatActivity {
             loadQuestion(questionId);
             loadOptions(questionId);
             loadPreviousAnswer(questionId);
+
+            if (questionId == 2) {
+                presetWakeUpTime(questionId);
+            }
         }
     }
 
@@ -200,14 +227,12 @@ public class Questionnaire extends AppCompatActivity {
         radioGroup.clearCheck();
         radioGroup.removeAllViews();
 
-        Map optionData = options.get(questionId - 1);
-
-        for (Object i : optionData.keySet()) {
+        for (int i = 0; i < optionIds[questionId - 1].length; i++) {
             AppCompatRadioButton optionBox = new AppCompatRadioButton(this);
-            optionBox.setId((int) i);
+            optionBox.setId(optionIds[questionId - 1][i]);
 
-            optionBox.setText(optionData.get(i).toString());
-            optionBox.setTextSize(20);
+            optionBox.setText(optionValues[questionId - 1][i]);
+            optionBox.setTextSize((int) (sizeInDp / 3.5));
             optionBox.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
 
             RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(
@@ -215,20 +240,14 @@ public class Questionnaire extends AppCompatActivity {
                     RadioGroup.LayoutParams.WRAP_CONTENT
             );
 
-            int marginInDp = (int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP,
-                    25,
-                    getResources().getDisplayMetrics()
-            );
-
-            layoutParams.setMargins(0, 0, 0, marginInDp);
+            layoutParams.setMargins(0, 0, 0, sizeInDp);
             optionBox.setLayoutParams(layoutParams);
 
             optionBox.setPadding(
-                    marginInDp / 2,
-                    marginInDp / 2,
-                    marginInDp / 2,
-                    marginInDp / 2
+                    sizeInDp / 2,
+                    sizeInDp / 2,
+                    sizeInDp / 2,
+                    sizeInDp / 2
             );
             
             radioGroup.addView(optionBox);
@@ -242,30 +261,42 @@ public class Questionnaire extends AppCompatActivity {
         }
     }
 
+    private void presetWakeUpTime(int questionId) {
+        int previousAnswer = currentAnswers[questionId - 2];
+        int firstOption = optionIds[questionId - 1][0];
+
+        AppCompatRadioButton option = findViewById(previousAnswer + firstOption - 1);
+
+        TextBox information = findViewById(R.id.information);
+        String currentText = information.getText().toString();
+        String newText = getString(R.string.wakeup_time) + option.getText().toString().toLowerCase();
+
+        information.setText(currentText + "\n " + newText);
+
+        if(currentAnswers[questionId - 1] == 0) {
+            option.setChecked(true);
+        }
+    }
+
     private void loadAllAnswers() {
         LinearLayout layout = findViewById(R.id.answers);
 
-        int sizeInDp = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                8,
-                getResources().getDisplayMetrics()
-        );
-
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
-        layoutParams.setMargins(0, 0, 0, sizeInDp * 2);
+        layoutParams.setMargins(0, 0, 0, sizeInDp / 2);
 
         for (int i = 0 ; i < maxQuestions; i++) {
             TextBox textBox = new TextBox(this);
-            textBox.setTextAllignment(View.TEXT_ALIGNMENT_TEXT_START);
-            textBox.setTextSize(sizeInDp);
+
+            textBox.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+            textBox.setTextSize((int) (sizeInDp / 3.5));
             textBox.setLayoutParams(layoutParams);
 
             String question = (i + 1) + ". " + questions[i];
             String answer = currentAnswers[i] != 0 ?
-                    "A: " + options.get(i).get(currentAnswers[i]) :
+                    "A: " + optionValues[i][Arrays.binarySearch(optionIds[i], currentAnswers[i])] :
                     "No answer";
 
             textBox.setText(question + "\n" + answer);
@@ -276,15 +307,19 @@ public class Questionnaire extends AppCompatActivity {
 
     public void storeAnswers(View view) {
         for (int i = 0; i < maxQuestions; i++) {
-            myDB.add(
+            String[] columns = {
                     SleepAidContract.SleepAidEntry.ANSWER_OPTION_ID,
+                    SleepAidContract.SleepAidEntry.ANSWER_QUESTION_ID
+            };
+
+            int[] values = {
                     currentAnswers[i],
-                    SleepAidContract.SleepAidEntry.ANSWER_TABLE
-            );
+                    i + 1
+            };
 
             myDB.add(
-                    SleepAidContract.SleepAidEntry.ANSWER_QUESTION_ID,
-                    i + 1,
+                    columns,
+                    values,
                     SleepAidContract.SleepAidEntry.ANSWER_TABLE
             );
         }

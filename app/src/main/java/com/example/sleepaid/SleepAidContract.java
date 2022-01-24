@@ -20,6 +20,18 @@ public final class SleepAidContract {
         public static final String ANSWER_ID = "AnswerId";
         public static final String ANSWER_OPTION_ID = "OptionId";
         public static final String ANSWER_QUESTION_ID = "QuestionId";
+
+        public static final String ALARM_TABLE = "Alarm";
+        public static final String ALARM_ID = "AlarmId";
+        public static final String ALARM_TYPE = "AlarmType";
+        public static final String ALARM_TIME = "AlarmTime";
+        public static final String ALARM_DAYS = "AlarmDays";
+        public static final String ALARM_SOUND = "AlarmSound";
+
+        public static final String CONFIGURATION_TABLE = "Configuration";
+        public static final String CONFIGURATION_ID = "ConfigurationId";
+        public static final String CONFIGURATION_TYPE = "ConfigurationType";
+        public static final String CONFIGURATION_VALUE = "ConfigurationValue";
     }
 
     protected static final String CREATE_QUESTION_TABLE =
@@ -84,4 +96,33 @@ public final class SleepAidContract {
 
     protected static final String DELETE_ANSWER_TABLE =
             "DROP TABLE IF EXISTS " + SleepAidEntry.ANSWER_TABLE;
+
+    protected static final String CREATE_ALARM_TABLE =
+            "CREATE TABLE " +
+                    SleepAidEntry.ALARM_TABLE + " (" +
+                    SleepAidEntry.ALARM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    SleepAidEntry.ALARM_TYPE + " TEXT NOT NULL, " +
+                    SleepAidEntry.ALARM_TIME + " TEXT NOT NULL, " +
+                    SleepAidEntry.ALARM_DAYS + " TEXT NOT NULL, " +
+                    SleepAidEntry.ALARM_SOUND + " TEXT NOT NULL";
+
+    protected static final String DELETE_ALARM_TABLE =
+            "DROP TABLE IF EXISTS " + SleepAidEntry.ALARM_TABLE;
+
+    protected static final String CREATE_CONFIGURATION_TABLE =
+            "CREATE TABLE " +
+                    SleepAidEntry.CONFIGURATION_TABLE + " (" +
+                    SleepAidEntry.CONFIGURATION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    SleepAidEntry.CONFIGURATION_TYPE + " TEXT NOT NULL, " +
+                    SleepAidEntry.CONFIGURATION_VALUE + " INTEGER NOT NULL";
+
+    protected static final String FILL_CONFIGURATION_TABLE =
+            "INSERT INTO " +
+                    SleepAidEntry.CONFIGURATION_TABLE + " (" +
+                    SleepAidEntry.CONFIGURATION_TYPE + ", " +
+                    SleepAidEntry.CONFIGURATION_VALUE + ") VALUES " +
+                    "('notifications', 1)";
+
+    protected static final String DELETE_CONFIGURATION_TABLE =
+            "DROP TABLE IF EXISTS " + SleepAidEntry.CONFIGURATION_TABLE;
 }
