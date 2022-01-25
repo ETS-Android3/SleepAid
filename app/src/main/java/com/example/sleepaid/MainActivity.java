@@ -1,28 +1,54 @@
 package com.example.sleepaid;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+
 public class MainActivity extends AppCompatActivity {
+    AppDatabase db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        DBHelper db = new DBHelper(this);
-        db.getWritableDatabase();
+        db = Room.databaseBuilder(
+                getApplicationContext(),
+                AppDatabase.class,
+                "sleep-aid.db"
+        ).createFromAsset("database/initial-data.db").build();
 
-        Cursor answerData = db.load(SleepAidContract.SleepAidEntry.ANSWER_TABLE);
+        db.answerDao().getAll()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        answers -> {
+                            if (!answers.isEmpty()) {
+                                goToHomeScreen();
+                            }
+                            else {
+                                setContentView(R.layout.activity_main);
+                            }
+                        },
+                        Throwable::printStackTrace
+                );
 
-        if (answerData.moveToFirst()) {
-            goToHomeScreen();
-        }
-        else {
-            setContentView(R.layout.activity_main);
-        }
+//        DBHelper db = new DBHelper(this);
+//        db.getWritableDatabase();
+//
+//        Cursor answerData = db.load(SleepAidContract.SleepAidEntry.ANSWER_TABLE);
+//
+//        if (answerData.moveToFirst()) {
+//            goToHomeScreen();
+//        }
+//        else {
+//            setContentView(R.layout.activity_main);
+//        }
     }
 
     public void startQuestionnaire(View view) {
