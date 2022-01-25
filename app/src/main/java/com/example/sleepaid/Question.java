@@ -6,10 +6,22 @@ import androidx.room.PrimaryKey;
 
 @Entity
 public class Question {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "questionId")
     public int id;
 
     public String question;
     public String information;
+
+    public int getId() {
+        return this.id;
+    }
+
+    public String getQuestion() {
+        return this.question;
+    }
+
+    public String getInformation() {
+        return this.information;
+    }
 }

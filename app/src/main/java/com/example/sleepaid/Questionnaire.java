@@ -1,9 +1,9 @@
 package com.example.sleepaid;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
@@ -13,20 +13,22 @@ import android.widget.RadioGroup;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatRadioButton;
 
-import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+
+@SuppressLint("NewApi")
 public class Questionnaire extends AppCompatActivity {
-    private DBHelper myDB;
+    AppDatabase db;
 
-    private int maxQuestions;
+    private int currentQuestionId;
+    private List<Answer> currentAnswers;
 
-    private int currentQuestion;
-    private int[] currentAnswers;
-
-    private String[] questions;
-    private String[] information;
-    private int[][] optionIds;
-    private String[][] optionValues;
+    private List<Question> questions;
+    private List<Option> options;
 
     private int sizeInDp;
 
@@ -34,27 +36,15 @@ public class Questionnaire extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_questionnaire);
 
-        myDB = new DBHelper(this);
-
-        Cursor questionData = myDB.loadMax(
-                SleepAidContract.SleepAidEntry.QUESTION_ID,
-                SleepAidContract.SleepAidEntry.QUESTION_TABLE
-        );
-        maxQuestions = questionData.moveToFirst() ? questionData.getInt(0) : 0;
-
-        currentAnswers = new int[maxQuestions];
-        currentQuestion = 1;
-
-        questions = new String[maxQuestions];
-        information = new String[maxQuestions];
-        optionIds = new int[maxQuestions][];
-        optionValues = new String[maxQuestions][];
+        db = AppDatabase.getDatabase(getApplicationContext());
 
         sizeInDp = (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
                 25,
                 getResources().getDisplayMetrics()
         );
+
+        currentQuestionId = 1;
 
         loadAllQuestions();
         loadAllOptions();
@@ -64,11 +54,11 @@ public class Questionnaire extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (currentQuestion == 1) {
+        if (currentQuestionId == 1) {
             exitQuestionnaire();
         }
         else {
-            loadScreen(currentQuestion - 1);
+            loadScreen(currentQuestionId - 1);
         }
     }
 
@@ -97,59 +87,25 @@ public class Questionnaire extends AppCompatActivity {
     }
 
     private void loadAllQuestions() {
-        String sortOrder = SleepAidContract.SleepAidEntry.QUESTION_ID;
-
-        Cursor questionData = myDB.load(
-                SleepAidContract.SleepAidEntry.QUESTION_TABLE,
-                null,
-                null,
-                null,
-                sortOrder
-        );
-
-        int questionIdIndex = questionData.getColumnIndexOrThrow(SleepAidContract.SleepAidEntry.QUESTION_ID);
-        int questionIndex = questionData.getColumnIndexOrThrow(SleepAidContract.SleepAidEntry.QUESTION_QUESTION);
-        int informationIndex = questionData.getColumnIndexOrThrow(SleepAidContract.SleepAidEntry.QUESTION_INFORMATION);
-
-        while(questionData.moveToNext()) {
-            int questionId = questionData.getInt(questionIdIndex);
-
-            questions[questionId - 1] = questionData.getString(questionIndex);
-            information[questionId - 1] = questionData.getString(informationIndex);
-        }
+        db.questionDao()
+                .getAll()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        questionData -> questions = questionData,
+                        Throwable::printStackTrace
+                );
     }
 
     private void loadAllOptions() {
-        String selection = SleepAidContract.SleepAidEntry.OPTION_QUESTION_ID + " = ?";
-        String sortOrder = SleepAidContract.SleepAidEntry.OPTION_ID;
-
-        for (int i = 0; i < maxQuestions; i++) {
-            String[] selectionArgs = {Integer.toString(i + 1)};
-
-            Cursor optionData = myDB.load(
-                    SleepAidContract.SleepAidEntry.OPTION_TABLE,   // The table to query
-                    null,             // The array of columns to return (pass null to get all)
-                    selection,              // The columns for the WHERE clause
-                    selectionArgs,          // The values for the WHERE clause
-                    sortOrder
-            );
-
-            int optionIdIndex = optionData.getColumnIndexOrThrow(SleepAidContract.SleepAidEntry.OPTION_ID);
-            int valueIndex = optionData.getColumnIndexOrThrow(SleepAidContract.SleepAidEntry.OPTION_VALUE);
-
-            int maxOptions = optionData.getCount();
-            optionIds[i] = new int[maxOptions];
-            optionValues[i] = new String[maxOptions];
-
-            int j = 0;
-
-            while(optionData.moveToNext()) {
-                optionIds[i][j] = optionData.getInt(optionIdIndex);
-                optionValues[i][j] = optionData.getString(valueIndex);
-
-                j++;
-            }
-        }
+        db.optionDao()
+                .getAll()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        optionData -> options = optionData,
+                        Throwable::printStackTrace
+                );
     }
 
     public void loadNextQuestion(View view) {
@@ -171,30 +127,33 @@ public class Questionnaire extends AppCompatActivity {
             );
         }
         else {
-            loadScreen(currentQuestion + 1);
+            loadScreen(currentQuestionId + 1);
         }
     }
 
     public void loadPreviousQuestion(View view) {
-        if (currentQuestion > maxQuestions) {
+        if (currentQuestionId > questions.size()) {
             setContentView(R.layout.activity_questionnaire);
         }
 
-        loadScreen(currentQuestion - 1);
+        loadScreen(currentQuestionId - 1);
     }
 
     private void loadScreen(int questionId) {
-        if (currentQuestion <= maxQuestions) {
+        if (currentQuestionId <= questions.size()) {
             RadioGroup radioGroup = findViewById(R.id.radioGroup);
             int checkedId = radioGroup.getCheckedRadioButtonId();
-            currentAnswers[currentQuestion - 1] = checkedId == -1 ? 0 : checkedId;
+
+            if (checkedId != -1) {
+                currentAnswers.add(new Answer(checkedId, currentQuestionId));
+            }
         }
 
         if (questionId == 0) {
             exitQuestionnaire();
         }
-        else if (questionId == maxQuestions + 1) {
-            currentQuestion = questionId;
+        else if (questionId == questions.size() + 1) {
+            currentQuestionId = questionId;
 
             setContentView(R.layout.activity_questionnaire_summary);
             loadAllAnswers();
@@ -202,7 +161,7 @@ public class Questionnaire extends AppCompatActivity {
         else {
             findViewById(R.id.scrollView).scrollTo(0, 0);
 
-            currentQuestion = questionId;
+            currentQuestionId = questionId;
 
             loadQuestion(questionId);
             loadOptions(questionId);
@@ -216,10 +175,17 @@ public class Questionnaire extends AppCompatActivity {
 
     private void loadQuestion(int questionId) {
         TextBox questionBox = findViewById(R.id.question);
-        questionBox.setText(questions[questionId - 1]);
-
         TextBox informationBox = findViewById(R.id.information);
-        informationBox.setText(information[questionId - 1]);
+
+        Optional<Question> question = questions
+                .stream()
+                .filter(q -> q.getQuestion().equals(questionId))
+                .findAny();
+
+        if (question.isPresent()) {
+            questionBox.setText(question.get().getQuestion());
+            informationBox.setText(question.get().getInformation());
+        }
     }
 
     private void loadOptions(int questionId) {
@@ -227,11 +193,16 @@ public class Questionnaire extends AppCompatActivity {
         radioGroup.clearCheck();
         radioGroup.removeAllViews();
 
-        for (int i = 0; i < optionIds[questionId - 1].length; i++) {
-            AppCompatRadioButton optionBox = new AppCompatRadioButton(this);
-            optionBox.setId(optionIds[questionId - 1][i]);
+        List<Option> possibleOptions = options
+                .stream()
+                .filter(o -> o.getQuestionId() == questionId)
+                .collect(Collectors.toList());
 
-            optionBox.setText(optionValues[questionId - 1][i]);
+        for (Option o : possibleOptions) {
+            AppCompatRadioButton optionBox = new AppCompatRadioButton(this);
+
+            optionBox.setId(o.getId());
+            optionBox.setText(o.getValue());
             optionBox.setTextSize((int) (sizeInDp / 3.5));
             optionBox.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
 
@@ -239,7 +210,6 @@ public class Questionnaire extends AppCompatActivity {
                     RadioGroup.LayoutParams.MATCH_PARENT,
                     RadioGroup.LayoutParams.WRAP_CONTENT
             );
-
             layoutParams.setMargins(0, 0, 0, sizeInDp);
             optionBox.setLayoutParams(layoutParams);
 
@@ -255,26 +225,45 @@ public class Questionnaire extends AppCompatActivity {
     }
 
     private void loadPreviousAnswer(int questionId) {
-        if(currentAnswers[questionId - 1] != 0) {
-            AppCompatRadioButton option = findViewById(currentAnswers[questionId - 1]);
+        Optional<Answer> answer = currentAnswers
+                .stream()
+                .filter(a -> a.getQuestionId() == questionId)
+                .findAny();
+
+        if (answer.isPresent()) {
+            AppCompatRadioButton option = findViewById(answer.get().getOptionId());
             option.setChecked(true);
         }
     }
 
     private void presetWakeUpTime(int questionId) {
-        int previousAnswer = currentAnswers[questionId - 2];
-        int firstOption = optionIds[questionId - 1][0];
+        Optional<Answer> previousAnswer = currentAnswers
+                .stream()
+                .filter(a -> a.getQuestionId() == (questionId - 1))
+                .findAny();
 
-        AppCompatRadioButton option = findViewById(previousAnswer + firstOption - 1);
+        Optional<Option> firstOption = options
+                .stream()
+                .filter(o -> o.getQuestionId() == questionId)
+                .findFirst();
 
-        TextBox information = findViewById(R.id.information);
-        String currentText = information.getText().toString();
-        String newText = getString(R.string.wakeup_time) + option.getText().toString().toLowerCase();
+        if (previousAnswer.isPresent() && firstOption.isPresent()) {
+            AppCompatRadioButton option = findViewById(previousAnswer.get().getOptionId() + firstOption.get().getId() - 1);
 
-        information.setText(currentText + "\n " + newText);
+            TextBox information = findViewById(R.id.information);
+            String currentText = information.getText().toString();
+            String newText = getString(R.string.wakeup_time) + option.getText().toString().toLowerCase();
 
-        if(currentAnswers[questionId - 1] == 0) {
-            option.setChecked(true);
+            information.setText(currentText + "\n " + newText);
+
+            Optional<Answer> currentAnswer = currentAnswers
+                    .stream()
+                    .filter(a -> a.getQuestionId() == questionId)
+                    .findAny();
+
+            if(!currentAnswer.isPresent()) {
+                option.setChecked(true);
+            }
         }
     }
 
@@ -287,42 +276,43 @@ public class Questionnaire extends AppCompatActivity {
         );
         layoutParams.setMargins(0, 0, 0, sizeInDp / 2);
 
-        for (int i = 0 ; i < maxQuestions; i++) {
+        for (Question q : questions) {
             TextBox textBox = new TextBox(this);
 
             textBox.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
             textBox.setTextSize((int) (sizeInDp / 3.5));
             textBox.setLayoutParams(layoutParams);
 
-            String question = (i + 1) + ". " + questions[i];
-            String answer = currentAnswers[i] != 0 ?
-                    "A: " + optionValues[i][Arrays.binarySearch(optionIds[i], currentAnswers[i])] :
-                    "No answer";
+            int questionId = q.getId();
 
-            textBox.setText(question + "\n" + answer);
+            String questionText = questionId + ". " + q.getQuestion();
+            String answerText;
+
+            Optional<Answer> currentAnswer = currentAnswers
+                    .stream()
+                    .filter(a -> a.getQuestionId() == questionId)
+                    .findAny();
+
+            if (currentAnswer.isPresent()) {
+                Optional<Option> option = options
+                        .stream()
+                        .filter(o -> o.getId() == currentAnswer.get().getOptionId())
+                        .findAny();
+
+                answerText = "A: " + option.get().getValue();
+            }
+            else {
+                answerText = "No answer";
+            }
+
+            textBox.setText(questionText + "\n" + answerText);
 
             layout.addView(textBox);
         }
     }
 
     public void storeAnswers(View view) {
-        for (int i = 0; i < maxQuestions; i++) {
-            String[] columns = {
-                    SleepAidContract.SleepAidEntry.ANSWER_OPTION_ID,
-                    SleepAidContract.SleepAidEntry.ANSWER_QUESTION_ID
-            };
-
-            int[] values = {
-                    currentAnswers[i],
-                    i + 1
-            };
-
-            myDB.add(
-                    columns,
-                    values,
-                    SleepAidContract.SleepAidEntry.ANSWER_TABLE
-            );
-        }
+        db.answerDao().insert(currentAnswers);
 
         Intent homeScreen = new Intent(this, HomeScreen.class);
         startActivity(homeScreen);

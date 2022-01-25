@@ -20,10 +20,27 @@ import androidx.room.PrimaryKey;
         )
 })
 public class Answer {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "answerId")
     public int id;
 
     public int optionId;
     public int questionId;
+
+    public Answer(int optionId, int questionId) {
+        this.optionId = optionId;
+        this.questionId = questionId;
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
+    public int getOptionId() {
+        return this.optionId;
+    }
+
+    public int getQuestionId() {
+        return this.questionId;
+    }
 }

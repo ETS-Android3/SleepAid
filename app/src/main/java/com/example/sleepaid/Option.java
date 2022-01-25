@@ -14,10 +14,22 @@ import androidx.room.PrimaryKey;
         )
 })
 public class Option {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "optionId")
     public int id;
 
     public String value;
     public int questionId;
+
+    public int getId() {
+        return this.id;
+    }
+
+    public String getValue() {
+        return this.value;
+    }
+
+    public int getQuestionId() {
+        return this.questionId;
+    }
 }
