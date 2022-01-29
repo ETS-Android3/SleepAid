@@ -13,8 +13,10 @@ import android.widget.RadioGroup;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatRadioButton;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -45,11 +47,9 @@ public class Questionnaire extends AppCompatActivity {
         );
 
         currentQuestionId = 1;
+        currentAnswers = new ArrayList<Answer>();
 
         loadAllQuestions();
-        loadAllOptions();
-
-        loadScreen(1);
     }
 
     @Override
@@ -92,7 +92,11 @@ public class Questionnaire extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        questionData -> questions = questionData,
+                        questionData -> {
+                            questions = questionData;
+
+                            loadAllOptions();
+                        },
                         Throwable::printStackTrace
                 );
     }
@@ -103,12 +107,16 @@ public class Questionnaire extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        optionData -> options = optionData,
+                        optionData -> {
+                            options = optionData;
+
+                            loadScreen(1);
+                        },
                         Throwable::printStackTrace
                 );
     }
 
-    public void loadNextQuestion(View view) {
+    public void loadNextScreen(View view) {
         RadioGroup radioGroup = findViewById(R.id.radioGroup);
         int checkedId = radioGroup.getCheckedRadioButtonId();
 
@@ -131,7 +139,7 @@ public class Questionnaire extends AppCompatActivity {
         }
     }
 
-    public void loadPreviousQuestion(View view) {
+    public void loadPreviousScreen(View view) {
         if (currentQuestionId > questions.size()) {
             setContentView(R.layout.activity_questionnaire);
         }
@@ -145,7 +153,25 @@ public class Questionnaire extends AppCompatActivity {
             int checkedId = radioGroup.getCheckedRadioButtonId();
 
             if (checkedId != -1) {
-                currentAnswers.add(new Answer(checkedId, currentQuestionId));
+                int existingAnswerId = -1;
+
+                if (!currentAnswers.isEmpty()) {
+                    Optional<Answer> answer = currentAnswers
+                            .stream()
+                            .filter(a -> a.getQuestionId() == currentQuestionId)
+                            .findAny();
+
+                    if (answer.isPresent()) {
+                        existingAnswerId = currentAnswers.indexOf(answer.get());
+                    }
+                }
+
+                if (existingAnswerId > -1) {
+                    currentAnswers.set(existingAnswerId, new Answer(checkedId, currentQuestionId));
+                }
+                else {
+                    currentAnswers.add(new Answer(checkedId, currentQuestionId));
+                }
             }
         }
 
@@ -164,8 +190,8 @@ public class Questionnaire extends AppCompatActivity {
             currentQuestionId = questionId;
 
             loadQuestion(questionId);
-            loadOptions(questionId);
-            loadPreviousAnswer(questionId);
+            loadOptionsForQuestion(questionId);
+            loadPreviousAnswerForQuestion(questionId);
 
             if (questionId == 2) {
                 presetWakeUpTime(questionId);
@@ -179,7 +205,7 @@ public class Questionnaire extends AppCompatActivity {
 
         Optional<Question> question = questions
                 .stream()
-                .filter(q -> q.getQuestion().equals(questionId))
+                .filter(q -> q.getId() == questionId)
                 .findAny();
 
         if (question.isPresent()) {
@@ -188,7 +214,7 @@ public class Questionnaire extends AppCompatActivity {
         }
     }
 
-    private void loadOptions(int questionId) {
+    private void loadOptionsForQuestion(int questionId) {
         RadioGroup radioGroup = findViewById(R.id.radioGroup);
         radioGroup.clearCheck();
         radioGroup.removeAllViews();
@@ -224,15 +250,17 @@ public class Questionnaire extends AppCompatActivity {
         }
     }
 
-    private void loadPreviousAnswer(int questionId) {
-        Optional<Answer> answer = currentAnswers
-                .stream()
-                .filter(a -> a.getQuestionId() == questionId)
-                .findAny();
+    private void loadPreviousAnswerForQuestion(int questionId) {
+        if (!currentAnswers.isEmpty()) {
+            Optional<Answer> answer = currentAnswers
+                    .stream()
+                    .filter(a -> a.getQuestionId() == questionId)
+                    .findAny();
 
-        if (answer.isPresent()) {
-            AppCompatRadioButton option = findViewById(answer.get().getOptionId());
-            option.setChecked(true);
+            if (answer.isPresent()) {
+                AppCompatRadioButton option = findViewById(answer.get().getOptionId());
+                option.setChecked(true);
+            }
         }
     }
 
@@ -312,9 +340,13 @@ public class Questionnaire extends AppCompatActivity {
     }
 
     public void storeAnswers(View view) {
-        db.answerDao().insert(currentAnswers);
-
-        Intent homeScreen = new Intent(this, HomeScreen.class);
-        startActivity(homeScreen);
+        db.answerDao()
+                .insert(currentAnswers)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        () -> new InitialSettingsHandler(getApplicationContext(), db).getSettings(),
+                        Throwable::printStackTrace
+                );
     }
 }

@@ -10,12 +10,18 @@ import androidx.room.RoomDatabase;
 @Database(entities = {
         Question.class,
         Option.class,
-        Answer.class
+        Answer.class,
+        Alarm.class,
+        AlarmType.class,
+        Configuration.class,
+        Goal.class,
+        SleepData.class,
+        SleepDataField.class
 },
         autoMigrations = {
-                @AutoMigration(from = 1, to = 2)
+                @AutoMigration(from = 1, to = 4)
         },
-        version = 2)
+        version = 4)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase INSTANCE;
     private static final String dbName = "sleep-aid.db";
@@ -25,6 +31,18 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract OptionDao optionDao();
 
     public abstract AnswerDao answerDao();
+
+    public abstract AlarmDao alarmDao();
+
+    public abstract AlarmTypeDao alarmTypeDao();
+
+    public abstract ConfigurationDao configurationDao();
+
+    public abstract GoalDao goalDao();
+
+    public abstract SleepDataDao sleepDataDao();
+
+    public abstract SleepDataFieldDao sleepDataFieldDao();
 
     public static AppDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {

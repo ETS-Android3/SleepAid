@@ -18,7 +18,7 @@ public interface OptionDao {
     @Query("SELECT * FROM Option WHERE optionId IN (:optionIds) ORDER BY optionId")
     Single<List<Option>> loadAllByIds(int[] optionIds);
 
-    @Query("SELECT * FROM Option WHERE questionId = (:questionIds) ORDER BY optionId")
+    @Query("SELECT * FROM Option WHERE questionId IN (:questionIds) ORDER BY optionId")
     Single<List<Option>> loadAllByQuestionIds(int[] questionIds);
 
     @Insert

@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 2,
-    "identityHash": "42ec4c7ca8e8955c32a9f2928889f719",
+    "version": 4,
+    "identityHash": "cfa9894ebf8cdfdf12d089f6c6b8b068",
     "entities": [
       {
         "tableName": "Question",
@@ -137,7 +137,7 @@
       },
       {
         "tableName": "Alarm",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`alarmId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `type` TEXT, `time` TEXT, `days` TEXT, `sound` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`alarmId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `type` INTEGER NOT NULL, `time` TEXT, `days` TEXT, `sound` TEXT, FOREIGN KEY(`type`) REFERENCES `AlarmType`(`typeId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -148,8 +148,8 @@
           {
             "fieldPath": "type",
             "columnName": "type",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "time",
@@ -173,6 +173,44 @@
         "primaryKey": {
           "columnNames": [
             "alarmId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "AlarmType",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "type"
+            ],
+            "referencedColumns": [
+              "typeId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "AlarmType",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`typeId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `type` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "typeId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "typeId"
           ],
           "autoGenerate": true
         },
@@ -210,12 +248,130 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "Goal",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`goalId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `value` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "goalId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "value",
+            "columnName": "value",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "goalId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "SleepData",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`fieldId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `field` TEXT, `date` TEXT, `value` TEXT, FOREIGN KEY(`field`) REFERENCES `SleepDataField`(`field`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "fieldId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "field",
+            "columnName": "field",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "value",
+            "columnName": "value",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "fieldId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "SleepDataField",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "field"
+            ],
+            "referencedColumns": [
+              "field"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "SleepDataField",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`fieldId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `field` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "fieldId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "field",
+            "columnName": "field",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "fieldId"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_SleepDataField_field",
+            "unique": true,
+            "columnNames": [
+              "field"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_SleepDataField_field` ON `${TABLE_NAME}` (`field`)"
+          }
+        ],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '42ec4c7ca8e8955c32a9f2928889f719')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cfa9894ebf8cdfdf12d089f6c6b8b068')"
     ]
   }
 }
