@@ -5,14 +5,18 @@
       <map>
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/ic_launcher_background.xml" value="0.13974358974358975" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/rounded_shape.xml" value="0.1703125" />
-        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/activity_home_screen.xml" value="0.1264957264957265" />
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/activity_alarms_screen.xml" value="0.1" />
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/activity_goals_screen.xml" value="0.1" />
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/activity_home_screen.xml" value="0.4466666666666667" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/activity_main.xml" value="0.14666666666666667" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/activity_question1.xml" value="0.16666666666666666" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/activity_questionnaire.xml" value="0.16666666666666666" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/activity_questionnaire_summary.xml" value="0.14666666666666667" />
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/activity_settings_screen.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/information_box.xml" value="0.1264957264957265" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/radio_button.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/text_box.xml" value="0.1264957264957265" />
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/menu/main_menu.xml" value="0.22" />
       </map>
     </option>
   </component>

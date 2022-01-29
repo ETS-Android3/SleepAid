@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(
                         answers -> {
                             if (!answers.isEmpty()) {
-                                goToHomeScreen();
+                                goToSleepDataScreen();
                             }
                             else {
                                 setContentView(R.layout.activity_main);
@@ -38,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(questionnaire);
     }
 
-    private void goToHomeScreen() {
-        Intent homeScreen = new Intent(this, HomeScreen.class);
-        startActivity(homeScreen);
+    private void goToSleepDataScreen() {
+        Intent sleepDataScreen = new Intent(this, SleepDataScreen.class);
+        startActivity(sleepDataScreen);
     }
 }

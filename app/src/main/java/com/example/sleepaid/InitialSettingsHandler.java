@@ -146,8 +146,8 @@ public class InitialSettingsHandler {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         () -> {
-                            Intent homeScreen = new Intent(this.context, HomeScreen.class);
-                            context.startActivity(homeScreen);
+                            Intent sleepDataScreen = new Intent(this.context, SleepDataScreen.class);
+                            context.startActivity(sleepDataScreen);
                         },
                         Throwable::printStackTrace
                 );

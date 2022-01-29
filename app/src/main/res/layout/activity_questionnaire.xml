@@ -3,8 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollView"
+    android:theme="@style/Theme.SleepAid"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    tools:context=".Questionnaire"
     tools:layout_editor_absoluteX="1dp"
     tools:layout_editor_absoluteY="1dp">
 
