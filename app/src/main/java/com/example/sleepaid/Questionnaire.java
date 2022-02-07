@@ -13,52 +13,36 @@ import android.widget.RadioGroup;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatRadioButton;
 
+import com.example.sleepaid.Activity.HelloScreen;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-@SuppressLint("NewApi")
 public class Questionnaire extends AppCompatActivity {
-    AppDatabase db;
-
-    private int currentQuestionId;
-    private List<Answer> currentAnswers;
-
-    private List<Question> questions;
-    private List<Option> options;
-
-    private int sizeInDp;
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_questionnaire);
+        setContentView(R.layout.activity_questionnaire_host);
 
-        db = AppDatabase.getDatabase(getApplicationContext());
+        QuestionnaireFragment fragment = new QuestionnaireFragment();
 
-        sizeInDp = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                25,
-                getResources().getDisplayMetrics()
-        );
-
-        currentQuestionId = 1;
-        currentAnswers = new ArrayList<Answer>();
-
-        loadAllQuestions();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.content, fragment)
+                .commit();
     }
 
     @Override
     public void onBackPressed() {
-        if (currentQuestionId == 1) {
-            exitQuestionnaire();
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
         }
         else {
-            loadScreen(currentQuestionId - 1);
+            exitQuestionnaire();
         }
     }
 
@@ -67,13 +51,14 @@ public class Questionnaire extends AppCompatActivity {
 
         DialogInterface.OnClickListener exitAction = new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                Intent mainActivity = new Intent(context, MainActivity.class);
+                Intent mainActivity = new Intent(context, HelloScreen.class);
                 startActivity(mainActivity);
             }
         };
 
         DialogInterface.OnClickListener cancelAction = new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {}
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
         };
 
         Modal.show(
@@ -84,269 +69,5 @@ public class Questionnaire extends AppCompatActivity {
                 getString(R.string.cancel_modal),
                 cancelAction
         );
-    }
-
-    private void loadAllQuestions() {
-        db.questionDao()
-                .getAll()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        questionData -> {
-                            questions = questionData;
-
-                            loadAllOptions();
-                        },
-                        Throwable::printStackTrace
-                );
-    }
-
-    private void loadAllOptions() {
-        db.optionDao()
-                .getAll()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        optionData -> {
-                            options = optionData;
-
-                            loadScreen(1);
-                        },
-                        Throwable::printStackTrace
-                );
-    }
-
-    public void loadNextScreen(View view) {
-        RadioGroup radioGroup = findViewById(R.id.radioGroup);
-        int checkedId = radioGroup.getCheckedRadioButtonId();
-
-        if (checkedId == -1) {
-            DialogInterface.OnClickListener cancelAction = new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {}
-            };
-
-            Modal.show(
-                    this,
-                    getString(R.string.question_validation),
-                    getString(R.string.ok_modal),
-                    cancelAction,
-                    null,
-                    null
-            );
-        }
-        else {
-            loadScreen(currentQuestionId + 1);
-        }
-    }
-
-    public void loadPreviousScreen(View view) {
-        if (currentQuestionId > questions.size()) {
-            setContentView(R.layout.activity_questionnaire);
-        }
-
-        loadScreen(currentQuestionId - 1);
-    }
-
-    private void loadScreen(int questionId) {
-        if (currentQuestionId <= questions.size()) {
-            RadioGroup radioGroup = findViewById(R.id.radioGroup);
-            int checkedId = radioGroup.getCheckedRadioButtonId();
-
-            if (checkedId != -1) {
-                int existingAnswerId = -1;
-
-                if (!currentAnswers.isEmpty()) {
-                    Optional<Answer> answer = currentAnswers
-                            .stream()
-                            .filter(a -> a.getQuestionId() == currentQuestionId)
-                            .findAny();
-
-                    if (answer.isPresent()) {
-                        existingAnswerId = currentAnswers.indexOf(answer.get());
-                    }
-                }
-
-                if (existingAnswerId > -1) {
-                    currentAnswers.set(existingAnswerId, new Answer(checkedId, currentQuestionId));
-                }
-                else {
-                    currentAnswers.add(new Answer(checkedId, currentQuestionId));
-                }
-            }
-        }
-
-        if (questionId == 0) {
-            exitQuestionnaire();
-        }
-        else if (questionId == questions.size() + 1) {
-            currentQuestionId = questionId;
-
-            setContentView(R.layout.activity_questionnaire_summary);
-            loadAllAnswers();
-        }
-        else {
-            findViewById(R.id.scrollView).scrollTo(0, 0);
-
-            currentQuestionId = questionId;
-
-            loadQuestion(questionId);
-            loadOptionsForQuestion(questionId);
-            loadPreviousAnswerForQuestion(questionId);
-
-            if (questionId == 2) {
-                presetWakeUpTime(questionId);
-            }
-        }
-    }
-
-    private void loadQuestion(int questionId) {
-        TextBox questionBox = findViewById(R.id.question);
-        TextBox informationBox = findViewById(R.id.information);
-
-        Optional<Question> question = questions
-                .stream()
-                .filter(q -> q.getId() == questionId)
-                .findAny();
-
-        if (question.isPresent()) {
-            questionBox.setText(question.get().getQuestion());
-            informationBox.setText(question.get().getInformation());
-        }
-    }
-
-    private void loadOptionsForQuestion(int questionId) {
-        RadioGroup radioGroup = findViewById(R.id.radioGroup);
-        radioGroup.clearCheck();
-        radioGroup.removeAllViews();
-
-        List<Option> possibleOptions = options
-                .stream()
-                .filter(o -> o.getQuestionId() == questionId)
-                .collect(Collectors.toList());
-
-        for (Option o : possibleOptions) {
-            AppCompatRadioButton optionBox = new AppCompatRadioButton(this);
-
-            optionBox.setId(o.getId());
-            optionBox.setText(o.getValue());
-            optionBox.setTextSize((int) (sizeInDp / 3.5));
-            optionBox.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-
-            RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(
-                    RadioGroup.LayoutParams.MATCH_PARENT,
-                    RadioGroup.LayoutParams.WRAP_CONTENT
-            );
-            layoutParams.setMargins(0, 0, 0, sizeInDp);
-            optionBox.setLayoutParams(layoutParams);
-
-            optionBox.setPadding(
-                    sizeInDp / 2,
-                    sizeInDp / 2,
-                    sizeInDp / 2,
-                    sizeInDp / 2
-            );
-            
-            radioGroup.addView(optionBox);
-        }
-    }
-
-    private void loadPreviousAnswerForQuestion(int questionId) {
-        if (!currentAnswers.isEmpty()) {
-            Optional<Answer> answer = currentAnswers
-                    .stream()
-                    .filter(a -> a.getQuestionId() == questionId)
-                    .findAny();
-
-            if (answer.isPresent()) {
-                AppCompatRadioButton option = findViewById(answer.get().getOptionId());
-                option.setChecked(true);
-            }
-        }
-    }
-
-    private void presetWakeUpTime(int questionId) {
-        Optional<Answer> previousAnswer = currentAnswers
-                .stream()
-                .filter(a -> a.getQuestionId() == (questionId - 1))
-                .findAny();
-
-        Optional<Option> firstOption = options
-                .stream()
-                .filter(o -> o.getQuestionId() == questionId)
-                .findFirst();
-
-        if (previousAnswer.isPresent() && firstOption.isPresent()) {
-            AppCompatRadioButton option = findViewById(previousAnswer.get().getOptionId() + firstOption.get().getId() - 1);
-
-            TextBox information = findViewById(R.id.information);
-            String currentText = information.getText().toString();
-            String newText = getString(R.string.wakeup_time) + option.getText().toString().toLowerCase();
-
-            information.setText(currentText + "\n " + newText);
-
-            Optional<Answer> currentAnswer = currentAnswers
-                    .stream()
-                    .filter(a -> a.getQuestionId() == questionId)
-                    .findAny();
-
-            if(!currentAnswer.isPresent()) {
-                option.setChecked(true);
-            }
-        }
-    }
-
-    private void loadAllAnswers() {
-        LinearLayout layout = findViewById(R.id.answers);
-
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        layoutParams.setMargins(0, 0, 0, sizeInDp / 2);
-
-        for (Question q : questions) {
-            TextBox textBox = new TextBox(this);
-
-            textBox.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-            textBox.setTextSize((int) (sizeInDp / 3.5));
-            textBox.setLayoutParams(layoutParams);
-
-            int questionId = q.getId();
-
-            String questionText = questionId + ". " + q.getQuestion();
-            String answerText;
-
-            Optional<Answer> currentAnswer = currentAnswers
-                    .stream()
-                    .filter(a -> a.getQuestionId() == questionId)
-                    .findAny();
-
-            if (currentAnswer.isPresent()) {
-                Optional<Option> option = options
-                        .stream()
-                        .filter(o -> o.getId() == currentAnswer.get().getOptionId())
-                        .findAny();
-
-                answerText = "A: " + option.get().getValue();
-            }
-            else {
-                answerText = "No answer";
-            }
-
-            textBox.setText(questionText + "\n" + answerText);
-
-            layout.addView(textBox);
-        }
-    }
-
-    public void storeAnswers(View view) {
-        db.answerDao()
-                .insert(currentAnswers)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        () -> new InitialSettingsHandler(getApplicationContext(), db).getSettings(),
-                        Throwable::printStackTrace
-                );
     }
 }

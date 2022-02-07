@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/helloScreenFragment">
+
+    <fragment
+        android:id="@+id/helloScreenFragment"
+        android:name="com.example.sleepaid.HelloScreenFragment"
+        android:label="HelloScreenFragment" >
+        <action
+            android:id="@+id/action_helloScreenFragment_to_questionnaireFragment"
+            app:destination="@id/questionnaireFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/questionnaireFragment"
+        android:name="com.example.sleepaid.QuestionnaireFragment"
+        android:label="QuestionnaireFragment" />
+</navigation>

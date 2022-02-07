@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SleepAid">
         <activity
-            android:name=".MainActivity"
+            android:name=".Activity.HelloScreen"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
