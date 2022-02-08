@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.AppCompatRadioButton;
 import androidx.fragment.app.Fragment;
 
@@ -16,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.example.sleepaid.Activity.HelloScreen;
@@ -30,6 +32,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 @SuppressLint("NewApi")
 public class QuestionnaireFragment extends Fragment {
+    Context context;
     AppDatabase db;
 
     private int currentQuestionId;
@@ -52,7 +55,8 @@ public class QuestionnaireFragment extends Fragment {
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
 
-        db = AppDatabase.getDatabase(App.getContext());
+        context = App.getContext();
+        db = AppDatabase.getDatabase(context);
 
         sizeInDp = (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
@@ -77,8 +81,6 @@ public class QuestionnaireFragment extends Fragment {
 //    }
 
     private void exitQuestionnaire() {
-        Context context = App.getContext();
-
         DialogInterface.OnClickListener exitAction = new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 Intent mainActivity = new Intent(context, HelloScreen.class);
@@ -140,7 +142,7 @@ public class QuestionnaireFragment extends Fragment {
             };
 
             Modal.show(
-                    App.getContext(),
+                    context,
                     getString(R.string.question_validation),
                     getString(R.string.ok_modal),
                     cancelAction,
@@ -199,7 +201,7 @@ public class QuestionnaireFragment extends Fragment {
             loadAllAnswers();
         }
         else {
-            getView().findViewById(R.id.scrollView).scrollTo(0, 0);
+            getActivity().findViewById(R.id.scrollView).scrollTo(0, 0);
 
             currentQuestionId = questionId;
 
@@ -229,6 +231,8 @@ public class QuestionnaireFragment extends Fragment {
     }
 
     private void loadOptionsForQuestion(int questionId) {
+        Context contextThemeWrapper = new ContextThemeWrapper(context, R.style.RadioButton_White);
+
         RadioGroup radioGroup = getView().findViewById(R.id.radioGroup);
         radioGroup.clearCheck();
         radioGroup.removeAllViews();
@@ -239,7 +243,7 @@ public class QuestionnaireFragment extends Fragment {
                 .collect(Collectors.toList());
 
         for (Option o : possibleOptions) {
-            AppCompatRadioButton optionBox = new AppCompatRadioButton(App.getContext());
+            AppCompatRadioButton optionBox = new AppCompatRadioButton(contextThemeWrapper, null, R.style.RadioButton_White);
 
             optionBox.setId(o.getId());
             optionBox.setText(o.getValue());
@@ -319,7 +323,7 @@ public class QuestionnaireFragment extends Fragment {
         layoutParams.setMargins(0, 0, 0, sizeInDp / 2);
 
         for (Question q : questions) {
-            TextBox textBox = new TextBox(App.getContext());
+            TextBox textBox = new TextBox(context);
 
             textBox.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
             textBox.setTextSize((int) (sizeInDp / 3.5));
@@ -359,7 +363,7 @@ public class QuestionnaireFragment extends Fragment {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        () -> new InitialSettingsHandler(App.getContext(), db).getSettings(),
+                        () -> new InitialSettingsHandler(context, db).getSettings(),
                         Throwable::printStackTrace
                 );
     }

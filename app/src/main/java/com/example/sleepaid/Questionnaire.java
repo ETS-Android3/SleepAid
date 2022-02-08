@@ -32,7 +32,7 @@ public class Questionnaire extends AppCompatActivity {
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.content, fragment)
+                .add(R.id.scrollView, fragment)
                 .commit();
     }
 

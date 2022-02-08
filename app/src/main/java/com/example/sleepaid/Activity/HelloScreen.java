@@ -1,12 +1,14 @@
 package com.example.sleepaid.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatRadioButton;
 
 import android.content.ContentValues;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.RadioGroup;
 
 import com.example.sleepaid.AppDatabase;
 import com.example.sleepaid.HelloScreenFragment;
@@ -39,15 +41,6 @@ public class HelloScreen extends AppCompatActivity {
                             }
                             else {
                                 setContentView(R.layout.activity_hello_screen_host);
-
-                                if (savedInstanceState == null) {
-                                    HelloScreenFragment fragment = new HelloScreenFragment();
-
-                                    getSupportFragmentManager()
-                                            .beginTransaction()
-                                            .add(R.id.content, fragment)
-                                            .commit();
-                                }
                             }
                         },
                         Throwable::printStackTrace
