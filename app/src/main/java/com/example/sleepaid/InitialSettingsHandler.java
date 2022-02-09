@@ -3,7 +3,9 @@ package com.example.sleepaid;
 import android.app.Activity;
 import android.content.Intent;
 
+import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,15 +14,15 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class InitialSettingsHandler {
-    Activity activity;
+    Fragment fragment;
     AppDatabase db;
 
     List<Configuration> configurationList;
     List<Goal> goalList;
     List<Alarm> alarmList;
 
-    public InitialSettingsHandler(Activity activity, AppDatabase db) {
-        this.activity = activity;
+    public InitialSettingsHandler(Fragment fragment, AppDatabase db) {
+        this.fragment = fragment;
         this.db = db;
 
         this.configurationList = new ArrayList<>();
@@ -151,7 +153,7 @@ public class InitialSettingsHandler {
                             Intent intent = new Intent(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                            Navigation.findNavController(this.activity, R.id.mainMenuScreenHost).navigate(R.id.finishQuestionnaireAction);
+                            NavHostFragment.findNavController(this.fragment).navigate(R.id.finishQuestionnaireAction);
                         },
                         Throwable::printStackTrace
                 );

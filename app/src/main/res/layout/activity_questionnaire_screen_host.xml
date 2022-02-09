@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<androidx.fragment.app.FragmentContainerView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/scrollView"
+    android:theme="@style/Theme.SleepAid"
+    android:name="androidx.navigation.fragment.NavHostFragment"
+    app:navGraph="@navigation/questionnaire_screen_graph"
+    android:id="@+id/content"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:theme="@style/Theme.SleepAid">
-    <androidx.fragment.app.FragmentContainerView
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        app:navGraph="@navigation/questionnaire_screen_graph"
-        android:id="@+id/content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</ScrollView>
+    android:layout_height="match_parent" />

@@ -198,7 +198,7 @@ public class QuestionnaireFragment extends Fragment {
             NavHostFragment.findNavController(this).navigate(R.id.showSummaryAction);
         }
         else {
-            getActivity().findViewById(R.id.scrollView).scrollTo(0, 0);
+            getView().findViewById(R.id.scrollView).scrollTo(0, 0);
 
             model.setCurrentQuestionId(questionId);
 

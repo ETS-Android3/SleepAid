@@ -144,7 +144,7 @@ public class QuestionnaireSummaryFragment extends Fragment {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        () -> new InitialSettingsHandler(getActivity(), db).getSettings(),
+                        () -> new InitialSettingsHandler(this, db).getSettings(),
                         Throwable::printStackTrace
                 );
     }
