@@ -24,10 +24,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Questionnaire"
-            android:exported="true">
-        </activity>
-        <activity
             android:name=".SleepDataScreen"
             android:exported="true">
         </activity>

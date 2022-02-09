@@ -1,18 +1,11 @@
 package com.example.sleepaid.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatRadioButton;
 
-import android.content.ContentValues;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.RadioGroup;
 
 import com.example.sleepaid.AppDatabase;
-import com.example.sleepaid.HelloScreenFragment;
-import com.example.sleepaid.Questionnaire;
 import com.example.sleepaid.R;
 import com.example.sleepaid.SleepDataScreen;
 
@@ -45,11 +38,6 @@ public class HelloScreen extends AppCompatActivity {
                         },
                         Throwable::printStackTrace
                 );
-    }
-
-    public void startQuestionnaire(View view) {
-        Intent questionnaire = new Intent(this, Questionnaire.class);
-        startActivity(questionnaire);
     }
 
     private void goToSleepDataScreen() {

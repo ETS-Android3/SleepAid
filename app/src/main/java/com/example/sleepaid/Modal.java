@@ -3,6 +3,7 @@ package com.example.sleepaid;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.view.WindowManager;
 
 public class Modal {
     public Modal() {}
@@ -27,6 +28,9 @@ public class Modal {
             alert.setNegativeButton(negativeButton, negativeAction);
         }
 
-        alert.show();
+        AlertDialog alertDialog = alert.create();
+
+        alertDialog.getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        alertDialog.show();
     }
 }

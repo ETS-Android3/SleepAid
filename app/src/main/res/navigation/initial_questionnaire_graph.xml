@@ -1,19 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/helloScreenFragment">
 
     <fragment
         android:id="@+id/helloScreenFragment"
-        android:name="com.example.sleepaid.HelloScreenFragment"
+        android:name="com.example.sleepaid.Fragment.HelloScreenFragment"
         android:label="HelloScreenFragment" >
         <action
-            android:id="@+id/action_helloScreenFragment_to_questionnaireFragment"
+            android:id="@+id/startQuestionnaireAction"
             app:destination="@id/questionnaireFragment" />
     </fragment>
     <fragment
         android:id="@+id/questionnaireFragment"
-        android:name="com.example.sleepaid.QuestionnaireFragment"
-        android:label="QuestionnaireFragment" />
+        android:name="com.example.sleepaid.Fragment.QuestionnaireFragment"
+        android:label="QuestionnaireFragment" >
+        <action
+            android:id="@+id/exitQuestionnaireAction"
+            app:destination="@id/helloScreenFragment" />
+        <action
+            android:id="@+id/showSummaryAction"
+            app:destination="@id/questionnaireSummaryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/questionnaireSummaryFragment"
+        android:name="com.example.sleepaid.Fragment.QuestionnaireSummaryFragment"
+        android:label="fragment_questionnaire_summary"
+        tools:layout="@layout/fragment_questionnaire_summary" >
+        <action
+            android:id="@+id/exitSummaryAction"
+            app:destination="@id/questionnaireFragment" />
+    </fragment>
 </navigation>

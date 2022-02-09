@@ -1,26 +1,37 @@
-package com.example.sleepaid;
+package com.example.sleepaid.Fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.AppCompatRadioButton;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import com.example.sleepaid.Activity.HelloScreen;
+import com.example.sleepaid.Answer;
+import com.example.sleepaid.App;
+import com.example.sleepaid.AppDatabase;
+import com.example.sleepaid.InitialSettingsHandler;
+import com.example.sleepaid.Modal;
+import com.example.sleepaid.Option;
+import com.example.sleepaid.Question;
+import com.example.sleepaid.R;
+import com.example.sleepaid.SharedViewModel;
+import com.example.sleepaid.TextBox;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,16 +43,32 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 @SuppressLint("NewApi")
 public class QuestionnaireFragment extends Fragment {
-    Context context;
-    AppDatabase db;
+    private Context context;
+    private AppDatabase db;
+    private SharedViewModel model;
 
-    private int currentQuestionId;
     private List<Answer> currentAnswers;
 
-    private List<Question> questions;
-    private List<Option> options;
-
     private int sizeInDp;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (model.getCurrentQuestionId() == 1) {
+                    exitQuestionnaire();
+                }
+                else {
+                    loadScreen(model.getCurrentQuestionId() - 1);
+                }
+            }
+        };
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -57,6 +84,7 @@ public class QuestionnaireFragment extends Fragment {
 
         context = App.getContext();
         db = AppDatabase.getDatabase(context);
+        model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
         sizeInDp = (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
@@ -64,42 +92,20 @@ public class QuestionnaireFragment extends Fragment {
                 getResources().getDisplayMetrics()
         );
 
-        currentQuestionId = 1;
-        currentAnswers = new ArrayList<Answer>();
+        currentAnswers = model.getAnswers() == null ? new ArrayList<>() : model.getAnswers();
 
-        loadAllQuestions();
-    }
+        Button backButton = getView().findViewById(R.id.backButton);
+        backButton.setOnClickListener(this::loadPreviousScreen);
 
-//    @Override
-//    public void onBackPressed() {
-//        if (currentQuestionId == 1) {
-//            exitQuestionnaire();
-//        }
-//        else {
-//            loadScreen(currentQuestionId - 1);
-//        }
-//    }
+        Button nextButton = getView().findViewById(R.id.nextButton);
+        nextButton.setOnClickListener(this::loadNextScreen);
 
-    private void exitQuestionnaire() {
-        DialogInterface.OnClickListener exitAction = new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                Intent mainActivity = new Intent(context, HelloScreen.class);
-                startActivity(mainActivity);
-            }
-        };
-
-        DialogInterface.OnClickListener cancelAction = new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {}
-        };
-
-        Modal.show(
-                context,
-                getString(R.string.exit_questionnaire),
-                getString(R.string.yes_modal),
-                exitAction,
-                getString(R.string.cancel_modal),
-                cancelAction
-        );
+        if(model.getQuestions() == null) {
+            loadAllQuestions();
+        }
+        else {
+            loadScreen(model.getCurrentQuestionId());
+        }
     }
 
     private void loadAllQuestions() {
@@ -109,8 +115,7 @@ public class QuestionnaireFragment extends Fragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         questionData -> {
-                            questions = questionData;
-
+                            model.setQuestions(questionData);
                             loadAllOptions();
                         },
                         Throwable::printStackTrace
@@ -124,12 +129,15 @@ public class QuestionnaireFragment extends Fragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         optionData -> {
-                            options = optionData;
-
-                            loadScreen(1);
+                            model.setOptions(optionData);
+                            loadScreen(model.getCurrentQuestionId());
                         },
                         Throwable::printStackTrace
                 );
+    }
+
+    public void loadPreviousScreen(View view) {
+        loadScreen(model.getCurrentQuestionId() - 1);
     }
 
     public void loadNextScreen(View view) {
@@ -142,7 +150,7 @@ public class QuestionnaireFragment extends Fragment {
             };
 
             Modal.show(
-                    context,
+                    requireActivity(),
                     getString(R.string.question_validation),
                     getString(R.string.ok_modal),
                     cancelAction,
@@ -151,59 +159,48 @@ public class QuestionnaireFragment extends Fragment {
             );
         }
         else {
-            loadScreen(currentQuestionId + 1);
+            loadScreen(model.getCurrentQuestionId() + 1);
         }
     }
 
-    public void loadPreviousScreen(View view) {
-//        if (currentQuestionId > questions.size()) {
-//            setContentView(R.layout.activity_questionnaire_host);
-//        }
-
-        loadScreen(currentQuestionId - 1);
-    }
-
     private void loadScreen(int questionId) {
-        if (currentQuestionId <= questions.size()) {
-            RadioGroup radioGroup = getView().findViewById(R.id.radioGroup);
-            int checkedId = radioGroup.getCheckedRadioButtonId();
+        RadioGroup radioGroup = getView().findViewById(R.id.radioGroup);
+        int checkedId = radioGroup.getCheckedRadioButtonId();
 
-            if (checkedId != -1) {
-                int existingAnswerId = -1;
+        if (checkedId != -1) {
+            int existingAnswerId = -1;
 
-                if (!currentAnswers.isEmpty()) {
-                    Optional<Answer> answer = currentAnswers
-                            .stream()
-                            .filter(a -> a.getQuestionId() == currentQuestionId)
-                            .findAny();
+            if (!currentAnswers.isEmpty()) {
+                Optional<Answer> answer = currentAnswers
+                        .stream()
+                        .filter(a -> a.getQuestionId() == model.getCurrentQuestionId())
+                        .findAny();
 
-                    if (answer.isPresent()) {
-                        existingAnswerId = currentAnswers.indexOf(answer.get());
-                    }
+                if (answer.isPresent()) {
+                    existingAnswerId = currentAnswers.indexOf(answer.get());
                 }
+            }
 
-                if (existingAnswerId > -1) {
-                    currentAnswers.set(existingAnswerId, new Answer(checkedId, currentQuestionId));
-                }
-                else {
-                    currentAnswers.add(new Answer(checkedId, currentQuestionId));
-                }
+            if (existingAnswerId > -1) {
+                currentAnswers.set(existingAnswerId, new Answer(checkedId, model.getCurrentQuestionId()));
+            }
+            else {
+                currentAnswers.add(new Answer(checkedId, model.getCurrentQuestionId()));
             }
         }
 
         if (questionId == 0) {
             exitQuestionnaire();
         }
-        else if (questionId == questions.size() + 1) {
-            currentQuestionId = questionId;
+        else if (questionId == model.getQuestions().size() + 1) {
+            model.setAnswers(currentAnswers);
 
-            //setContentView(R.layout.activity_questionnaire_summary);
-            loadAllAnswers();
+            NavHostFragment.findNavController(this).navigate(R.id.showSummaryAction);
         }
         else {
             getActivity().findViewById(R.id.scrollView).scrollTo(0, 0);
 
-            currentQuestionId = questionId;
+            model.setCurrentQuestionId(questionId);
 
             loadQuestion(questionId);
             loadOptionsForQuestion(questionId);
@@ -215,11 +212,34 @@ public class QuestionnaireFragment extends Fragment {
         }
     }
 
+    private void exitQuestionnaire() {
+        Fragment fragment = this;
+
+        DialogInterface.OnClickListener exitAction = new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                NavHostFragment.findNavController(fragment).navigate(R.id.exitQuestionnaireAction);
+            }
+        };
+
+        DialogInterface.OnClickListener cancelAction = new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {}
+        };
+
+        Modal.show(
+                requireActivity(),
+                getString(R.string.exit_questionnaire),
+                getString(R.string.yes_modal),
+                exitAction,
+                getString(R.string.cancel_modal),
+                cancelAction
+        );
+    }
+
     private void loadQuestion(int questionId) {
         TextBox questionBox = getView().findViewById(R.id.question);
         TextBox informationBox = getView().findViewById(R.id.information);
 
-        Optional<Question> question = questions
+        Optional<Question> question = model.getQuestions()
                 .stream()
                 .filter(q -> q.getId() == questionId)
                 .findAny();
@@ -237,7 +257,7 @@ public class QuestionnaireFragment extends Fragment {
         radioGroup.clearCheck();
         radioGroup.removeAllViews();
 
-        List<Option> possibleOptions = options
+        List<Option> possibleOptions = model.getOptions()
                 .stream()
                 .filter(o -> o.getQuestionId() == questionId)
                 .collect(Collectors.toList());
@@ -288,7 +308,7 @@ public class QuestionnaireFragment extends Fragment {
                 .filter(a -> a.getQuestionId() == (questionId - 1))
                 .findAny();
 
-        Optional<Option> firstOption = options
+        Optional<Option> firstOption = model.getOptions()
                 .stream()
                 .filter(o -> o.getQuestionId() == questionId)
                 .findFirst();
@@ -311,60 +331,5 @@ public class QuestionnaireFragment extends Fragment {
                 option.setChecked(true);
             }
         }
-    }
-
-    private void loadAllAnswers() {
-        LinearLayout layout = getView().findViewById(R.id.answers);
-
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        layoutParams.setMargins(0, 0, 0, sizeInDp / 2);
-
-        for (Question q : questions) {
-            TextBox textBox = new TextBox(context);
-
-            textBox.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-            textBox.setTextSize((int) (sizeInDp / 3.5));
-            textBox.setLayoutParams(layoutParams);
-
-            int questionId = q.getId();
-
-            String questionText = questionId + ". " + q.getQuestion();
-            String answerText;
-
-            Optional<Answer> currentAnswer = currentAnswers
-                    .stream()
-                    .filter(a -> a.getQuestionId() == questionId)
-                    .findAny();
-
-            if (currentAnswer.isPresent()) {
-                Optional<Option> option = options
-                        .stream()
-                        .filter(o -> o.getId() == currentAnswer.get().getOptionId())
-                        .findAny();
-
-                answerText = "A: " + option.get().getValue();
-            }
-            else {
-                answerText = "No answer";
-            }
-
-            textBox.setText(questionText + "\n" + answerText);
-
-            layout.addView(textBox);
-        }
-    }
-
-    public void storeAnswers(View view) {
-        db.answerDao()
-                .insert(currentAnswers)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        () -> new InitialSettingsHandler(context, db).getSettings(),
-                        Throwable::printStackTrace
-                );
     }
 }
