@@ -1,7 +1,9 @@
 package com.example.sleepaid;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
+
+import androidx.navigation.Navigation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,20 +12,20 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class InitialSettingsHandler {
-    Context context;
+    Activity activity;
     AppDatabase db;
 
     List<Configuration> configurationList;
     List<Goal> goalList;
     List<Alarm> alarmList;
 
-    public InitialSettingsHandler(Context context, AppDatabase db) {
-        this.context = context;
+    public InitialSettingsHandler(Activity activity, AppDatabase db) {
+        this.activity = activity;
         this.db = db;
 
-        this.configurationList = new ArrayList<Configuration>();
-        this.goalList = new ArrayList<Goal>();
-        this.alarmList = new ArrayList<Alarm>();
+        this.configurationList = new ArrayList<>();
+        this.goalList = new ArrayList<>();
+        this.alarmList = new ArrayList<>();
     }
 
     public void getSettings() {
@@ -146,8 +148,10 @@ public class InitialSettingsHandler {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         () -> {
-                            Intent sleepDataScreen = new Intent(this.context, SleepDataScreen.class);
-                            context.startActivity(sleepDataScreen);
+                            Intent intent = new Intent(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                            Navigation.findNavController(this.activity, R.id.mainMenuScreenHost).navigate(R.id.finishQuestionnaireAction);
                         },
                         Throwable::printStackTrace
                 );

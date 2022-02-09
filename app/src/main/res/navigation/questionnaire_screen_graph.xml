@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/helloScreenFragment">
+    app:startDestination="@id/greetingFragment">
 
     <fragment
-        android:id="@+id/helloScreenFragment"
-        android:name="com.example.sleepaid.Fragment.HelloScreenFragment"
-        android:label="HelloScreenFragment" >
+        android:id="@+id/greetingFragment"
+        android:name="com.example.sleepaid.Fragment.GreetingFragment"
+        android:label="GreetingFragment">
         <action
             android:id="@+id/startQuestionnaireAction"
             app:destination="@id/questionnaireFragment" />
@@ -19,7 +19,7 @@
         android:label="QuestionnaireFragment" >
         <action
             android:id="@+id/exitQuestionnaireAction"
-            app:destination="@id/helloScreenFragment" />
+            app:destination="@id/greetingFragment" />
         <action
             android:id="@+id/showSummaryAction"
             app:destination="@id/questionnaireSummaryFragment" />
@@ -32,5 +32,12 @@
         <action
             android:id="@+id/exitSummaryAction"
             app:destination="@id/questionnaireFragment" />
+        <action
+            android:id="@+id/finishQuestionnaireAction"
+            app:destination="@id/mainMenuScreen" />
     </fragment>
+    <activity
+        android:id="@+id/mainMenuScreen"
+        android:name="com.example.sleepaid.Activity.MainMenuScreen"
+        android:label="MainMenuScreen" />
 </navigation>

@@ -8,7 +8,7 @@
     android:theme="@style/Theme.SleepAid">
     <androidx.fragment.app.FragmentContainerView
         android:name="androidx.navigation.fragment.NavHostFragment"
-        app:navGraph="@navigation/initial_questionnaire_graph"
+        app:navGraph="@navigation/questionnaire_screen_graph"
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

@@ -15,7 +15,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.sleepaid.R;
 import com.example.sleepaid.SharedViewModel;
 
-public class HelloScreenFragment extends Fragment implements View.OnClickListener {
+public class GreetingFragment extends Fragment implements View.OnClickListener {
     private SharedViewModel model;
 
     @Override
@@ -23,7 +23,7 @@ public class HelloScreenFragment extends Fragment implements View.OnClickListene
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_hello_screen, container, false);
+        return inflater.inflate(R.layout.fragment_greeting, container, false);
     }
 
     @Override

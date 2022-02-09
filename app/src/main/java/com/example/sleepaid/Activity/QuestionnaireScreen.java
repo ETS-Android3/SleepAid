@@ -7,12 +7,11 @@ import android.os.Bundle;
 
 import com.example.sleepaid.AppDatabase;
 import com.example.sleepaid.R;
-import com.example.sleepaid.SleepDataScreen;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class HelloScreen extends AppCompatActivity {
+public class QuestionnaireScreen extends AppCompatActivity {
     //private String url = "https://192.168.0.47/new_testing.php";
 
     @Override
@@ -30,19 +29,19 @@ public class HelloScreen extends AppCompatActivity {
                 .subscribe(
                         answers -> {
                             if (!answers.isEmpty()) {
-                                goToSleepDataScreen();
+                                goToMainMenuScreen();
                             }
                             else {
-                                setContentView(R.layout.activity_hello_screen_host);
+                                setContentView(R.layout.activity_questionnaire_screen_host);
                             }
                         },
                         Throwable::printStackTrace
                 );
     }
 
-    private void goToSleepDataScreen() {
-        Intent sleepDataScreen = new Intent(this, SleepDataScreen.class);
-        startActivity(sleepDataScreen);
+    private void goToMainMenuScreen() {
+        Intent mainMenuScreen = new Intent(this, MainMenuScreen.class);
+        startActivity(mainMenuScreen);
     }
 
 //    private class AddNewTesting extends AsyncTask<String, Void, Void> {
