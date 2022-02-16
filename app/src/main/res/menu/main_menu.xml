@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group
-        android:id="@+id/group1">
+        android:id="@+id/group1"
+        android:checkableBehavior="single">
         <item
-            android:id="@+id/sleepData"
-            android:title="Sleep data"
-            android:onClick="showSleepData" />
+            android:id="@+id/sleepDataFragment"
+            android:title="Sleep data" />
         <item
-            android:id="@+id/alarms"
-            android:title="Alarms"
-            android:onClick="showAlarms" />
+            android:id="@+id/alarmsFragment"
+            android:title="Alarms" />
         <item
-            android:id="@+id/goals"
-            android:title="Goals"
-            android:onClick="showGoals" />
+            android:id="@+id/goalsFragment"
+            android:title="Goals" />
         <item
-            android:id="@+id/settings"
-            android:title="Settings"
-            android:onClick="showSettings" />
+            android:id="@+id/settingsFragment"
+            android:title="Settings" />
     </group>
 </menu>

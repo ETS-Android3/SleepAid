@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main_menu_screen_graph">
+    android:id="@+id/main_menu_screen_graph"
+    app:startDestination="@id/sleepDataFragment">
 
+    <fragment
+        android:id="@+id/sleepDataFragment"
+        android:name="com.example.sleepaid.Fragment.SleepDataFragment"
+        android:label="Sleep data" />
+    <fragment
+        android:id="@+id/alarmsFragment"
+        android:name="com.example.sleepaid.Fragment.AlarmsFragment"
+        android:label="Alarms" />
+    <fragment
+        android:id="@+id/goalsFragment"
+        android:name="com.example.sleepaid.Fragment.GoalsFragment"
+        android:label="Goals" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.sleepaid.Fragment.SettingsFragment"
+        android:label="Settings" />
 </navigation>
