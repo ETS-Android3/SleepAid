@@ -18,6 +18,13 @@
     <string name="finish_button">Finish&#160;&#160;&#160;></string>
 
     <string name="review">Your answers</string>
+
+    <string-array name="calendarOptions">
+        <item>Week</item>
+        <item>Month</item>
+        <item>Year</item>
+    </string-array>
+
     <string name="large_text">
         "Material is the metaphor.\n\n"
 

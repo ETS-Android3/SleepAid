@@ -1,10 +1,8 @@
 package com.example.sleepaid;
 
-import android.app.Activity;
 import android.content.Intent;
 
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
 import java.util.ArrayList;
@@ -73,14 +71,14 @@ public class InitialSettingsHandler {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         answerData -> {
-                            List<Integer> bedTimes = StringHandler.getIntsFromString(answerData.get(0));
+                            List<Integer> bedTimes = DataHandler.getIntsFromString(answerData.get(0));
                             Goal bedTimeMin = new Goal("bedTimeMin", Integer.toString(bedTimes.get(0)));
                             goalList.add(bedTimeMin);
 
                             Goal bedTimeMax = new Goal("bedTimeMax", Integer.toString(bedTimes.get(1)));
                             goalList.add(bedTimeMax);
 
-                            List<Integer> wakeUpTimes = StringHandler.getIntsFromString(answerData.get(1));
+                            List<Integer> wakeUpTimes = DataHandler.getIntsFromString(answerData.get(1));
                             Goal wakeUpTimeMin = new Goal("wakeUpTimeMin", Integer.toString(wakeUpTimes.get(0)));
                             goalList.add(wakeUpTimeMin);
 
