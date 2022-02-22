@@ -11,6 +11,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -95,6 +96,7 @@ public class SleepDataFragment extends Fragment {
 
         Spinner calendarDropdown = getView().findViewById(R.id.calendarDropdown);
         calendarDropdown.setAdapter(adapter);
+        calendarDropdown.setOnItemSelectedListener(changeGraphViewType);
 
         if (model.getGraphViewType() == null) {
             model.setGraphViewType("week");
@@ -103,7 +105,7 @@ public class SleepDataFragment extends Fragment {
         today = Calendar.getInstance();
         getTodaysRange();
 
-        loadDurationGraph("This " + model.getGraphViewType());
+        loadGraph("This " + model.getGraphViewType());
     }
 
     private void getTodaysRange() {
@@ -130,7 +132,7 @@ public class SleepDataFragment extends Fragment {
         graphRangeMin = DataHandler.getFormattedDate(rangeMin.getTime());
     }
 
-    private void loadDurationGraph(String period) {
+    private void loadGraph(String period) {
         if (graphRangeMax.equals(DataHandler.getFormattedDate(today.getTime()))) {
             nextButton.setVisibility(View.INVISIBLE);
             period = "This " + model.getGraphViewType();
@@ -290,7 +292,19 @@ public class SleepDataFragment extends Fragment {
             graphRangeMin = DataHandler.getFormattedDate(rangeMin.getTime());
             graphRangeMax = DataHandler.getFormattedDate(rangeMax.getTime());
 
-            loadDurationGraph(graphRangeMin + " - " + graphRangeMax);
+            loadGraph(graphRangeMin + " - " + graphRangeMax);
         }
+    };
+
+    private AdapterView.OnItemSelectedListener changeGraphViewType = new AdapterView.OnItemSelectedListener() {
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+            Object item = parent.getItemAtPosition(pos);
+
+            model.setGraphViewType(item.toString().toLowerCase());
+            getTodaysRange();
+            loadGraph("This " + model.getGraphViewType());
+        }
+
+        public void onNothingSelected(AdapterView<?> parent) {}
     };
 }
