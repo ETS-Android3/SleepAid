@@ -6,8 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,35 +15,30 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.example.sleepaid.App;
 import com.example.sleepaid.DataHandler;
 import com.example.sleepaid.R;
 import com.example.sleepaid.SharedViewModel;
 import com.jjoe64.graphview.DefaultLabelFormatter;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GridLabelRenderer;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
-import com.jjoe64.graphview.series.PointsGraphSeries;
 
 import java.util.Calendar;
 
 public class SleepDataFragment extends Fragment {
-    private SharedViewModel model;
+    private SleepDataGraphFragment graphFragment;
 
-    private GraphView sleepGraph;
+    private SharedViewModel model;
 
     Button previousButton;
     Button nextButton;
 
-    private Calendar today;
-    private Calendar rangeMax;
-    private Calendar rangeMin;
+    protected Calendar today;
 
-    private String graphRangeMin;
-    private String graphRangeMax;
+    protected Calendar rangeMax;
+    protected Calendar rangeMin;
+
+    protected String graphRangeMin;
+    protected String graphRangeMax;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -55,31 +50,9 @@ public class SleepDataFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
+        graphFragment = (SleepDurationGraphFragment) getChildFragmentManager().getFragments().get(0).getChildFragmentManager().getFragments().get(0);
+
         model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
-
-        int sizeInDp = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                25,
-                getResources().getDisplayMetrics()
-        );
-
-        sleepGraph = getView().findViewById(R.id.sleepGraph);
-
-        sleepGraph.setTitleTextSize(sizeInDp);
-        sleepGraph.setTitleColor(getResources().getColor(R.color.white));
-
-        sleepGraph.getGridLabelRenderer().setGridColor(getResources().getColor(R.color.white));
-        sleepGraph.getGridLabelRenderer().setVerticalLabelsVisible(false);
-
-        sleepGraph.getViewport().setXAxisBoundsManual(true);
-        sleepGraph.getViewport().setYAxisBoundsManual(true);
-
-        sleepGraph.getGridLabelRenderer().setHorizontalLabelsColor(getResources().getColor(R.color.white));
-
-        sleepGraph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.NONE);
-        //sleepGraph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.HORIZONTAL);
-        //sleepGraph.getViewport().setDrawBorder(true);
-        sleepGraph.getViewport().setBorderColor(getResources().getColor(R.color.white));
 
         previousButton = getView().findViewById(R.id.previousButton);
         previousButton.setOnClickListener(loadPeriod);
@@ -100,12 +73,14 @@ public class SleepDataFragment extends Fragment {
 
         if (model.getGraphViewType() == null) {
             model.setGraphViewType("week");
+
+            model.setGraphWeekLength(7);
+            model.setGraphMonthLength(5);
+            model.setGraphYearLength(12);
         }
 
         today = Calendar.getInstance();
         getTodaysRange();
-
-        loadGraph("This " + model.getGraphViewType());
     }
 
     private void getTodaysRange() {
@@ -132,75 +107,7 @@ public class SleepDataFragment extends Fragment {
         graphRangeMin = DataHandler.getFormattedDate(rangeMin.getTime());
     }
 
-    private void loadGraph(String period) {
-        if (graphRangeMax.equals(DataHandler.getFormattedDate(today.getTime()))) {
-            nextButton.setVisibility(View.INVISIBLE);
-            period = "This " + model.getGraphViewType();
-        }
-        else {
-            nextButton.setVisibility(View.VISIBLE);
-        }
-
-        sleepGraph.removeAllSeries();
-
-        TextView graphTitle = getView().findViewById(R.id.graphTitle);
-        graphTitle.setText(period);
-
-        switch(model.getGraphViewType()) {
-            case "week":
-                sleepGraph.getViewport().setMaxX(6);
-                sleepGraph.getGridLabelRenderer().setNumHorizontalLabels(7);
-                sleepGraph.getGridLabelRenderer().setLabelFormatter(this.getWeekLabelFormatter());
-                break;
-
-            case "month":
-                sleepGraph.getViewport().setMaxX(3);
-                sleepGraph.getGridLabelRenderer().setNumHorizontalLabels(4);
-                sleepGraph.getGridLabelRenderer().setLabelFormatter(this.getMonthLabelFormatter(graphRangeMin, graphRangeMax));
-                break;
-
-            case "year":
-                sleepGraph.getViewport().setMaxX(11);
-                sleepGraph.getGridLabelRenderer().setNumHorizontalLabels(12);
-                sleepGraph.getGridLabelRenderer().setLabelFormatter(this.getYearLabelFormatter());
-                break;
-        }
-
-        //TODO load from database based on current range
-        model.setSleepDurationLineSeries(
-                new LineGraphSeries<>(new DataPoint[]{
-                        new DataPoint(0, 1),
-                        new DataPoint(1, 3),
-                        new DataPoint(2, 4),
-                        new DataPoint(3, 9),
-                        new DataPoint(4, 6),
-                        new DataPoint(5, 3),
-                        new DataPoint(6, 6)
-                }),
-                getResources().getColor(R.color.white),
-                getResources().getColor(R.color.white)
-        );
-
-        model.setSleepDurationPointsSeries(
-                new PointsGraphSeries<>(new DataPoint[]{
-                        new DataPoint(0, 1.5),
-                        new DataPoint(0.85, 3.4),
-                        new DataPoint(1.85, 4.4),
-                        new DataPoint(2.85, 9.4),
-                        new DataPoint(3.85, 6.4),
-                        new DataPoint(4.85, 3.4),
-                        new DataPoint(5.85, 6.4)
-                }),
-                getResources().getColor(R.color.white)
-        );
-
-        sleepGraph.getViewport().setMaxY(10);
-
-        sleepGraph.addSeries(model.getSleepDurationLineSeries());
-        sleepGraph.addSeries(model.getSleepDurationPointsSeries());
-    }
-
-    private DefaultLabelFormatter getWeekLabelFormatter() {
+    protected DefaultLabelFormatter getWeekLabelFormatter() {
         String[] days = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
 
         return new DefaultLabelFormatter() {
@@ -216,14 +123,14 @@ public class SleepDataFragment extends Fragment {
         };
     }
 
-    private DefaultLabelFormatter getMonthLabelFormatter(String graphRangeMin, String graphRangeMax) {
-        String[] weeks = {graphRangeMin, graphRangeMax};
+    protected DefaultLabelFormatter getMonthLabelFormatter(String graphRangeMin, String graphRangeMax) {
+        String[] weeks = {"1", "2", "3", "4", "5"};
 
         return new DefaultLabelFormatter() {
             @Override
             public String formatLabel(double value, boolean isValueX) {
                 if (isValueX) {
-                    // show months of the year
+                    // show weeks of the month
                     return weeks[(int) value];
                 } else {
                     return "";
@@ -232,7 +139,7 @@ public class SleepDataFragment extends Fragment {
         };
     }
 
-    private DefaultLabelFormatter getYearLabelFormatter() {
+    protected DefaultLabelFormatter getYearLabelFormatter() {
         String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
         return new DefaultLabelFormatter() {
@@ -258,7 +165,7 @@ public class SleepDataFragment extends Fragment {
 
             Calendar endOfRange = (Calendar) rangeMin.clone();
 
-            switch(model.getGraphViewType()) {
+            switch (model.getGraphViewType()) {
                 case "week":
                     // rangeMin will always be a Monday, so we can just move by 7 days
                     rangeMin.add(Calendar.DAY_OF_WEEK, 7 * direction);
@@ -292,7 +199,7 @@ public class SleepDataFragment extends Fragment {
             graphRangeMin = DataHandler.getFormattedDate(rangeMin.getTime());
             graphRangeMax = DataHandler.getFormattedDate(rangeMax.getTime());
 
-            loadGraph(graphRangeMin + " - " + graphRangeMax);
+            graphFragment.loadGraph(graphRangeMin + " - " + graphRangeMax);
         }
     };
 
@@ -302,7 +209,7 @@ public class SleepDataFragment extends Fragment {
 
             model.setGraphViewType(item.toString().toLowerCase());
             getTodaysRange();
-            loadGraph("This " + model.getGraphViewType());
+            graphFragment.loadGraph("This " + model.getGraphViewType());
         }
 
         public void onNothingSelected(AdapterView<?> parent) {}

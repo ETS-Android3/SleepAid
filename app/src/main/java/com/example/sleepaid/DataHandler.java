@@ -1,5 +1,7 @@
 package com.example.sleepaid;
 
+import com.example.sleepaid.Database.SleepData;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,5 +25,20 @@ public class DataHandler {
 
     public static String getFormattedDate(Date date) {
         return new SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(date);
+    }
+
+    public static List<Double> getDoublesFromSleepDataValues(List<SleepData> sleepData) {
+        List<Double> processedValues = new ArrayList<>();
+
+        for (SleepData s : sleepData) {
+            List<Integer> times = DataHandler.getIntsFromString(s.getValue());
+
+            int hours = times.get(0);
+            double minutes = times.size() > 1 ? times.get(1) / 60.0 : 0;
+
+            processedValues.add(hours + minutes);
+        }
+
+        return processedValues;
     }
 }

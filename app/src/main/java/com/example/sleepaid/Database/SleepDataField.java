@@ -1,4 +1,4 @@
-package com.example.sleepaid;
+package com.example.sleepaid.Database;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;

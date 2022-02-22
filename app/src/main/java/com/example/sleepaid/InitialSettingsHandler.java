@@ -5,6 +5,11 @@ import android.content.Intent;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.sleepaid.Database.Alarm;
+import com.example.sleepaid.Database.AppDatabase;
+import com.example.sleepaid.Database.Configuration;
+import com.example.sleepaid.Database.Goal;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +48,6 @@ public class InitialSettingsHandler {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         answerData -> {
-                            System.out.println(answerData.get(0));
                             Configuration c = new Configuration("supportNaps", answerData.get(0));
                             configurationList.add(c);
 

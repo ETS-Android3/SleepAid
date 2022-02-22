@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.example.sleepaid.AppDatabase;
+import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.R;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;

@@ -5,6 +5,9 @@ import android.graphics.Paint;
 
 import androidx.lifecycle.ViewModel;
 
+import com.example.sleepaid.Database.Answer;
+import com.example.sleepaid.Database.Option;
+import com.example.sleepaid.Database.Question;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -20,6 +23,10 @@ public class SharedViewModel extends ViewModel {
     private int currentQuestionId;
 
     private String graphViewType;
+
+    private int graphWeekLength;
+    private int graphMonthLength;
+    private int graphYearLength;
 
     private LineGraphSeries<DataPoint> sleepDurationLineSeries;
     private PointsGraphSeries<DataPoint> sleepDurationPointsSeries;
@@ -44,6 +51,18 @@ public class SharedViewModel extends ViewModel {
         this.graphViewType = graphViewType;
     }
 
+    public void setGraphWeekLength(int graphWeekLength) {
+        this.graphWeekLength = graphWeekLength;
+    }
+
+    public void setGraphMonthLength(int graphMonthLength) {
+        this.graphMonthLength = graphMonthLength;
+    }
+
+    public void setGraphYearLength(int graphYearLength) {
+        this.graphYearLength = graphYearLength;
+    }
+
     public void setSleepDurationLineSeries(LineGraphSeries<DataPoint> sleepDurationLineSeries, int backgroundColor, int lineColor) {
         this.sleepDurationLineSeries = sleepDurationLineSeries;
 
@@ -61,7 +80,7 @@ public class SharedViewModel extends ViewModel {
             public void draw(Canvas canvas, Paint paint, float x, float y, DataPointInterface dataPoint) {
                 paint.setColor(pointsColor);
                 paint.setTextSize(38);
-                canvas.drawText((int) (dataPoint.getY() - 0.4) + "h", x, y, paint);
+                canvas.drawText(String.format("%.1f", dataPoint.getY() - 0.5) + "h", x, y, paint);
             }
         });
     }
@@ -84,6 +103,34 @@ public class SharedViewModel extends ViewModel {
 
     public String getGraphViewType() {
         return this.graphViewType;
+    }
+
+    public int getGraphPeriodLength() {
+        switch (this.graphViewType) {
+            case "week":
+                return this.graphWeekLength;
+
+            case "month":
+                return this.graphMonthLength;
+
+            case "year":
+                return this.graphYearLength;
+
+            default:
+                return 0;
+        }
+    }
+
+    public int getGraphWeekLength() {
+        return this.graphWeekLength;
+    }
+
+    public int getGraphMonthLength() {
+        return this.graphMonthLength;
+    }
+
+    public int getGraphYearLength() {
+        return this.graphYearLength;
     }
 
     public LineGraphSeries<DataPoint> getSleepDurationLineSeries() {

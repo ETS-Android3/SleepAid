@@ -1,4 +1,4 @@
-package com.example.sleepaid;
+package com.example.sleepaid.Database;
 
 import android.content.Context;
 

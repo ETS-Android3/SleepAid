@@ -1,4 +1,4 @@
-package com.example.sleepaid;
+package com.example.sleepaid.Database;
 
 import androidx.room.Dao;
 import androidx.room.Insert;
@@ -23,6 +23,9 @@ public interface SleepDataDao {
 
     @Query("SELECT * FROM SleepData WHERE date BETWEEN :dateMin AND :dateMax ORDER BY date")
     Single<List<SleepData>> loadAllByDateRange(String dateMin, String dateMax);
+
+    @Query("SELECT * FROM SleepData WHERE date BETWEEN :dateMin AND :dateMax AND field = (:field) ORDER BY date")
+    Single<List<SleepData>> loadAllByDateRangeAndType(String dateMin, String dateMax, String field);
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     Completable insert(List<SleepData> sleepData);

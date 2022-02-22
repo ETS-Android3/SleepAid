@@ -1,4 +1,4 @@
-package com.example.sleepaid;
+package com.example.sleepaid.Database;
 
 import androidx.room.Dao;
 import androidx.room.Insert;

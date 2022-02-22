@@ -18,18 +18,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import com.example.sleepaid.Answer;
+import com.example.sleepaid.Database.Answer;
 import com.example.sleepaid.App;
-import com.example.sleepaid.AppDatabase;
+import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.InitialSettingsHandler;
-import com.example.sleepaid.Option;
-import com.example.sleepaid.Question;
+import com.example.sleepaid.Database.Option;
+import com.example.sleepaid.Database.Question;
 import com.example.sleepaid.R;
 import com.example.sleepaid.SharedViewModel;
 import com.example.sleepaid.TextBox;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;

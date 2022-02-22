@@ -1,20 +1,20 @@
-package com.example.sleepaid;
+package com.example.sleepaid.Database;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity
-public class Configuration {
+public class Goal {
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "configurationId")
+    @ColumnInfo(name = "goalId")
     public int id;
 
-    public String type;
+    public String name;
     public String value;
 
-    public Configuration(String type, String value) {
-        this.type = type;
+    public Goal(String name, String value) {
+        this.name = name;
         this.value = value;
     }
 
@@ -22,8 +22,8 @@ public class Configuration {
         return this.id;
     }
 
-    public String getType() {
-        return this.type;
+    public String getName() {
+        return this.name;
     }
 
     public String getValue() {

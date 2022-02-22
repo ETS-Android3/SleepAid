@@ -1,4 +1,4 @@
-package com.example.sleepaid;
+package com.example.sleepaid.Database;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -7,37 +7,26 @@ import androidx.room.PrimaryKey;
 
 @Entity(foreignKeys = {
         @ForeignKey(
-                entity = Option.class,
-                parentColumns = "optionId",
-                childColumns = "optionId",
-                onDelete = ForeignKey.CASCADE
-        ),
-        @ForeignKey(
                 entity = Question.class,
                 parentColumns = "questionId",
                 childColumns = "questionId",
                 onDelete = ForeignKey.CASCADE
         )
 })
-public class Answer {
+public class Option {
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "answerId")
+    @ColumnInfo(name = "optionId")
     public int id;
 
-    public int optionId;
+    public String value;
     public int questionId;
-
-    public Answer(int optionId, int questionId) {
-        this.optionId = optionId;
-        this.questionId = questionId;
-    }
 
     public int getId() {
         return this.id;
     }
 
-    public int getOptionId() {
-        return this.optionId;
+    public String getValue() {
+        return this.value;
     }
 
     public int getQuestionId() {
