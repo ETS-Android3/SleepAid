@@ -21,6 +21,7 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.OptionalDouble;
 import java.util.stream.Collectors;
@@ -38,6 +39,7 @@ public abstract class SleepDataGraphFragment extends Fragment {
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
         sleepDataFragment = (SleepDataFragment) getParentFragment().getParentFragment();
+        sleepDataFragment.graphFragment = this;
 
         db = AppDatabase.getDatabase(App.getContext());
 
@@ -57,16 +59,35 @@ public abstract class SleepDataGraphFragment extends Fragment {
 
         //graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.HORIZONTAL);
 
-        loadGraph("This " + model.getGraphViewType());
+        loadGraph(sleepDataFragment.rangeMin.getTime(), sleepDataFragment.rangeMax.getTime());
+        loadData();
     }
 
-    protected void loadGraph(String period) {
+    protected void loadGraph(Date min, Date max) {
+        String period;
+
         if (sleepDataFragment.graphRangeMax.equals(DataHandler.getFormattedDate(sleepDataFragment.today.getTime()))) {
             sleepDataFragment.nextButton.setVisibility(View.INVISIBLE);
+
             period = "This " + model.getGraphViewType();
         }
         else {
             sleepDataFragment.nextButton.setVisibility(View.VISIBLE);
+
+            switch (model.getGraphViewType()) {
+                case "month":
+                    period = DataHandler.getMonth(min);
+                    break;
+
+                case "year":
+                    period = DataHandler.getYear(min);
+                    break;
+
+                //"week"
+                default:
+                    period = DataHandler.getFormattedDate(min) + " - " + DataHandler.getFormattedDate(max);
+                    break;
+            }
         }
 
         graph.removeAllSeries();
@@ -75,12 +96,6 @@ public abstract class SleepDataGraphFragment extends Fragment {
         graphTitle.setText(period);
 
         switch (model.getGraphViewType()) {
-            case "week":
-                graph.getViewport().setMaxX(model.getGraphWeekLength() - 1);
-                graph.getGridLabelRenderer().setNumHorizontalLabels(model.getGraphWeekLength());
-                graph.getGridLabelRenderer().setLabelFormatter(sleepDataFragment.getWeekLabelFormatter());
-                break;
-
             case "month":
                 graph.getViewport().setMaxX(model.getGraphMonthLength() - 1);
                 graph.getGridLabelRenderer().setNumHorizontalLabels(model.getGraphMonthLength());
@@ -92,8 +107,17 @@ public abstract class SleepDataGraphFragment extends Fragment {
                 graph.getGridLabelRenderer().setNumHorizontalLabels(model.getGraphYearLength());
                 graph.getGridLabelRenderer().setLabelFormatter(sleepDataFragment.getYearLabelFormatter());
                 break;
+
+            //"week"
+            default:
+                graph.getViewport().setMaxX(model.getGraphWeekLength() - 1);
+                graph.getGridLabelRenderer().setNumHorizontalLabels(model.getGraphWeekLength());
+                graph.getGridLabelRenderer().setLabelFormatter(sleepDataFragment.getWeekLabelFormatter());
+                break;
         }
     }
+
+    protected void loadData() {}
 
     protected List<Double> processFromDatabase(List<SleepData> sleepData) {
         if (sleepData.isEmpty()) {

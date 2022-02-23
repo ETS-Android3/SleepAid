@@ -1,13 +1,12 @@
 package com.example.sleepaid.Fragment;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.example.sleepaid.DataHandler;
 import com.example.sleepaid.R;
@@ -23,7 +22,7 @@ import java.util.List;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class SleepDurationGraphFragment extends SleepDataGraphFragment {
+public class BedTimeGraphFragment extends SleepDataGraphFragment {
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
@@ -44,7 +43,7 @@ public class SleepDurationGraphFragment extends SleepDataGraphFragment {
                 .loadAllByDateRangeAndType(
                         DataHandler.getSQLiteDate(sleepDataFragment.rangeMin.getTime()),
                         DataHandler.getSQLiteDate(sleepDataFragment.rangeMax.getTime()),
-                        "duration"
+                        "bed time"
                 )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -76,34 +75,34 @@ public class SleepDurationGraphFragment extends SleepDataGraphFragment {
                                 }
                             }
 
-                            model.setSleepDurationLineSeries(
+                            model.setBedTimeLineSeries(
                                     lineGraphSeries,
                                     getResources().getColor(R.color.white),
                                     getResources().getColor(R.color.white)
                             );
 
-                            model.setSleepDurationPointsSeries(
+                            model.setBedTimePointsSeries(
                                     pointsGraphSeries,
                                     getResources().getColor(R.color.white)
                             );
 
                             graph.getViewport().setMaxY(Collections.max(processedSleepData) + 1);
 
-                            graph.addSeries(model.getSleepDurationLineSeries());
-                            graph.addSeries(model.getSleepDurationPointsSeries());
+                            graph.addSeries(model.getBedTimeLineSeries());
+                            graph.addSeries(model.getBedTimePointsSeries());
                         },
                         Throwable::printStackTrace
                 );
     }
 
     protected void loadData() {
-        TextBox durationBox = sleepDataFragment.getView().findViewById(R.id.middleBox);
-        durationBox.setText(sleepDataFragment.todayDuration);
-
+//        TextBox durationBox = sleepDataFragment.getView().findViewById(R.id.rightBox);
+//        durationBox.setText(sleepDataFragment.todayDuration);
+//
 //        TextBox wakeupTimeBox = sleepDataFragment.getView().findViewById(R.id.leftBox);
 //        wakeupTimeBox.setText(sleepDataFragment.todayWakeupTime);
-//
-//        TextBox bedTimeBox = sleepDataFragment.getView().findViewById(R.id.rightBox);
-//        bedTimeBox.setText(sleepDataFragment.todayBedTime);
+
+        TextBox bedTimeBox = sleepDataFragment.getView().findViewById(R.id.middleBox);
+        bedTimeBox.setText(sleepDataFragment.todayBedTime);
     }
 }

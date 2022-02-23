@@ -1,78 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/scrollView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <Spinner
-            android:id="@+id/calendarDropdown"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:gravity="center"
-            android:paddingRight="22.5dp"
-            android:background="@drawable/dropdown_shape"
-            android:popupBackground="@drawable/dropdown_item_shape"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/previousButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="7dp"
-            android:text="&lt;"
-            android:textAlignment="center"
-            android:textSize="22.5sp"
-            android:textColor="@color/white"
-            android:backgroundTint="@android:color/transparent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/graphTitle"/>
-
-        <TextView
-            android:id="@+id/graphTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:textColor="@color/white"
-            android:textAlignment="center"
-            android:fontFamily="@font/roboto"
-            android:textSize="22.5sp"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/nextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="7dp"
-            android:text="&gt;"
-            android:textAlignment="center"
-            android:textSize="22.5sp"
-            android:textColor="@color/white"
-            android:backgroundTint="@android:color/transparent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/graphTitle"/>
-
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/graph"
-            android:name="androidx.navigation.fragment.NavHostFragment"
-            app:navGraph="@navigation/sleep_data_graph_graph"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintHeight_percent="0.9"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/graphTitle"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+            android:layout_height="wrap_content">
+
+            <Spinner
+                android:id="@+id/calendarDropdown"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:paddingRight="24dp"
+                android:background="@drawable/dropdown_shape"
+                android:popupBackground="@drawable/dropdown_item_shape"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/previousButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="5dp"
+                android:text="&lt;"
+                android:textAlignment="center"
+                android:textSize="22.5sp"
+                android:textColor="@color/white"
+                android:backgroundTint="@android:color/transparent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/graphTitle"/>
+
+            <TextView
+                android:id="@+id/graphTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/white"
+                android:textAlignment="center"
+                android:fontFamily="@font/roboto"
+                android:textSize="22.5sp"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/nextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="5dp"
+                android:text="&gt;"
+                android:textAlignment="center"
+                android:textSize="22.5sp"
+                android:textColor="@color/white"
+                android:backgroundTint="@android:color/transparent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/graphTitle"/>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/graph"
+                android:name="androidx.navigation.fragment.NavHostFragment"
+                app:navGraph="@navigation/sleep_data_graph_graph"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintHeight_min="400dp"
+                app:layout_constraintHeight_max="wrap"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/graphTitle"/>
+
+            <TextView
+                android:id="@+id/today"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Today"
+                android:textColor="@color/white"
+                android:textAlignment="center"
+                android:fontFamily="@font/roboto"
+                android:textSize="22.5sp"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/graph" />
+
+            <!--<com.example.sleepaid.TextBox
+                android:id="@+id/leftBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toStartOf="@id/middleBox"
+                app:layout_constraintTop_toBottomOf="@+id/graph"/>-->
+
+            <com.example.sleepaid.TextBox
+                android:id="@+id/middleBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/today"
+                app:layout_constraintHorizontal_bias="0.5" />
+
+            <!--<com.example.sleepaid.TextBox
+                android:id="@+id/rightBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/middleBox"
+                app:layout_constraintTop_toBottomOf="@+id/graph"/>-->
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomMenu"
+        app:menu="@menu/graph_menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

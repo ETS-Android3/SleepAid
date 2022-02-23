@@ -31,7 +31,11 @@ public class SharedViewModel extends ViewModel {
     private LineGraphSeries<DataPoint> sleepDurationLineSeries;
     private PointsGraphSeries<DataPoint> sleepDurationPointsSeries;
 
-    private String[] sleepGraphTabsText;
+    private LineGraphSeries<DataPoint> wakeupTimeLineSeries;
+    private PointsGraphSeries<DataPoint> wakeupTimePointsSeries;
+
+    private LineGraphSeries<DataPoint> bedTimeLineSeries;
+    private PointsGraphSeries<DataPoint> bedTimePointsSeries;
 
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
@@ -92,8 +96,60 @@ public class SharedViewModel extends ViewModel {
         });
     }
 
-    public void setSleepGraphTabsText(String[] graphTabsText) {
-        this.sleepGraphTabsText = graphTabsText;
+    public void setWakeupTimeLineSeries(LineGraphSeries<DataPoint> wakeupTimeLineSeries, int backgroundColor, int lineColor) {
+        this.wakeupTimeLineSeries = wakeupTimeLineSeries;
+
+        this.wakeupTimeLineSeries.setDrawBackground(true);
+        this.wakeupTimeLineSeries.setDrawDataPoints(true);
+        //this.sleepDurationLineSeries.setBackgroundColor(backgroundColor);
+        this.wakeupTimeLineSeries.setColor(lineColor);
+    }
+
+    public void setWakeupTimePointsSeries(PointsGraphSeries<DataPoint> wakeupTimePointsSeries, int pointsColor) {
+        this.wakeupTimePointsSeries = wakeupTimePointsSeries;
+
+        this.wakeupTimePointsSeries.setCustomShape(new PointsGraphSeries.CustomShape() {
+            @Override
+            public void draw(Canvas canvas, Paint paint, float x, float y, DataPointInterface dataPoint) {
+                paint.setColor(pointsColor);
+                paint.setTextSize(38);
+
+                //TODO figure out if it's AM or PM
+                String text = (dataPoint.getY() - 0.5) % 1 == 0 ?
+                        (int)(dataPoint.getY() - 0.5) + "AM" :
+                        String.format("%.1f", dataPoint.getY() - 0.5) + "AM";
+
+                canvas.drawText(text, x, y, paint);
+            }
+        });
+    }
+
+    public void setBedTimeLineSeries(LineGraphSeries<DataPoint> bedTimeLineSeries, int backgroundColor, int lineColor) {
+        this.bedTimeLineSeries = bedTimeLineSeries;
+
+        this.bedTimeLineSeries.setDrawBackground(true);
+        this.bedTimeLineSeries.setDrawDataPoints(true);
+        //this.sleepDurationLineSeries.setBackgroundColor(backgroundColor);
+        this.bedTimeLineSeries.setColor(lineColor);
+    }
+
+    public void setBedTimePointsSeries(PointsGraphSeries<DataPoint> bedTimePointsSeries, int pointsColor) {
+        this.bedTimePointsSeries = bedTimePointsSeries;
+
+        this.bedTimePointsSeries.setCustomShape(new PointsGraphSeries.CustomShape() {
+            @Override
+            public void draw(Canvas canvas, Paint paint, float x, float y, DataPointInterface dataPoint) {
+                paint.setColor(pointsColor);
+                paint.setTextSize(38);
+
+                //TODO figure out if it's AM or PM
+                String text = (dataPoint.getY() - 0.5) % 1 == 0 ?
+                        (int)(dataPoint.getY() - 0.5) + "PM" :
+                        String.format("%.1f", dataPoint.getY() - 0.5) + "PM";
+
+                canvas.drawText(text, x, y, paint);
+            }
+        });
     }
 
     public List<Question> getQuestions() {
@@ -118,17 +174,15 @@ public class SharedViewModel extends ViewModel {
 
     public int getGraphPeriodLength() {
         switch (this.graphViewType) {
-            case "week":
-                return this.graphWeekLength;
-
             case "month":
                 return this.graphMonthLength;
 
             case "year":
                 return this.graphYearLength;
 
+            //"week"
             default:
-                return 0;
+                return this.graphWeekLength;
         }
     }
 
@@ -152,11 +206,19 @@ public class SharedViewModel extends ViewModel {
         return this.sleepDurationPointsSeries;
     }
 
-    public String[] getSleepGraphTabsText() {
-        return this.sleepGraphTabsText;
+    public LineGraphSeries<DataPoint> getWakeupTimeLineSeries() {
+        return this.wakeupTimeLineSeries;
     }
 
-    public String getSleepGraphTabsText(int position) {
-        return this.sleepGraphTabsText[position];
+    public PointsGraphSeries<DataPoint> getWakeupTimePointsSeries() {
+        return this.wakeupTimePointsSeries;
+    }
+
+    public LineGraphSeries<DataPoint> getBedTimeLineSeries() {
+        return this.bedTimeLineSeries;
+    }
+
+    public PointsGraphSeries<DataPoint> getBedTimePointsSeries() {
+        return this.bedTimePointsSeries;
     }
 }

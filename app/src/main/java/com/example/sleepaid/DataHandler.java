@@ -31,16 +31,28 @@ public class DataHandler {
         return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date);
     }
 
+    public static String getMonth(Date date) {
+        return new SimpleDateFormat("MM/yy", Locale.getDefault()).format(date);
+    }
+
+    public static String getYear(Date date) {
+        return new SimpleDateFormat("yyyy", Locale.getDefault()).format(date);
+    }
+
+    public static double getDoubleFromSleepDataValue(SleepData sleepData) {
+        List<Integer> times = DataHandler.getIntsFromString(sleepData.getValue());
+
+        int hours = times.get(0);
+        double minutes = times.size() > 1 ? times.get(1) / 60.0 : 0;
+
+        return hours + minutes;
+    }
+
     public static List<Double> getDoublesFromSleepDataValues(List<SleepData> sleepData) {
         List<Double> processedValues = new ArrayList<>();
 
         for (SleepData s : sleepData) {
-            List<Integer> times = DataHandler.getIntsFromString(s.getValue());
-
-            int hours = times.get(0);
-            double minutes = times.size() > 1 ? times.get(1) / 60.0 : 0;
-
-            processedValues.add(hours + minutes);
+            processedValues.add(getDoubleFromSleepDataValue(s));
         }
 
         return processedValues;

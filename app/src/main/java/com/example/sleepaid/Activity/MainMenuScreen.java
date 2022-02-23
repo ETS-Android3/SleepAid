@@ -35,6 +35,7 @@ public class MainMenuScreen extends AppCompatActivity {
                 R.id.sleepDataFragment,
                 R.id.alarmsFragment,
                 R.id.goalsFragment,
+                R.id.sleepDiaryFragment,
                 R.id.settingsFragment
         )
                 .setOpenableLayout(drawerLayout)

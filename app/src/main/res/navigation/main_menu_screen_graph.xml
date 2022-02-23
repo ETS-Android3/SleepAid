@@ -17,6 +17,10 @@
         android:name="com.example.sleepaid.Fragment.GoalsFragment"
         android:label="Goals" />
     <fragment
+        android:id="@+id/sleepDiaryFragment"
+        android:name="com.example.sleepaid.Fragment.SleepDiaryFragment"
+        android:label="Sleep diary" />
+    <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.sleepaid.Fragment.SettingsFragment"
         android:label="Settings" />

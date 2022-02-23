@@ -15,6 +15,7 @@
         <item name="materialButtonStyle">@style/Button.White</item>
         <item name="radioButtonStyle">@style/RadioButton.White</item>
         <item name="android:windowBackground">@color/purple_sleep</item>
+        <item name="bottomNavigationStyle">@style/BottomNavigation</item>
     </style>
 
     <style name="Button.White" parent="Theme.SleepAid">
@@ -30,5 +31,12 @@
         <item name="android:textColor">@color/black</item>
         <item name="android:textAlignment">textStart</item>
         <item name="cornerRadius">15dp</item>
+    </style>
+
+    <style name="BottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="backgroundTint">@color/darker_purple_sleep</item>
+        <item name="itemBackground">@color/bottom_navigation_style_background</item>
+        <item name="itemIconTint">@color/bottom_navigation_style</item>
+        <item name="itemTextColor">@color/bottom_navigation_style</item>
     </style>
 </resources>

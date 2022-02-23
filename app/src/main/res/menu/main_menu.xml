@@ -5,15 +5,23 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/sleepDataFragment"
-            android:title="Sleep data" />
+            android:title="Sleep data"
+            android:icon="@drawable/graph_icon" />
         <item
             android:id="@+id/alarmsFragment"
-            android:title="Alarms" />
+            android:title="Alarms"
+            android:icon="@drawable/alarm_icon" />
         <item
             android:id="@+id/goalsFragment"
-            android:title="Goals" />
+            android:title="Goals"
+            android:icon="@drawable/goal_icon" />
+        <item
+            android:id="@+id/sleepDiaryFragment"
+            android:title="Sleep diary"
+            android:icon="@drawable/diary_icon" />
         <item
             android:id="@+id/settingsFragment"
-            android:title="Settings" />
+            android:title="Settings"
+            android:icon="@drawable/settings_icon" />
     </group>
 </menu>

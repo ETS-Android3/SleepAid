@@ -82,20 +82,20 @@ public class InitialSettingsHandler {
                             Goal bedTimeMax = new Goal("bedTimeMax", Integer.toString(bedTimes.get(1)));
                             goalList.add(bedTimeMax);
 
-                            List<Integer> wakeUpTimes = DataHandler.getIntsFromString(answerData.get(1));
-                            Goal wakeUpTimeMin = new Goal("wakeUpTimeMin", Integer.toString(wakeUpTimes.get(0)));
-                            goalList.add(wakeUpTimeMin);
+                            List<Integer> wakeupTimes = DataHandler.getIntsFromString(answerData.get(1));
+                            Goal wakeupTimeMin = new Goal("wakeupTimeMin", Integer.toString(wakeupTimes.get(0)));
+                            goalList.add(wakeupTimeMin);
 
-                            Goal wakeUpTimeMax = new Goal("wakeUpTimeMax", Integer.toString(wakeUpTimes.get(1)));
-                            goalList.add(wakeUpTimeMax);
+                            Goal wakeupTimeMax = new Goal("wakeupTimeMax", Integer.toString(wakeupTimes.get(1)));
+                            goalList.add(wakeupTimeMax);
 
                             int duration = bedTimes.get(0) <= 12 ?
-                                    12 + (wakeUpTimes.get(0) - bedTimes.get(0)) :
-                                    (wakeUpTimes.get(0) - bedTimes.get(0));
+                                    12 + (wakeupTimes.get(0) - bedTimes.get(0)) :
+                                    (wakeupTimes.get(0) - bedTimes.get(0));
                             Goal sleepDuration = new Goal("sleepDuration", Integer.toString(duration));
                             goalList.add(sleepDuration);
 
-                            getAlarmList(wakeUpTimes.get(0), bedTimes.get(0));
+                            getAlarmList(wakeupTimes.get(0), bedTimes.get(0));
                         },
                         Throwable::printStackTrace
                 );
@@ -112,11 +112,17 @@ public class InitialSettingsHandler {
                 );
     }
 
-    private void getAlarmList(int wakeUpTime, int bedTime) {
-        Alarm morningAlarm = new Alarm(1, wakeUpTime + " am", "1 2 3 4 5 6 7", "default");
-        alarmList.add(morningAlarm);
+    private void getAlarmList(int wakeupTime, int bedTime) {
+        for (int i = 0; i < 4; i++) {
+            String newWakeupTime = (i == 0) ? wakeupTime + ":00" : wakeupTime + ":" + i * 10;
 
-        Alarm bedtimeAlarm = new Alarm(3, bedTime < 12 ? bedTime + " pm" : bedTime + " am", "1 2 3 4 5 6 7", "default");
+            Alarm morningAlarm = new Alarm(1,  newWakeupTime + " am", "M T W T F S S", "default");
+            alarmList.add(morningAlarm);
+        }
+
+        Alarm bedtimeAlarmBefore = new Alarm(3, (bedTime - 1) < 12 ? (bedTime - 1) + ":30 pm" : (bedTime - 1) + ":30 am", "M T W T F S S", "default");
+        Alarm bedtimeAlarm = new Alarm(3, bedTime < 12 ? bedTime + ":00 pm" : bedTime + ":00 am", "M T W T F S S", "default");
+        alarmList.add(bedtimeAlarmBefore);
         alarmList.add(bedtimeAlarm);
 
         if (configurationList.get(0).getValue() == "Yes.") {

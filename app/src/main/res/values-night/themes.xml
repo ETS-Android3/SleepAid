@@ -12,9 +12,9 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
-        <item name="windowActionBar">false</item>
         <item name="materialButtonStyle">@style/Button.White</item>
         <item name="radioButtonStyle">@style/RadioButton.White</item>
         <item name="android:windowBackground">@color/purple_sleep</item>
+        <item name="bottomNavigationStyle">@style/BottomNavigation</item>
     </style>
 </resources>

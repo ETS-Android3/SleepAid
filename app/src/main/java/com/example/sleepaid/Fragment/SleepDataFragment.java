@@ -6,6 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,16 +20,27 @@ import android.widget.Spinner;
 
 import com.example.sleepaid.App;
 import com.example.sleepaid.DataHandler;
+import com.example.sleepaid.Database.AppDatabase;
+import com.example.sleepaid.Database.SleepData;
 import com.example.sleepaid.R;
 import com.example.sleepaid.SharedViewModel;
+import com.example.sleepaid.TextBox;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.jjoe64.graphview.DefaultLabelFormatter;
 
+import org.w3c.dom.Text;
+
 import java.util.Calendar;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class SleepDataFragment extends Fragment {
     private SharedViewModel model;
 
-    private SleepDataGraphFragment graphFragment;
+    private AppDatabase db;
+
+    protected SleepDataGraphFragment graphFragment;
 
     Button previousButton;
     Button nextButton;
@@ -39,6 +53,10 @@ public class SleepDataFragment extends Fragment {
     protected String graphRangeMin;
     protected String graphRangeMax;
 
+    protected String todayDuration;
+    protected String todayWakeupTime;
+    protected String todayBedTime;
+
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
@@ -49,9 +67,16 @@ public class SleepDataFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
+        NavHostFragment navHostFragment = (NavHostFragment) getChildFragmentManager().findFragmentById(R.id.graph);
+
+        NavController navController = navHostFragment.getNavController();
+        BottomNavigationView bottomMenu = getView().findViewById(R.id.bottomMenu);
+
+        NavigationUI.setupWithNavController(bottomMenu, navController);
+
         model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
-        graphFragment = (SleepDurationGraphFragment) getChildFragmentManager().getFragments().get(0).getChildFragmentManager().getFragments().get(0);
+        db = AppDatabase.getDatabase(App.getContext());
 
         previousButton = getView().findViewById(R.id.previousButton);
         previousButton.setOnClickListener(loadPeriod);
@@ -79,7 +104,10 @@ public class SleepDataFragment extends Fragment {
         }
 
         today = Calendar.getInstance();
+
         getTodaysRange();
+
+        getTodaysData();
     }
 
     private void getTodaysRange() {
@@ -89,11 +117,6 @@ public class SleepDataFragment extends Fragment {
         graphRangeMax = DataHandler.getFormattedDate(rangeMax.getTime());
 
         switch (model.getGraphViewType()) {
-            case "week":
-                // Days are indexed from 1 starting with Sunday, so add 2 to get to Monday
-                rangeMin.add(Calendar.DAY_OF_WEEK, -rangeMax.get(Calendar.DAY_OF_WEEK) + 2);
-                break;
-
             case "month":
                 rangeMin.add(Calendar.DAY_OF_MONTH, -rangeMax.get(Calendar.DAY_OF_MONTH) + 1);
                 break;
@@ -101,9 +124,48 @@ public class SleepDataFragment extends Fragment {
             case "year":
                 rangeMin.add(Calendar.DAY_OF_YEAR, -rangeMax.get(Calendar.DAY_OF_YEAR) + 1);
                 break;
+
+            //"week"
+            default:
+                // Days are indexed from 1 starting with Sunday, so add 2 to get to Monday
+                rangeMin.add(Calendar.DAY_OF_WEEK, -rangeMax.get(Calendar.DAY_OF_WEEK) + 2);
+                break;
         }
 
         graphRangeMin = DataHandler.getFormattedDate(rangeMin.getTime());
+    }
+
+    private void getTodaysData() {
+        db.sleepDataDao()
+                .loadAllByDates(new String[]{DataHandler.getSQLiteDate(today.getTime())})
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        sleepData -> {
+                            todayDuration = "-";
+                            todayWakeupTime = "-";
+                            todayBedTime = "-";
+
+                            for (SleepData s : sleepData) {
+                                switch (s.getField()) {
+                                    case "wake-up time":
+                                        todayWakeupTime = s.getValue();
+                                        break;
+
+                                    case "bed time":
+                                        todayBedTime = s.getValue();
+                                        break;
+
+                                    //"duration"
+                                    default:
+                                        todayDuration = s.getValue();
+                                }
+                            }
+
+                            graphFragment.loadData();
+                        },
+                        Throwable::printStackTrace
+                );
     }
 
     protected DefaultLabelFormatter getWeekLabelFormatter() {
@@ -165,15 +227,6 @@ public class SleepDataFragment extends Fragment {
             Calendar endOfRange = (Calendar) rangeMin.clone();
 
             switch (model.getGraphViewType()) {
-                case "week":
-                    // rangeMin will always be a Monday, so we can just move by 7 days
-                    rangeMin.add(Calendar.DAY_OF_WEEK, 7 * direction);
-
-                    // We need to make sure we don't go past today
-                    endOfRange = (Calendar) rangeMin.clone();
-                    endOfRange.add(Calendar.DAY_OF_WEEK, 6);
-                    break;
-
                 case "month":
                     // rangeMin will always be the 1st of the month, so we can just move by 1 month
                     rangeMin.add(Calendar.MONTH, direction);
@@ -190,6 +243,16 @@ public class SleepDataFragment extends Fragment {
                     endOfRange.set(Calendar.MONTH, 11);
                     endOfRange.set(Calendar.DAY_OF_MONTH, 31);
                     break;
+
+                //"week"
+                default:
+                    // rangeMin will always be a Monday, so we can just move by 7 days
+                    rangeMin.add(Calendar.DAY_OF_WEEK, 7 * direction);
+
+                    // We need to make sure we don't go past today
+                    endOfRange = (Calendar) rangeMin.clone();
+                    endOfRange.add(Calendar.DAY_OF_WEEK, 6);
+                    break;
             }
 
             // We need to make sure we don't go past today when clicking next
@@ -198,17 +261,17 @@ public class SleepDataFragment extends Fragment {
             graphRangeMin = DataHandler.getFormattedDate(rangeMin.getTime());
             graphRangeMax = DataHandler.getFormattedDate(rangeMax.getTime());
 
-            graphFragment.loadGraph(graphRangeMin + " - " + graphRangeMax);
+            graphFragment.loadGraph(rangeMin.getTime(), rangeMax.getTime());
         }
     };
 
     private AdapterView.OnItemSelectedListener changeGraphViewType = new AdapterView.OnItemSelectedListener() {
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
             Object item = parent.getItemAtPosition(pos);
-
             model.setGraphViewType(item.toString().toLowerCase());
+
             getTodaysRange();
-            graphFragment.loadGraph("This " + model.getGraphViewType());
+            graphFragment.loadGraph(rangeMin.getTime(), rangeMax.getTime());
         }
 
         public void onNothingSelected(AdapterView<?> parent) {}

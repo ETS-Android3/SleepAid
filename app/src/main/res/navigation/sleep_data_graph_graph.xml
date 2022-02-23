@@ -8,4 +8,12 @@
         android:id="@+id/sleepDurationGraphFragment"
         android:name="com.example.sleepaid.Fragment.SleepDurationGraphFragment"
         android:label="SleepDurationGraphFragment" />
+    <fragment
+        android:id="@+id/wakeupTimeGraphFragment"
+        android:name="com.example.sleepaid.Fragment.WakeupTimeGraphFragment"
+        android:label="WakeupTimeGraphFragment" />
+    <fragment
+        android:id="@+id/bedTimeGraphFragment"
+        android:name="com.example.sleepaid.Fragment.BedTimeGraphFragment"
+        android:label="BedTimeGraphFragment" />
 </navigation>
