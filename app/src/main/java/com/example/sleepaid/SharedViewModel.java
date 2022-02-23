@@ -31,6 +31,8 @@ public class SharedViewModel extends ViewModel {
     private LineGraphSeries<DataPoint> sleepDurationLineSeries;
     private PointsGraphSeries<DataPoint> sleepDurationPointsSeries;
 
+    private String[] sleepGraphTabsText;
+
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
     }
@@ -80,9 +82,18 @@ public class SharedViewModel extends ViewModel {
             public void draw(Canvas canvas, Paint paint, float x, float y, DataPointInterface dataPoint) {
                 paint.setColor(pointsColor);
                 paint.setTextSize(38);
-                canvas.drawText(String.format("%.1f", dataPoint.getY() - 0.5) + "h", x, y, paint);
+
+                String text = (dataPoint.getY() - 0.5) % 1 == 0 ?
+                        (int)(dataPoint.getY() - 0.5) + "h" :
+                        String.format("%.1f", dataPoint.getY() - 0.5) + "h";
+
+                canvas.drawText(text, x, y, paint);
             }
         });
+    }
+
+    public void setSleepGraphTabsText(String[] graphTabsText) {
+        this.sleepGraphTabsText = graphTabsText;
     }
 
     public List<Question> getQuestions() {
@@ -139,5 +150,13 @@ public class SharedViewModel extends ViewModel {
 
     public PointsGraphSeries<DataPoint> getSleepDurationPointsSeries() {
         return this.sleepDurationPointsSeries;
+    }
+
+    public String[] getSleepGraphTabsText() {
+        return this.sleepGraphTabsText;
+    }
+
+    public String getSleepGraphTabsText(int position) {
+        return this.sleepGraphTabsText[position];
     }
 }

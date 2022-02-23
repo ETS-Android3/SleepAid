@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.fragment.NavHostFragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,9 +24,9 @@ import com.jjoe64.graphview.DefaultLabelFormatter;
 import java.util.Calendar;
 
 public class SleepDataFragment extends Fragment {
-    private SleepDataGraphFragment graphFragment;
-
     private SharedViewModel model;
+
+    private SleepDataGraphFragment graphFragment;
 
     Button previousButton;
     Button nextButton;
@@ -50,9 +49,9 @@ public class SleepDataFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
-        graphFragment = (SleepDurationGraphFragment) getChildFragmentManager().getFragments().get(0).getChildFragmentManager().getFragments().get(0);
-
         model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+
+        graphFragment = (SleepDurationGraphFragment) getChildFragmentManager().getFragments().get(0).getChildFragmentManager().getFragments().get(0);
 
         previousButton = getView().findViewById(R.id.previousButton);
         previousButton.setOnClickListener(loadPeriod);
@@ -60,15 +59,15 @@ public class SleepDataFragment extends Fragment {
         nextButton = getView().findViewById(R.id.nextButton);
         nextButton.setOnClickListener(loadPeriod);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(
                 App.getContext(),
                 R.array.calendarOptions,
                 R.layout.calendar_dropdown
         );
-        adapter.setDropDownViewResource(R.layout.calendar_item_dropdown);
+        arrayAdapter.setDropDownViewResource(R.layout.calendar_item_dropdown);
 
         Spinner calendarDropdown = getView().findViewById(R.id.calendarDropdown);
-        calendarDropdown.setAdapter(adapter);
+        calendarDropdown.setAdapter(arrayAdapter);
         calendarDropdown.setOnItemSelectedListener(changeGraphViewType);
 
         if (model.getGraphViewType() == null) {

@@ -56,7 +56,6 @@ public abstract class SleepDataGraphFragment extends Fragment {
         graph.getViewport().setYAxisBoundsManual(true);
 
         //graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.HORIZONTAL);
-        //graph.getViewport().setDrawBorder(true);
 
         loadGraph("This " + model.getGraphViewType());
     }
@@ -139,7 +138,7 @@ public abstract class SleepDataGraphFragment extends Fragment {
             for (String m : months) {
                 List<SleepData> sleepDataForMonth = sleepData
                         .stream()
-                        .filter(s -> s.getDate().contains("/" + m + "/"))
+                        .filter(s -> s.getDate().contains("-" + m + "-"))
                         .collect(Collectors.toList());
 
                 List<Double> valuesForMonth = DataHandler.getDoublesFromSleepDataValues(sleepDataForMonth);

@@ -27,6 +27,10 @@ public class DataHandler {
         return new SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(date);
     }
 
+    public static String getSQLiteDate(Date date) {
+        return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date);
+    }
+
     public static List<Double> getDoublesFromSleepDataValues(List<SleepData> sleepData) {
         List<Double> processedValues = new ArrayList<>();
 

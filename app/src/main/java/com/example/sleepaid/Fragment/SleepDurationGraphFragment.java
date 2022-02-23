@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.sleepaid.DataHandler;
 import com.example.sleepaid.R;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -39,14 +40,17 @@ public class SleepDurationGraphFragment extends SleepDataGraphFragment {
 
         db.sleepDataDao()
                 .loadAllByDateRangeAndType(
-                        sleepDataFragment.graphRangeMin,
-                        sleepDataFragment.graphRangeMax,
+                        DataHandler.getSQLiteDate(sleepDataFragment.rangeMin.getTime()),
+                        DataHandler.getSQLiteDate(sleepDataFragment.rangeMax.getTime()),
                         "duration"
                 )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         sleepData -> {
+                            //TODO make database composite primary key with date and field
+                            //TODO fix this for less values than required
+                            //TODO clear points for dates after today
                             List<Double> processedSleepData = processFromDatabase(sleepData);
 
                             LineGraphSeries<DataPoint> lineGraphSeries = new LineGraphSeries<>();
