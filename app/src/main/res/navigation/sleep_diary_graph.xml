@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/sleep_diary_graph"
+    app:startDestination="@id/morningSleepDiaryFragment">
+    <fragment
+        android:id="@+id/morningSleepDiaryFragment"
+        android:name="com.example.sleepaid.MainMenu.Fragment.SleepDiary.MorningSleepDiaryFragment"
+        android:label="MorningSleepDiaryFragment" />
+    <fragment
+        android:id="@+id/bedtimeSleepDiaryFragment"
+        android:name="com.example.sleepaid.MainMenu.Fragment.SleepDiary.BedtimeSleepDiaryFragment"
+        android:label="BedtimeSleepDiaryFragment" />
+</navigation>

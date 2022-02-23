@@ -5,10 +5,10 @@ import android.content.Intent;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.sleepaid.Database.Alarm;
+import com.example.sleepaid.Database.Alarm.Alarm;
 import com.example.sleepaid.Database.AppDatabase;
-import com.example.sleepaid.Database.Configuration;
-import com.example.sleepaid.Database.Goal;
+import com.example.sleepaid.Database.Configuration.Configuration;
+import com.example.sleepaid.Database.Goal.Goal;
 
 import java.util.ArrayList;
 import java.util.List;

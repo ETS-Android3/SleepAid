@@ -1,6 +1,6 @@
 package com.example.sleepaid;
 
-import com.example.sleepaid.Database.SleepData;
+import com.example.sleepaid.Database.SleepData.SleepData;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

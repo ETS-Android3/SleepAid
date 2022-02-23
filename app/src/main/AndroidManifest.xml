@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SleepAid">
         <activity
-            android:name=".Activity.QuestionnaireScreen"
+            android:name=".Questionnaire.Activity.QuestionnaireScreen"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activity.MainMenuScreen"
+            android:name=".MainMenu.Activity.MainMenuScreen"
             android:exported="true">
         </activity>
 

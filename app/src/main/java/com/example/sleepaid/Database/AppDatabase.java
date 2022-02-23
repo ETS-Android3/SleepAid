@@ -7,6 +7,25 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import com.example.sleepaid.Database.Alarm.Alarm;
+import com.example.sleepaid.Database.Alarm.AlarmDao;
+import com.example.sleepaid.Database.AlarmType.AlarmType;
+import com.example.sleepaid.Database.AlarmType.AlarmTypeDao;
+import com.example.sleepaid.Database.Answer.Answer;
+import com.example.sleepaid.Database.Answer.AnswerDao;
+import com.example.sleepaid.Database.Configuration.Configuration;
+import com.example.sleepaid.Database.Configuration.ConfigurationDao;
+import com.example.sleepaid.Database.Goal.Goal;
+import com.example.sleepaid.Database.Goal.GoalDao;
+import com.example.sleepaid.Database.Option.Option;
+import com.example.sleepaid.Database.Option.OptionDao;
+import com.example.sleepaid.Database.Question.Question;
+import com.example.sleepaid.Database.Question.QuestionDao;
+import com.example.sleepaid.Database.SleepData.SleepData;
+import com.example.sleepaid.Database.SleepData.SleepDataDao;
+import com.example.sleepaid.Database.SleepDataField.SleepDataField;
+import com.example.sleepaid.Database.SleepDataField.SleepDataFieldDao;
+
 @Database(entities = {
         Question.class,
         Option.class,

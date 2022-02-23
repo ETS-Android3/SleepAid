@@ -5,9 +5,9 @@ import android.graphics.Paint;
 
 import androidx.lifecycle.ViewModel;
 
-import com.example.sleepaid.Database.Answer;
-import com.example.sleepaid.Database.Option;
-import com.example.sleepaid.Database.Question;
+import com.example.sleepaid.Database.Answer.Answer;
+import com.example.sleepaid.Database.Option.Option;
+import com.example.sleepaid.Database.Question.Question;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
