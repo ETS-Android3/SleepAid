@@ -43,7 +43,7 @@ public class WakeupTimeGraphFragment extends SleepDataGraphFragment {
                 .loadAllByDateRangeAndType(
                         DataHandler.getSQLiteDate(sleepDataFragment.rangeMin.getTime()),
                         DataHandler.getSQLiteDate(sleepDataFragment.rangeMax.getTime()),
-                        "wake-up time"
+                        "Wake-up time"
                 )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -43,12 +43,6 @@ public abstract class AlarmListFragment extends Fragment {
         if (alarmList.size() != 0) {
             list.setVisibility(View.VISIBLE);
 
-            List<String> alarmText = new ArrayList<>();
-
-            for (Alarm a : alarmList) {
-                alarmText.add(a.getTime() + "   " + a.getDays());
-            }
-
             AlarmAdapter alarmAdapter = new AlarmAdapter(
                     App.getContext(),
                     alarmList.stream().map(Alarm::getTime).collect(Collectors.toList()),

@@ -1,20 +1,29 @@
 package com.example.sleepaid.Database.Configuration;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity
+@Entity(indices = {
+        @Index(
+                value = {"name"},
+                unique = true
+        )
+})
 public class Configuration {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "configurationId")
     public int id;
 
-    public String type;
+    @NonNull
+    public String name;
+    @NonNull
     public String value;
 
-    public Configuration(String type, String value) {
-        this.type = type;
+    public Configuration(String name, String value) {
+        this.name = name;
         this.value = value;
     }
 
@@ -22,8 +31,8 @@ public class Configuration {
         return this.id;
     }
 
-    public String getType() {
-        return this.type;
+    public String getName() {
+        return this.name;
     }
 
     public String getValue() {

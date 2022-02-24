@@ -22,7 +22,7 @@ import java.util.List;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class BedTimeGraphFragment extends SleepDataGraphFragment {
+public class BedtimeGraphFragment extends SleepDataGraphFragment {
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
@@ -43,7 +43,7 @@ public class BedTimeGraphFragment extends SleepDataGraphFragment {
                 .loadAllByDateRangeAndType(
                         DataHandler.getSQLiteDate(sleepDataFragment.rangeMin.getTime()),
                         DataHandler.getSQLiteDate(sleepDataFragment.rangeMax.getTime()),
-                        "bed time"
+                        "Bedtime"
                 )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -75,21 +75,21 @@ public class BedTimeGraphFragment extends SleepDataGraphFragment {
                                 }
                             }
 
-                            model.setBedTimeLineSeries(
+                            model.setBedtimeLineSeries(
                                     lineGraphSeries,
                                     getResources().getColor(R.color.white),
                                     getResources().getColor(R.color.white)
                             );
 
-                            model.setBedTimePointsSeries(
+                            model.setBedtimePointsSeries(
                                     pointsGraphSeries,
                                     getResources().getColor(R.color.white)
                             );
 
                             graph.getViewport().setMaxY(Collections.max(processedSleepData) + 1);
 
-                            graph.addSeries(model.getBedTimeLineSeries());
-                            graph.addSeries(model.getBedTimePointsSeries());
+                            graph.addSeries(model.getBedtimeLineSeries());
+                            graph.addSeries(model.getBedtimePointsSeries());
                         },
                         Throwable::printStackTrace
                 );
@@ -102,7 +102,7 @@ public class BedTimeGraphFragment extends SleepDataGraphFragment {
 //        TextBox wakeupTimeBox = sleepDataFragment.getView().findViewById(R.id.leftBox);
 //        wakeupTimeBox.setText(sleepDataFragment.todayWakeupTime);
 
-        TextBox bedTimeBox = sleepDataFragment.getView().findViewById(R.id.middleBox);
-        bedTimeBox.setText(sleepDataFragment.todayBedTime);
+        TextBox bedtimeBox = sleepDataFragment.getView().findViewById(R.id.middleBox);
+        bedtimeBox.setText(sleepDataFragment.todayBedtime);
     }
 }

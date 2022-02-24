@@ -1,5 +1,6 @@
 package com.example.sleepaid.Database.Option;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -20,6 +21,7 @@ public class Option {
     @ColumnInfo(name = "optionId")
     public int id;
 
+    @NonNull
     public String value;
     public int questionId;
 

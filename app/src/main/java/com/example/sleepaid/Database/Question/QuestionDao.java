@@ -17,6 +17,9 @@ public interface QuestionDao {
     @Query("SELECT * FROM Question WHERE questionId IN (:questionIds) ORDER BY questionId")
     Single<List<Question>> loadAllByIds(int[] questionIds);
 
+    @Query("SELECT * FROM Question WHERE questionnaireId IN (:questionnaireIds) ORDER BY questionnaireId, questionId")
+    Single<List<Question>> loadAllByQuestionnaireIds(int[] questionnaireIds);
+
     @Insert
     Completable insert(List<Question> questions);
 }

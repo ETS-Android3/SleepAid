@@ -1,21 +1,33 @@
 package com.example.sleepaid.Database.Goal;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity
+@Entity(indices = {
+        @Index(
+                value = {"name"},
+                unique = true
+        )
+})
 public class Goal {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "goalId")
     public int id;
 
+    @NonNull
     public String name;
-    public String value;
+    @NonNull
+    public int valueMin;
+    @NonNull
+    public int valueMax;
 
-    public Goal(String name, String value) {
+    public Goal(String name, int valueMin, int valueMax) {
         this.name = name;
-        this.value = value;
+        this.valueMin = valueMin;
+        this.valueMax = valueMax;
     }
 
     public int getId() {
@@ -26,7 +38,11 @@ public class Goal {
         return this.name;
     }
 
-    public String getValue() {
-        return this.value;
+    public int getValueMin() {
+        return this.valueMin;
+    }
+
+    public int getValueMax() {
+        return this.valueMax;
     }
 }

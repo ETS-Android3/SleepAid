@@ -12,6 +12,6 @@ public interface SleepDataFieldDao {
     @Query("SELECT * FROM SleepDataField ORDER BY fieldId")
     Single<List<SleepDataField>> getAll();
 
-    @Query("SELECT * FROM SleepDataField WHERE field IN (:fields) ORDER BY fieldId")
-    Single<List<SleepDataField>> loadAllByFields(String[] fields);
+    @Query("SELECT * FROM SleepDataField WHERE name IN (:names) ORDER BY fieldId")
+    Single<List<SleepDataField>> loadAllByNames(String[] names);
 }

@@ -15,8 +15,8 @@ public interface ConfigurationDao {
     @Query("SELECT * FROM Configuration ORDER BY configurationId")
     Single<List<Configuration>> getAll();
 
-    @Query("SELECT * FROM Configuration WHERE type IN (:configurationTypes) ORDER BY configurationId")
-    Single<List<Configuration>> loadAllByTypes(String[] configurationTypes);
+    @Query("SELECT * FROM Configuration WHERE name IN (:configurationNames) ORDER BY configurationId")
+    Single<List<Configuration>> loadAllByNames(String[] configurationNames);
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     Completable insert(List<Configuration> configurations);

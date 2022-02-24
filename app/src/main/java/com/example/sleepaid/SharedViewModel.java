@@ -34,8 +34,8 @@ public class SharedViewModel extends ViewModel {
     private LineGraphSeries<DataPoint> wakeupTimeLineSeries;
     private PointsGraphSeries<DataPoint> wakeupTimePointsSeries;
 
-    private LineGraphSeries<DataPoint> bedTimeLineSeries;
-    private PointsGraphSeries<DataPoint> bedTimePointsSeries;
+    private LineGraphSeries<DataPoint> bedtimeLineSeries;
+    private PointsGraphSeries<DataPoint> bedtimePointsSeries;
 
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
@@ -124,19 +124,19 @@ public class SharedViewModel extends ViewModel {
         });
     }
 
-    public void setBedTimeLineSeries(LineGraphSeries<DataPoint> bedTimeLineSeries, int backgroundColor, int lineColor) {
-        this.bedTimeLineSeries = bedTimeLineSeries;
+    public void setBedtimeLineSeries(LineGraphSeries<DataPoint> bedtimeLineSeries, int backgroundColor, int lineColor) {
+        this.bedtimeLineSeries = bedtimeLineSeries;
 
-        this.bedTimeLineSeries.setDrawBackground(true);
-        this.bedTimeLineSeries.setDrawDataPoints(true);
+        this.bedtimeLineSeries.setDrawBackground(true);
+        this.bedtimeLineSeries.setDrawDataPoints(true);
         //this.sleepDurationLineSeries.setBackgroundColor(backgroundColor);
-        this.bedTimeLineSeries.setColor(lineColor);
+        this.bedtimeLineSeries.setColor(lineColor);
     }
 
-    public void setBedTimePointsSeries(PointsGraphSeries<DataPoint> bedTimePointsSeries, int pointsColor) {
-        this.bedTimePointsSeries = bedTimePointsSeries;
+    public void setBedtimePointsSeries(PointsGraphSeries<DataPoint> bedtimePointsSeries, int pointsColor) {
+        this.bedtimePointsSeries = bedtimePointsSeries;
 
-        this.bedTimePointsSeries.setCustomShape(new PointsGraphSeries.CustomShape() {
+        this.bedtimePointsSeries.setCustomShape(new PointsGraphSeries.CustomShape() {
             @Override
             public void draw(Canvas canvas, Paint paint, float x, float y, DataPointInterface dataPoint) {
                 paint.setColor(pointsColor);
@@ -214,11 +214,11 @@ public class SharedViewModel extends ViewModel {
         return this.wakeupTimePointsSeries;
     }
 
-    public LineGraphSeries<DataPoint> getBedTimeLineSeries() {
-        return this.bedTimeLineSeries;
+    public LineGraphSeries<DataPoint> getBedtimeLineSeries() {
+        return this.bedtimeLineSeries;
     }
 
-    public PointsGraphSeries<DataPoint> getBedTimePointsSeries() {
-        return this.bedTimePointsSeries;
+    public PointsGraphSeries<DataPoint> getBedtimePointsSeries() {
+        return this.bedtimePointsSeries;
     }
 }

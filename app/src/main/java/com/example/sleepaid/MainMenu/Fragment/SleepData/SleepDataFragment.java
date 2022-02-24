@@ -52,7 +52,7 @@ public class SleepDataFragment extends Fragment {
 
     protected String todayDuration;
     protected String todayWakeupTime;
-    protected String todayBedTime;
+    protected String todayBedtime;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -141,19 +141,19 @@ public class SleepDataFragment extends Fragment {
                         sleepData -> {
                             todayDuration = "-";
                             todayWakeupTime = "-";
-                            todayBedTime = "-";
+                            todayBedtime = "-";
 
                             for (SleepData s : sleepData) {
                                 switch (s.getField()) {
-                                    case "wake-up time":
+                                    case "Wake-up time":
                                         todayWakeupTime = s.getValue();
                                         break;
 
-                                    case "bed time":
-                                        todayBedTime = s.getValue();
+                                    case "Bedtime":
+                                        todayBedtime = s.getValue();
                                         break;
 
-                                    //"duration"
+                                    //"Sleep duration"
                                     default:
                                         todayDuration = s.getValue();
                                 }

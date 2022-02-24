@@ -15,7 +15,7 @@ public interface SleepDataDao {
     @Query("SELECT * FROM SleepData ORDER BY date")
     Single<List<SleepData>> getAll();
 
-    @Query("SELECT * FROM SleepData WHERE field IN (:fields) ORDER BY fieldId")
+    @Query("SELECT * FROM SleepData WHERE field IN (:fields) ORDER BY field")
     Single<List<SleepData>> loadAllByFields(String[] fields);
 
     @Query("SELECT * FROM SleepData WHERE date IN (:dates) ORDER BY date")

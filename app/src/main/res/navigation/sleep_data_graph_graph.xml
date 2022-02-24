@@ -14,6 +14,6 @@
         android:label="WakeupTimeGraphFragment" />
     <fragment
         android:id="@+id/bedTimeGraphFragment"
-        android:name="com.example.sleepaid.MainMenu.Fragment.SleepData.BedTimeGraphFragment"
+        android:name="com.example.sleepaid.MainMenu.Fragment.SleepData.BedtimeGraphFragment"
         android:label="BedTimeGraphFragment" />
 </navigation>

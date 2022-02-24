@@ -21,12 +21,15 @@ import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Option.OptionDao;
 import com.example.sleepaid.Database.Question.Question;
 import com.example.sleepaid.Database.Question.QuestionDao;
+import com.example.sleepaid.Database.Questionnaire.Questionnaire;
+import com.example.sleepaid.Database.Questionnaire.QuestionnaireDao;
 import com.example.sleepaid.Database.SleepData.SleepData;
 import com.example.sleepaid.Database.SleepData.SleepDataDao;
 import com.example.sleepaid.Database.SleepDataField.SleepDataField;
 import com.example.sleepaid.Database.SleepDataField.SleepDataFieldDao;
 
 @Database(entities = {
+        Questionnaire.class,
         Question.class,
         Option.class,
         Answer.class,
@@ -37,13 +40,13 @@ import com.example.sleepaid.Database.SleepDataField.SleepDataFieldDao;
         SleepData.class,
         SleepDataField.class
 },
-        autoMigrations = {
-                @AutoMigration(from = 1, to = 4)
-        },
-        version = 4)
+        version = 1,
+        exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase INSTANCE;
     private static final String dbName = "sleep-aid.db";
+
+    public abstract QuestionnaireDao questionnaireDao();
 
     public abstract QuestionDao questionDao();
 
@@ -71,7 +74,9 @@ public abstract class AppDatabase extends RoomDatabase {
                             context,
                             AppDatabase.class,
                             dbName
-                    ).createFromAsset("database/initial-data.db").build();
+                    )
+                            .createFromAsset("database/initial-data.db")
+                            .build();
                 }
             }
         }

@@ -76,23 +76,17 @@ public class InitialSettingsHandler {
                 .subscribe(
                         answerData -> {
                             List<Integer> bedTimes = DataHandler.getIntsFromString(answerData.get(0));
-                            Goal bedTimeMin = new Goal("bedTimeMin", Integer.toString(bedTimes.get(0)));
-                            goalList.add(bedTimeMin);
-
-                            Goal bedTimeMax = new Goal("bedTimeMax", Integer.toString(bedTimes.get(1)));
-                            goalList.add(bedTimeMax);
+                            Goal bedtime = new Goal("Bedtime", bedTimes.get(0), bedTimes.get(1));
+                            goalList.add(bedtime);
 
                             List<Integer> wakeupTimes = DataHandler.getIntsFromString(answerData.get(1));
-                            Goal wakeupTimeMin = new Goal("wakeupTimeMin", Integer.toString(wakeupTimes.get(0)));
-                            goalList.add(wakeupTimeMin);
-
-                            Goal wakeupTimeMax = new Goal("wakeupTimeMax", Integer.toString(wakeupTimes.get(1)));
-                            goalList.add(wakeupTimeMax);
+                            Goal wakeupTime = new Goal("Wake-up time", wakeupTimes.get(0), wakeupTimes.get(1));
+                            goalList.add(wakeupTime);
 
                             int duration = bedTimes.get(0) <= 12 ?
                                     12 + (wakeupTimes.get(0) - bedTimes.get(0)) :
                                     (wakeupTimes.get(0) - bedTimes.get(0));
-                            Goal sleepDuration = new Goal("sleepDuration", Integer.toString(duration));
+                            Goal sleepDuration = new Goal("Sleep duration", duration, duration);
                             goalList.add(sleepDuration);
 
                             getAlarmList(wakeupTimes.get(0), bedTimes.get(0));

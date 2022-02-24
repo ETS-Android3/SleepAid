@@ -46,7 +46,7 @@ public class AlarmsFragment extends Fragment {
         NavigationUI.setupWithNavController(bottomMenu, navController);
 
         db.configurationDao()
-                .loadAllByTypes(new String[]{"supportNaps"})
+                .loadAllByNames(new String[]{"supportNaps"})
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

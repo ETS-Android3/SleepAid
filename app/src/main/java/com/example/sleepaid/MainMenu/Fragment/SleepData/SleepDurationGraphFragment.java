@@ -44,7 +44,7 @@ public class SleepDurationGraphFragment extends SleepDataGraphFragment {
                 .loadAllByDateRangeAndType(
                         DataHandler.getSQLiteDate(sleepDataFragment.rangeMin.getTime()),
                         DataHandler.getSQLiteDate(sleepDataFragment.rangeMax.getTime()),
-                        "duration"
+                        "Sleep duration"
                 )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

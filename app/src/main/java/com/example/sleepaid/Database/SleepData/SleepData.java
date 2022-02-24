@@ -1,37 +1,35 @@
 package com.example.sleepaid.Database.SleepData;
 
-import androidx.room.ColumnInfo;
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
-import androidx.room.PrimaryKey;
 
 import com.example.sleepaid.Database.SleepDataField.SleepDataField;
 
-@Entity(foreignKeys = {
+@Entity(primaryKeys = {
+        "field",
+        "date"
+},
+        foreignKeys = {
         @ForeignKey(
                 entity = SleepDataField.class,
-                parentColumns = "field",
+                parentColumns = "name",
                 childColumns = "field",
                 onDelete = ForeignKey.CASCADE
         )
 })
 public class SleepData {
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "fieldId")
-    public int id;
-
+    @NonNull
     public String field;
+    @NonNull
     public String date;
+    @NonNull
     public String value;
 
     public SleepData(String field, String date, String value) {
         this.field = field;
         this.date = date;
         this.value = value;
-    }
-
-    public int getId() {
-        return this.id;
     }
 
     public String getField() {

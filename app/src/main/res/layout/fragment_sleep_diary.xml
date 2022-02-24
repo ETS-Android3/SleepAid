@@ -12,10 +12,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/bottomMenu">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/diary"
                 android:name="androidx.navigation.fragment.NavHostFragment"
@@ -24,11 +20,7 @@
                 android:layout_height="0dp"
                 android:layout_margin="10dp"
                 app:layout_constraintHeight_min="400dp"
-                app:layout_constraintHeight_max="wrap"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                app:layout_constraintHeight_max="wrap"/>
     </ScrollView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

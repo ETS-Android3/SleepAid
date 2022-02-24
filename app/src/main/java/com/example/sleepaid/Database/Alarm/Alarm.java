@@ -1,5 +1,6 @@
 package com.example.sleepaid.Database.Alarm;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -21,8 +22,11 @@ public class Alarm {
     public int id;
 
     public int type;
+    @NonNull
     public String time;
+    @NonNull
     public String days;
+    @NonNull
     public String sound;
 
     public Alarm(int type, String time, String days, String sound) {
