@@ -106,7 +106,7 @@
                 app:layout_constraintEnd_toStartOf="@id/middleBox"
                 app:layout_constraintTop_toBottomOf="@+id/graph"/>-->
 
-            <com.example.sleepaid.TextBox
+            <com.example.sleepaid.CircleBox
                 android:id="@+id/middleBox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

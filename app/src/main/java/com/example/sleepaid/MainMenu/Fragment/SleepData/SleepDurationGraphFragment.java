@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.sleepaid.CircleBox;
 import com.example.sleepaid.DataHandler;
 import com.example.sleepaid.R;
 import com.example.sleepaid.TextBox;
@@ -97,7 +98,7 @@ public class SleepDurationGraphFragment extends SleepDataGraphFragment {
     }
 
     protected void loadData() {
-        TextBox durationBox = sleepDataFragment.getView().findViewById(R.id.middleBox);
+        CircleBox durationBox = sleepDataFragment.getView().findViewById(R.id.middleBox);
         durationBox.setText(sleepDataFragment.todayDuration);
 
 //        TextBox wakeupTimeBox = sleepDataFragment.getView().findViewById(R.id.leftBox);

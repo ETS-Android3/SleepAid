@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.sleepaid.CircleBox;
 import com.example.sleepaid.DataHandler;
 import com.example.sleepaid.R;
 import com.example.sleepaid.TextBox;
@@ -99,7 +100,7 @@ public class WakeupTimeGraphFragment extends SleepDataGraphFragment {
 //        TextBox durationBox = sleepDataFragment.getView().findViewById(R.id.leftBox);
 //        durationBox.setText(sleepDataFragment.todayDuration);
 
-        TextBox wakeupTimeBox = sleepDataFragment.getView().findViewById(R.id.middleBox);
+        CircleBox wakeupTimeBox = sleepDataFragment.getView().findViewById(R.id.middleBox);
         wakeupTimeBox.setText(sleepDataFragment.todayWakeupTime);
 
 //        TextBox bedTimeBox = sleepDataFragment.getView().findViewById(R.id.rightBox);
