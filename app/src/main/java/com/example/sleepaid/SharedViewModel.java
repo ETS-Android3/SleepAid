@@ -87,9 +87,12 @@ public class SharedViewModel extends ViewModel {
                 paint.setColor(pointsColor);
                 paint.setTextSize(38);
 
-                String text = (dataPoint.getY() - 0.5) % 1 == 0 ?
-                        (int)(dataPoint.getY() - 0.5) + "h" :
-                        String.format("%.1f", dataPoint.getY() - 0.5) + "h";
+                int hours = (int)(dataPoint.getY() - 0.5);
+                int minutes = (int) (((dataPoint.getY() - 0.5) - hours) * 60);
+
+                String text = minutes == 0 ?
+                        hours + "h" :
+                        hours + "h" + minutes + "m";
 
                 canvas.drawText(text, x, y, paint);
             }
@@ -114,10 +117,13 @@ public class SharedViewModel extends ViewModel {
                 paint.setColor(pointsColor);
                 paint.setTextSize(38);
 
+                int hours = (int)(dataPoint.getY() - 0.5);
+                int minutes = (int) (((dataPoint.getY() - 0.5) - hours) * 60);
+
+                String delimiter = minutes < 10 ? ":0" : ":";
+
                 //TODO figure out if it's AM or PM
-                String text = (dataPoint.getY() - 0.5) % 1 == 0 ?
-                        (int)(dataPoint.getY() - 0.5) + "AM" :
-                        String.format("%.1f", dataPoint.getY() - 0.5) + "AM";
+                String text = hours + delimiter + minutes + "AM";
 
                 canvas.drawText(text, x, y, paint);
             }
@@ -142,10 +148,13 @@ public class SharedViewModel extends ViewModel {
                 paint.setColor(pointsColor);
                 paint.setTextSize(38);
 
+                int hours = (int)(dataPoint.getY() - 0.5);
+                int minutes = (int) (((dataPoint.getY() - 0.5) - hours) * 60);
+
+                String delimiter = minutes < 10 ? ":0" : ":";
+
                 //TODO figure out if it's AM or PM
-                String text = (dataPoint.getY() - 0.5) % 1 == 0 ?
-                        (int)(dataPoint.getY() - 0.5) + "PM" :
-                        String.format("%.1f", dataPoint.getY() - 0.5) + "PM";
+                String text = hours + delimiter + minutes + "PM";
 
                 canvas.drawText(text, x, y, paint);
             }

@@ -245,6 +245,7 @@ public class QuestionnaireFragment extends Fragment {
         if (question.isPresent()) {
             questionBox.setText(question.get().getQuestion());
             informationBox.setText(question.get().getInformation());
+            informationBox.setTextSize((int) (sizeInDp / 3.5));
         }
     }
 
