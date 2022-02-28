@@ -4,4 +4,4 @@
     android:id="@+id/sleepDataGraph"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginHorizontal="10dp" />
+    android:layout_marginHorizontal="2.5dp" />

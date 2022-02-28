@@ -31,6 +31,10 @@ public class DataHandler {
         return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date);
     }
 
+    public static String getDay(Date date) {
+        return new SimpleDateFormat("dd", Locale.getDefault()).format(date);
+    }
+
     public static String getMonth(Date date) {
         return new SimpleDateFormat("MM/yy", Locale.getDefault()).format(date);
     }

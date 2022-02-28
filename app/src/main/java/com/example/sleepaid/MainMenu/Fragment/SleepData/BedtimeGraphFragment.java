@@ -39,64 +39,10 @@ public class BedtimeGraphFragment extends SleepDataGraphFragment {
 
     protected void loadGraph(Date min, Date max) {
         super.loadGraph(min, max);
-
-        db.sleepDataDao()
-                .loadAllByDateRangeAndType(
-                        DataHandler.getSQLiteDate(sleepDataFragment.rangeMin.getTime()),
-                        DataHandler.getSQLiteDate(sleepDataFragment.rangeMax.getTime()),
-                        "Bedtime"
-                )
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        sleepData -> {
-                            //TODO make database composite primary key with date and field
-                            //TODO fix this for less values than required
-                            //TODO clear points for dates after today
-                            List<Double> processedSleepData = processFromDatabase(sleepData);
-
-                            LineGraphSeries<DataPoint> lineGraphSeries = new LineGraphSeries<>();
-                            PointsGraphSeries<DataPoint> pointsGraphSeries = new PointsGraphSeries<>();
-
-                            int maxGraphSize = model.getGraphPeriodLength();
-
-                            for (int i = 0; i < Math.min(maxGraphSize, processedSleepData.size()); i++) {
-                                lineGraphSeries.appendData(
-                                        new DataPoint(i, processedSleepData.get(i)),
-                                        true,
-                                        maxGraphSize
-                                );
-
-                                if (processedSleepData.get(i) != 0) {
-                                    pointsGraphSeries.appendData(
-                                            new DataPoint(Math.max(0, i - 0.15), processedSleepData.get(i) + 0.5),
-                                            true,
-                                            maxGraphSize
-                                    );
-                                }
-                            }
-
-                            model.setBedtimeLineSeries(
-                                    lineGraphSeries,
-                                    getResources().getColor(R.color.white),
-                                    getResources().getColor(R.color.white)
-                            );
-
-                            model.setBedtimePointsSeries(
-                                    pointsGraphSeries,
-                                    getResources().getColor(R.color.white)
-                            );
-
-                            graph.getViewport().setMaxY(Collections.max(processedSleepData) + 1);
-
-                            graph.addSeries(model.getBedtimeLineSeries());
-                            graph.addSeries(model.getBedtimePointsSeries());
-                        },
-                        Throwable::printStackTrace
-                );
+        super.loadFromDatabase("Bedtime");
     }
 
-    protected void loadData() {
+    protected void loadTodaysData() {
 //        TextBox durationBox = sleepDataFragment.getView().findViewById(R.id.rightBox);
 //        durationBox.setText(sleepDataFragment.todayDuration);
 //

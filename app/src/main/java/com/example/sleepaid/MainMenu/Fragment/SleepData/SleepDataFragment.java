@@ -47,9 +47,6 @@ public class SleepDataFragment extends Fragment {
     protected Calendar rangeMax;
     protected Calendar rangeMin;
 
-    protected String graphRangeMin;
-    protected String graphRangeMax;
-
     protected String todayDuration;
     protected String todayWakeupTime;
     protected String todayBedtime;
@@ -111,8 +108,6 @@ public class SleepDataFragment extends Fragment {
         rangeMax = Calendar.getInstance();
         rangeMin = Calendar.getInstance();
 
-        graphRangeMax = DataHandler.getFormattedDate(rangeMax.getTime());
-
         switch (model.getGraphViewType()) {
             case "month":
                 rangeMin.add(Calendar.DAY_OF_MONTH, -rangeMax.get(Calendar.DAY_OF_MONTH) + 1);
@@ -128,8 +123,6 @@ public class SleepDataFragment extends Fragment {
                 rangeMin.add(Calendar.DAY_OF_WEEK, -rangeMax.get(Calendar.DAY_OF_WEEK) + 2);
                 break;
         }
-
-        graphRangeMin = DataHandler.getFormattedDate(rangeMin.getTime());
     }
 
     private void getTodaysData() {
@@ -159,7 +152,7 @@ public class SleepDataFragment extends Fragment {
                                 }
                             }
 
-                            graphFragment.loadData();
+                            graphFragment.loadTodaysData();
                         },
                         Throwable::printStackTrace
                 );
@@ -181,8 +174,26 @@ public class SleepDataFragment extends Fragment {
         };
     }
 
-    protected DefaultLabelFormatter getMonthLabelFormatter(String graphRangeMin, String graphRangeMax) {
-        String[] weeks = {"1", "2", "3", "4", "5"};
+    protected DefaultLabelFormatter getMonthLabelFormatter(int numberOfWeeks) {
+        String[] weeks = new String[numberOfWeeks];
+
+        Calendar day = (Calendar) rangeMin.clone();
+
+        for (int i = 0; i < numberOfWeeks; i++) {
+            String weekStart = DataHandler.getDay(day.getTime());
+
+            if (i == numberOfWeeks - 1){
+                day.set(Calendar.DAY_OF_MONTH, rangeMin.getActualMaximum(Calendar.DATE));
+            } else {
+                day.add(Calendar.DAY_OF_MONTH, 6);
+            }
+
+            String weekEnd = DataHandler.getDay(day.getTime());
+
+            weeks[i] = weekStart + "-" + weekEnd;
+
+            day.add(Calendar.DAY_OF_MONTH, 1);
+        }
 
         return new DefaultLabelFormatter() {
             @Override
@@ -198,7 +209,7 @@ public class SleepDataFragment extends Fragment {
     }
 
     protected DefaultLabelFormatter getYearLabelFormatter() {
-        String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        String[] months = {"Jan", "   Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov  ", "Dec"};
 
         return new DefaultLabelFormatter() {
             @Override
@@ -254,9 +265,6 @@ public class SleepDataFragment extends Fragment {
 
             // We need to make sure we don't go past today when clicking next
             rangeMax = endOfRange.after(today) ? (Calendar) today.clone() : (Calendar) endOfRange.clone();
-
-            graphRangeMin = DataHandler.getFormattedDate(rangeMin.getTime());
-            graphRangeMax = DataHandler.getFormattedDate(rangeMax.getTime());
 
             graphFragment.loadGraph(rangeMin.getTime(), rangeMax.getTime());
         }

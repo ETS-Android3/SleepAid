@@ -35,12 +35,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="5dp"
-                android:text="&lt;"
+                android:text="&#160;&lt;&#160;"
                 android:textAlignment="center"
                 android:textSize="22.5sp"
                 android:textColor="@color/white"
                 android:backgroundTint="@android:color/transparent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/calendarDropdown"
                 app:layout_constraintEnd_toStartOf="@+id/graphTitle"/>
 
             <TextView
@@ -55,7 +55,7 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/calendarDropdown" />
 
             <Button
                 android:id="@+id/nextButton"
@@ -63,12 +63,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="5dp"
-                android:text="&gt;"
+                android:text="&#160;&gt;&#160;"
                 android:textAlignment="center"
                 android:textSize="22.5sp"
                 android:textColor="@color/white"
                 android:backgroundTint="@android:color/transparent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/calendarDropdown"
                 app:layout_constraintStart_toEndOf="@+id/graphTitle"/>
 
             <androidx.fragment.app.FragmentContainerView
@@ -99,29 +99,16 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/graph" />
 
-            <!--<com.example.sleepaid.TextBox
-                android:id="@+id/leftBox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toStartOf="@id/middleBox"
-                app:layout_constraintTop_toBottomOf="@+id/graph"/>-->
-
             <com.example.sleepaid.CircleBox
                 android:id="@+id/middleBox"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginVertical="10dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/today"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.5" />
-
-            <!--<com.example.sleepaid.TextBox
-                android:id="@+id/rightBox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toEndOf="@id/middleBox"
-                app:layout_constraintTop_toBottomOf="@+id/graph"/>-->
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
