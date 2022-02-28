@@ -29,15 +29,24 @@ public class SharedViewModel extends ViewModel {
     private int graphMonthLength;
     private int graphYearLength;
 
+    private int sleepDurationGoalMin;
+    private int sleepDurationGoalMax;
+
     private LineGraphSeries<DataPoint> sleepDurationLineSeries;
     private PointsGraphSeries<DataPoint> sleepDurationPointsSeries;
     private LineGraphSeries<DataPoint> sleepDurationGoalMinLine;
     private LineGraphSeries<DataPoint> sleepDurationGoalMaxLine;
 
+    private int wakeupTimeGoalMin;
+    private int wakeupTimeGoalMax;
+
     private LineGraphSeries<DataPoint> wakeupTimeLineSeries;
     private PointsGraphSeries<DataPoint> wakeupTimePointsSeries;
     private LineGraphSeries<DataPoint> wakeupTimeGoalMinLine;
     private LineGraphSeries<DataPoint> wakeupTimeGoalMaxLine;
+
+    private int bedtimeGoalMin;
+    private int bedtimeGoalMax;
 
     private LineGraphSeries<DataPoint> bedtimeLineSeries;
     private PointsGraphSeries<DataPoint> bedtimePointsSeries;
@@ -76,39 +85,23 @@ public class SharedViewModel extends ViewModel {
         this.graphYearLength = graphYearLength;
     }
 
-    private void setSleepDurationLineSeries(LineGraphSeries<DataPoint> sleepDurationLineSeries, int backgroundColor, int lineColor) {
-        this.sleepDurationLineSeries = sleepDurationLineSeries;
-
-        this.styleLineSeries(this.sleepDurationLineSeries, backgroundColor, lineColor);
-    }
-
-    private void setWakeupTimeLineSeries(LineGraphSeries<DataPoint> wakeupTimeLineSeries, int backgroundColor, int lineColor) {
-        this.wakeupTimeLineSeries = wakeupTimeLineSeries;
-
-        this.styleLineSeries(this.wakeupTimeLineSeries, backgroundColor, lineColor);
-    }
-
-    private void setBedtimeLineSeries(LineGraphSeries<DataPoint> bedtimeLineSeries, int backgroundColor, int lineColor) {
-        this.bedtimeLineSeries = bedtimeLineSeries;
-
-        this.styleLineSeries(this.bedtimeLineSeries, backgroundColor, lineColor);
-    }
-
     public void setLineSeries(String fieldName, LineGraphSeries<DataPoint> lineSeries, int backgroundColor, int lineColor) {
         switch (fieldName) {
             case "Wake-up time":
-                this.setWakeupTimeLineSeries(lineSeries, backgroundColor, lineColor);
+                this.wakeupTimeLineSeries = lineSeries;
                 break;
 
             case "Bedtime":
-                this.setBedtimeLineSeries(lineSeries, backgroundColor, lineColor);
+                this.bedtimeLineSeries = lineSeries;
                 break;
 
             //"Sleep duration"
             default:
-                this.setSleepDurationLineSeries(lineSeries, backgroundColor, lineColor);
+                this.sleepDurationLineSeries = lineSeries;
                 break;
         }
+
+        this.styleLineSeries(lineSeries, backgroundColor, lineColor);
     }
 
     private void styleLineSeries(LineGraphSeries<DataPoint> lineSeries, int backgroundColor, int lineColor) {
@@ -201,74 +194,104 @@ public class SharedViewModel extends ViewModel {
         }
     }
 
-    private void setSleepDurationGoalMinLine(LineGraphSeries<DataPoint> sleepDurationGoalMinLine, int lineColor) {
-        this.sleepDurationGoalMinLine = sleepDurationGoalMinLine;
-
-        styleGoalLine(this.sleepDurationGoalMinLine, lineColor);
-    }
-
-    private void setWakeupTimeGoalMinLine(LineGraphSeries<DataPoint> wakeupTimeGoalMinLine, int lineColor) {
-        this.wakeupTimeGoalMinLine = wakeupTimeGoalMinLine;
-
-        styleGoalLine(this.wakeupTimeGoalMinLine, lineColor);
-    }
-
-    private void setBedtimeGoalMinLine(LineGraphSeries<DataPoint> bedtimeGoalMinLine, int lineColor) {
-        this.bedtimeGoalMinLine = bedtimeGoalMinLine;
-
-        styleGoalLine(this.bedtimeGoalMinLine, lineColor);
-    }
-
-    public void setGoalMinLine(String goalName, LineGraphSeries<DataPoint> goalMinLine, int lineColor) {
+    public void setGoalMin(String goalName, int goalValue, int lineColor) {
         switch (goalName) {
             case "Wake-up time":
-                this.setWakeupTimeGoalMinLine(goalMinLine, lineColor);
+                this.wakeupTimeGoalMin = goalValue;
                 break;
 
             case "Bedtime":
-                this.setBedtimeGoalMinLine(goalMinLine, lineColor);
+                this.bedtimeGoalMin = goalValue;
                 break;
 
             //"Sleep duration"
             default:
-                this.setSleepDurationGoalMinLine(goalMinLine, lineColor);
+                this.sleepDurationGoalMin = goalValue;
                 break;
         }
+
+        LineGraphSeries<DataPoint> goalMinLine = new LineGraphSeries<>();
+
+        int maxGraphSize = this.getGraphPeriodLength();
+
+        for (int i = 0; i < maxGraphSize; i++) {
+            goalMinLine.appendData(
+                    new DataPoint(i, goalValue),
+                    true,
+                    maxGraphSize
+            );
+        }
+
+        this.setGoalMinLine(goalName, goalMinLine, lineColor);
     }
 
-    private void setSleepDurationGoalMaxLine(LineGraphSeries<DataPoint> sleepDurationGoalMaxLine, int lineColor) {
-        this.sleepDurationGoalMaxLine = sleepDurationGoalMaxLine;
-
-        styleGoalLine(this.sleepDurationGoalMaxLine, lineColor);
-    }
-
-    private void setWakeupTimeGoalMaxLine(LineGraphSeries<DataPoint> wakeupTimeGoalMaxLine, int lineColor) {
-        this.wakeupTimeGoalMaxLine = wakeupTimeGoalMaxLine;
-
-        styleGoalLine(this.wakeupTimeGoalMaxLine, lineColor);
-    }
-
-    private void setBedtimeGoalMaxLine(LineGraphSeries<DataPoint> bedtimeGoalMaxLine, int lineColor) {
-        this.bedtimeGoalMaxLine = bedtimeGoalMaxLine;
-
-        styleGoalLine(this.bedtimeGoalMaxLine, lineColor);
-    }
-
-    public void setGoalMaxLine(String goalName, LineGraphSeries<DataPoint> goalMaxLine, int lineColor) {
+    private void setGoalMinLine(String goalName, LineGraphSeries<DataPoint> goalMinLine, int lineColor) {
         switch (goalName) {
             case "Wake-up time":
-                this.setWakeupTimeGoalMaxLine(goalMaxLine, lineColor);
+                this.wakeupTimeGoalMinLine = goalMinLine;
                 break;
 
             case "Bedtime":
-                this.setBedtimeGoalMaxLine(goalMaxLine, lineColor);
+                this.bedtimeGoalMinLine = goalMinLine;
                 break;
 
             //"Sleep duration"
             default:
-                this.setSleepDurationGoalMaxLine(goalMaxLine, lineColor);
+                this.sleepDurationGoalMinLine = goalMinLine;
                 break;
         }
+
+        styleGoalLine(goalMinLine, lineColor);
+    }
+
+    public void setGoalMax(String goalName, int goalValue, int lineColor) {
+        switch (goalName) {
+            case "Wake-up time":
+                this.wakeupTimeGoalMax = goalValue;
+                break;
+
+            case "Bedtime":
+                this.bedtimeGoalMax = goalValue;
+                break;
+
+            //"Sleep duration"
+            default:
+                this.sleepDurationGoalMax = goalValue;
+                break;
+        }
+
+        LineGraphSeries<DataPoint> goalMaxLine = new LineGraphSeries<>();
+
+        int maxGraphSize = this.getGraphPeriodLength();
+
+        for (int i = 0; i < maxGraphSize; i++) {
+            goalMaxLine.appendData(
+                    new DataPoint(i, goalValue),
+                    true,
+                    maxGraphSize
+            );
+        }
+
+        this.setGoalMaxLine(goalName, goalMaxLine, lineColor);
+    }
+
+    private void setGoalMaxLine(String goalName, LineGraphSeries<DataPoint> goalMaxLine, int lineColor) {
+        switch (goalName) {
+            case "Wake-up time":
+                this.wakeupTimeGoalMaxLine = goalMaxLine;
+                break;
+
+            case "Bedtime":
+                this.bedtimeGoalMaxLine = goalMaxLine;
+                break;
+
+            //"Sleep duration"
+            default:
+                this.sleepDurationGoalMaxLine = goalMaxLine;
+                break;
+        }
+
+        styleGoalLine(goalMaxLine, lineColor);
     }
 
     private void styleGoalLine(LineGraphSeries<DataPoint> goalLine, int lineColor) {
@@ -358,6 +381,20 @@ public class SharedViewModel extends ViewModel {
         }
     }
 
+    public int getGoalMin(String goalName) {
+        switch (goalName) {
+            case "Wake-up time":
+                return this.wakeupTimeGoalMin;
+
+            case "Bedtime":
+                return this.bedtimeGoalMin;
+
+            //"Sleep duration"
+            default:
+                return this.sleepDurationGoalMin;
+        }
+    }
+
     public LineGraphSeries<DataPoint> getGoalMinLine(String goalName) {
         switch (goalName) {
             case "Wake-up time":
@@ -369,6 +406,20 @@ public class SharedViewModel extends ViewModel {
             //"Sleep duration"
             default:
                 return this.sleepDurationGoalMinLine;
+        }
+    }
+
+    public int getGoalMax(String goalName) {
+        switch (goalName) {
+            case "Wake-up time":
+                return this.wakeupTimeGoalMax;
+
+            case "Bedtime":
+                return this.bedtimeGoalMax;
+
+            //"Sleep duration"
+            default:
+                return this.sleepDurationGoalMax;
         }
     }
 

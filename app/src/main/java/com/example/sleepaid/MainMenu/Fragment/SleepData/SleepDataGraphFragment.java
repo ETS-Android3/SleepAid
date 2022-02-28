@@ -67,6 +67,7 @@ public abstract class SleepDataGraphFragment extends Fragment {
         graph.getViewport().setXAxisBoundsManual(true);
         graph.getViewport().setYAxisBoundsManual(true);
 
+        //graph.getViewport().setDrawBorder(true);
         //graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.HORIZONTAL);
         graph.setOnTouchListener(new OnSwipeTouchListener(App.getContext()) {
             @Override
@@ -162,7 +163,7 @@ public abstract class SleepDataGraphFragment extends Fragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         sleepData -> {
-                            List<Double> processedSleepData = processFromDatabase(sleepData);
+                            List<Double> processedSleepData = this.processFromDatabase(sleepData);
 
                             LineGraphSeries<DataPoint> lineGraphSeries = new LineGraphSeries<>();
                             PointsGraphSeries<DataPoint> pointsGraphSeries = new PointsGraphSeries<>();
@@ -218,7 +219,7 @@ public abstract class SleepDataGraphFragment extends Fragment {
                             );
 
                             graph.addSeries(model.getLineSeries(name));
-                            graph.addSeries(model.getPointsSeries(name));
+                            //graph.addSeries(model.getPointsSeries(name));
 
                             loadGoal(name);
                         },
@@ -236,36 +237,15 @@ public abstract class SleepDataGraphFragment extends Fragment {
                     .subscribe(
                             goalData -> {
                                 if (!goalData.isEmpty()) {
-                                    LineGraphSeries<DataPoint> goalLineMin = new LineGraphSeries<>();
-                                    LineGraphSeries<DataPoint> goalLineMax = new LineGraphSeries<>();
-
-                                    double goalValueMin = goalData.get(0).getValueMin();
-                                    double goalValueMax = goalData.get(0).getValueMax();
-
-                                    int maxGraphSize = model.getGraphPeriodLength();
-
-                                    for (int i = 0; i < maxGraphSize; i++) {
-                                        goalLineMin.appendData(
-                                                new DataPoint(i, goalValueMin),
-                                                true,
-                                                maxGraphSize
-                                        );
-
-                                        goalLineMax.appendData(
-                                                new DataPoint(i, goalValueMax),
-                                                true,
-                                                maxGraphSize
-                                        );
-                                    }
-
-                                    model.setGoalMinLine(
+                                    model.setGoalMin(
                                             goalName,
-                                            goalLineMin,
+                                            goalData.get(0).getValueMin(),
                                             getResources().getColor(R.color.white_transparent)
                                     );
-                                    model.setGoalMaxLine(
+
+                                    model.setGoalMax(
                                             goalName,
-                                            goalLineMax,
+                                            goalData.get(0).getValueMax(),
                                             getResources().getColor(R.color.white_transparent)
                                     );
 
