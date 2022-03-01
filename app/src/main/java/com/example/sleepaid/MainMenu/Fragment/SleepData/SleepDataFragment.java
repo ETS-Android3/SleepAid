@@ -126,6 +126,7 @@ public class SleepDataFragment extends Fragment {
     }
 
     private void getTodaysData() {
+        //TODO check if it's there already and if the date in shared view model matches
         db.sleepDataDao()
                 .loadAllByDates(new String[]{DataHandler.getSQLiteDate(today.getTime())})
                 .subscribeOn(Schedulers.io())

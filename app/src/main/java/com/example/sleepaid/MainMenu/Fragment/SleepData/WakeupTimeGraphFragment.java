@@ -39,7 +39,7 @@ public class WakeupTimeGraphFragment extends SleepDataGraphFragment {
 
     protected void loadGraph(Date min, Date max) {
         super.loadGraph(min, max);
-        super.loadFromDatabase("Wake-up time");
+        super.loadGoal("Wake-up time");
     }
 
     protected void loadTodaysData() {

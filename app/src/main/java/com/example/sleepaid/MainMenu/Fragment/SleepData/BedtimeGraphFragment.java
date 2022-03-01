@@ -39,7 +39,7 @@ public class BedtimeGraphFragment extends SleepDataGraphFragment {
 
     protected void loadGraph(Date min, Date max) {
         super.loadGraph(min, max);
-        super.loadFromDatabase("Bedtime");
+        super.loadGoal("Bedtime");
     }
 
     protected void loadTodaysData() {

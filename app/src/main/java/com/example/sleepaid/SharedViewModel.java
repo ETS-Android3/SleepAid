@@ -3,6 +3,7 @@ package com.example.sleepaid;
 import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
+import android.provider.ContactsContract;
 
 import androidx.lifecycle.ViewModel;
 
@@ -29,29 +30,35 @@ public class SharedViewModel extends ViewModel {
     private int graphMonthLength;
     private int graphYearLength;
 
-    private int sleepDurationGoalMin;
-    private int sleepDurationGoalMax;
-
     private LineGraphSeries<DataPoint> sleepDurationLineSeries;
     private PointsGraphSeries<DataPoint> sleepDurationPointsSeries;
+
+    private int sleepDurationGoalMin;
+    private int sleepDurationGoalMax;
     private LineGraphSeries<DataPoint> sleepDurationGoalMinLine;
     private LineGraphSeries<DataPoint> sleepDurationGoalMaxLine;
-
-    private int wakeupTimeGoalMin;
-    private int wakeupTimeGoalMax;
+    private PointsGraphSeries<DataPoint> sleepDurationGoalMinPoint;
+    private PointsGraphSeries<DataPoint> sleepDurationGoalMaxPoint;
 
     private LineGraphSeries<DataPoint> wakeupTimeLineSeries;
     private PointsGraphSeries<DataPoint> wakeupTimePointsSeries;
+
+    private int wakeupTimeGoalMin;
+    private int wakeupTimeGoalMax;
     private LineGraphSeries<DataPoint> wakeupTimeGoalMinLine;
     private LineGraphSeries<DataPoint> wakeupTimeGoalMaxLine;
-
-    private int bedtimeGoalMin;
-    private int bedtimeGoalMax;
+    private PointsGraphSeries<DataPoint> wakeupTimeGoalMinPoint;
+    private PointsGraphSeries<DataPoint> wakeupTimeGoalMaxPoint;
 
     private LineGraphSeries<DataPoint> bedtimeLineSeries;
     private PointsGraphSeries<DataPoint> bedtimePointsSeries;
+
+    private int bedtimeGoalMin;
+    private int bedtimeGoalMax;
     private LineGraphSeries<DataPoint> bedtimeGoalMinLine;
     private LineGraphSeries<DataPoint> bedtimeGoalMaxLine;
+    private PointsGraphSeries<DataPoint> bedtimeGoalMinPoint;
+    private PointsGraphSeries<DataPoint> bedtimeGoalMaxPoint;
 
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
@@ -194,7 +201,7 @@ public class SharedViewModel extends ViewModel {
         }
     }
 
-    public void setGoalMin(String goalName, int goalValue, int lineColor) {
+    public void setGoalMin(String goalName, int goalValue, int lineColor, int pointColor) {
         switch (goalName) {
             case "Wake-up time":
                 this.wakeupTimeGoalMin = goalValue;
@@ -223,6 +230,14 @@ public class SharedViewModel extends ViewModel {
         }
 
         this.setGoalMinLine(goalName, goalMinLine, lineColor);
+
+        PointsGraphSeries<DataPoint> goalMinPoint = new PointsGraphSeries<>();
+        goalMinPoint.appendData(
+                new DataPoint(0, goalValue + 0.25),
+                true,
+                1);
+
+        this.setGoalMinPointsSeries(goalName, goalMinPoint, pointColor);
     }
 
     private void setGoalMinLine(String goalName, LineGraphSeries<DataPoint> goalMinLine, int lineColor) {
@@ -241,10 +256,30 @@ public class SharedViewModel extends ViewModel {
                 break;
         }
 
-        styleGoalLine(goalMinLine, lineColor);
+        this.styleGoalLine(goalMinLine, lineColor);
     }
 
-    public void setGoalMax(String goalName, int goalValue, int lineColor) {
+    public void setGoalMinPointsSeries(String goalName, PointsGraphSeries<DataPoint> pointsSeries, int pointColor) {
+        switch (goalName) {
+            case "Wake-up time":
+                this.wakeupTimeGoalMinPoint = pointsSeries;
+                this.styleWakeupTimeGoalPoint(pointsSeries, pointColor);
+                break;
+
+            case "Bedtime":
+                this.bedtimeGoalMinPoint = pointsSeries;
+                this.styleBedtimeGoalPoint(pointsSeries, pointColor);
+                break;
+
+            //"Sleep duration"
+            default:
+                this.sleepDurationGoalMinPoint = pointsSeries;
+                this.styleSleepDurationGoalPoint(pointsSeries, pointColor);
+                break;
+        }
+    }
+
+    public void setGoalMax(String goalName, int goalValue, int lineColor, int pointColor) {
         switch (goalName) {
             case "Wake-up time":
                 this.wakeupTimeGoalMax = goalValue;
@@ -273,6 +308,14 @@ public class SharedViewModel extends ViewModel {
         }
 
         this.setGoalMaxLine(goalName, goalMaxLine, lineColor);
+
+        PointsGraphSeries<DataPoint> goalMaxPoint = new PointsGraphSeries<>();
+        goalMaxPoint.appendData(
+                new DataPoint(0, goalValue + 0.25),
+                true,
+                1);
+
+        this.setGoalMaxPointsSeries(goalName, goalMaxPoint, pointColor);
     }
 
     private void setGoalMaxLine(String goalName, LineGraphSeries<DataPoint> goalMaxLine, int lineColor) {
@@ -291,7 +334,27 @@ public class SharedViewModel extends ViewModel {
                 break;
         }
 
-        styleGoalLine(goalMaxLine, lineColor);
+        this.styleGoalLine(goalMaxLine, lineColor);
+    }
+
+    public void setGoalMaxPointsSeries(String goalName, PointsGraphSeries<DataPoint> pointsSeries, int pointColor) {
+        switch (goalName) {
+            case "Wake-up time":
+                this.wakeupTimeGoalMaxPoint = pointsSeries;
+                this.styleWakeupTimeGoalPoint(pointsSeries, pointColor);
+                break;
+
+            case "Bedtime":
+                this.bedtimeGoalMaxPoint = pointsSeries;
+                this.styleBedtimeGoalPoint(pointsSeries, pointColor);
+                break;
+
+            //"Sleep duration"
+            default:
+                this.sleepDurationGoalMaxPoint = pointsSeries;
+                this.styleSleepDurationGoalPoint(pointsSeries, pointColor);
+                break;
+        }
     }
 
     private void styleGoalLine(LineGraphSeries<DataPoint> goalLine, int lineColor) {
@@ -305,6 +368,65 @@ public class SharedViewModel extends ViewModel {
 
         goalLine.setCustomPaint(paint);
         goalLine.setDrawAsPath(true);
+    }
+
+    private void styleSleepDurationGoalPoint(PointsGraphSeries<DataPoint> sleepDurationGoalPoint, int pointColor) {
+        sleepDurationGoalPoint.setCustomShape(new PointsGraphSeries.CustomShape() {
+            @Override
+            public void draw(Canvas canvas, Paint paint, float x, float y, DataPointInterface dataPoint) {
+                paint.setColor(pointColor);
+                paint.setTextSize(38);
+
+                int hours = (int)(dataPoint.getY() - 0.25);
+                int minutes = (int) (((dataPoint.getY() - 0.25) - hours) * 60);
+
+                String text = minutes == 0 ?
+                        hours + "h" :
+                        hours + "h" + minutes + "m";
+
+                canvas.drawText(text, x, y, paint);
+            }
+        });
+    }
+
+    private void styleWakeupTimeGoalPoint(PointsGraphSeries<DataPoint> wakeupTimeGoalPoint, int pointColor) {
+        wakeupTimeGoalPoint.setCustomShape(new PointsGraphSeries.CustomShape() {
+            @Override
+            public void draw(Canvas canvas, Paint paint, float x, float y, DataPointInterface dataPoint) {
+                paint.setColor(pointColor);
+                paint.setTextSize(38);
+
+                int hours = (int)(dataPoint.getY() - 0.25);
+                int minutes = (int) (((dataPoint.getY() - 0.25) - hours) * 60);
+
+                String delimiter = minutes < 10 ? ":0" : ":";
+
+                //TODO figure out if it's AM or PM
+                String text = hours + delimiter + minutes + "AM";
+
+                canvas.drawText(text, x, y, paint);
+            }
+        });
+    }
+
+    private void styleBedtimeGoalPoint(PointsGraphSeries<DataPoint> bedtimeGoalPoint, int pointColor) {
+        bedtimeGoalPoint.setCustomShape(new PointsGraphSeries.CustomShape() {
+            @Override
+            public void draw(Canvas canvas, Paint paint, float x, float y, DataPointInterface dataPoint) {
+                paint.setColor(pointColor);
+                paint.setTextSize(38);
+
+                int hours = (int)(dataPoint.getY() - 0.25);
+                int minutes = (int) (((dataPoint.getY() - 0.25) - hours) * 60);
+
+                String delimiter = minutes < 10 ? ":0" : ":";
+
+                //TODO figure out if it's AM or PM
+                String text = hours + delimiter + minutes + "PM";
+
+                canvas.drawText(text, x, y, paint);
+            }
+        });
     }
 
     public List<Question> getQuestions() {
@@ -409,6 +531,20 @@ public class SharedViewModel extends ViewModel {
         }
     }
 
+    public PointsGraphSeries<DataPoint> getGoalMinPoint(String goalName) {
+        switch (goalName) {
+            case "Wake-up time":
+                return this.wakeupTimeGoalMinPoint;
+
+            case "Bedtime":
+                return this.bedtimeGoalMinPoint;
+
+            //"Sleep duration"
+            default:
+                return this.sleepDurationGoalMinPoint;
+        }
+    }
+
     public int getGoalMax(String goalName) {
         switch (goalName) {
             case "Wake-up time":
@@ -434,6 +570,20 @@ public class SharedViewModel extends ViewModel {
             //"Sleep duration"
             default:
                 return this.sleepDurationGoalMaxLine;
+        }
+    }
+
+    public PointsGraphSeries<DataPoint> getGoalMaxPoint(String goalName) {
+        switch (goalName) {
+            case "Wake-up time":
+                return this.wakeupTimeGoalMaxPoint;
+
+            case "Bedtime":
+                return this.bedtimeGoalMaxPoint;
+
+            //"Sleep duration"
+            default:
+                return this.sleepDurationGoalMaxPoint;
         }
     }
 }

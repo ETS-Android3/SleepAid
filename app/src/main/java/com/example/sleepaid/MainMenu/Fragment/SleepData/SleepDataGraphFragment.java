@@ -152,6 +152,56 @@ public abstract class SleepDataGraphFragment extends Fragment {
         }
     }
 
+    protected void loadGoal(String goalName) {
+        if (model.getGoalMinLine(goalName) == null &&
+                model.getGoalMaxLine(goalName) == null) {
+            db.goalDao()
+                    .loadAllByNames(new String[]{goalName})
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            goalData -> {
+                                if (!goalData.isEmpty()) {
+                                    model.setGoalMax(
+                                            goalName,
+                                            goalData.get(0).getValueMax(),
+                                            getResources().getColor(R.color.white_transparent),
+                                            getResources().getColor(R.color.white_transparent)
+                                    );
+
+                                    graph.addSeries(model.getGoalMaxLine(goalName));
+                                    graph.addSeries(model.getGoalMaxPoint(goalName));
+
+                                    model.setGoalMin(
+                                            goalName,
+                                            goalData.get(0).getValueMin(),
+                                            getResources().getColor(R.color.white_transparent),
+                                            getResources().getColor(R.color.white_transparent)
+                                    );
+
+                                    if (model.getGoalMin(goalName) != model.getGoalMax(goalName)) {
+                                        graph.addSeries(model.getGoalMinLine(goalName));
+                                        graph.addSeries(model.getGoalMinPoint(goalName));
+                                    }
+                                }
+
+                                loadFromDatabase(goalName);
+                            },
+                            Throwable::printStackTrace
+                    );
+        } else {
+            graph.addSeries(model.getGoalMaxLine(goalName));
+            graph.addSeries(model.getGoalMaxPoint(goalName));
+
+            if (model.getGoalMin(goalName) != model.getGoalMax(goalName)) {
+                graph.addSeries(model.getGoalMinLine(goalName));
+                graph.addSeries(model.getGoalMinPoint(goalName));
+            }
+
+            loadFromDatabase(goalName);
+        }
+    }
+
     protected void loadFromDatabase(String name) {
         db.sleepDataDao()
                 .loadAllByDateRangeAndType(
@@ -186,7 +236,8 @@ public abstract class SleepDataGraphFragment extends Fragment {
                                 }
                             }
 
-                            graph.getViewport().setMaxY(Collections.max(processedSleepData) + 1);
+                            //int goal = Math.max(model.getGoalMin(name), model.getGoalMax(name));
+                            graph.getViewport().setMaxY(Math.max(model.getGoalMax(name), Collections.max(processedSleepData)) + 1);
 
                             int graphColor;
 
@@ -220,45 +271,9 @@ public abstract class SleepDataGraphFragment extends Fragment {
 
                             graph.addSeries(model.getLineSeries(name));
                             //graph.addSeries(model.getPointsSeries(name));
-
-                            loadGoal(name);
                         },
                         Throwable::printStackTrace
                 );
-    }
-
-    protected void loadGoal(String goalName) {
-        if (model.getGoalMinLine(goalName) == null &&
-                model.getGoalMaxLine(goalName) == null) {
-            db.goalDao()
-                    .loadAllByNames(new String[]{goalName})
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            goalData -> {
-                                if (!goalData.isEmpty()) {
-                                    model.setGoalMin(
-                                            goalName,
-                                            goalData.get(0).getValueMin(),
-                                            getResources().getColor(R.color.white_transparent)
-                                    );
-
-                                    model.setGoalMax(
-                                            goalName,
-                                            goalData.get(0).getValueMax(),
-                                            getResources().getColor(R.color.white_transparent)
-                                    );
-
-                                    graph.addSeries(model.getGoalMinLine(goalName));
-                                    graph.addSeries(model.getGoalMaxLine(goalName));
-                                }
-                            },
-                            Throwable::printStackTrace
-                    );
-        } else {
-            graph.addSeries(model.getGoalMinLine(goalName));
-            graph.addSeries(model.getGoalMaxLine(goalName));
-        }
     }
 
     private List<Double> processFromDatabase(List<SleepData> sleepData) {
