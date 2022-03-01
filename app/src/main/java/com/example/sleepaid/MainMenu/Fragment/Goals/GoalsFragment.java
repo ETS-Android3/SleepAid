@@ -93,19 +93,19 @@ public class GoalsFragment extends Fragment {
                 if (g.getValueMin() != g.getValueMax()) {
                     goalTexts.add(g.getValueMin() + " - " + g.getValueMax());
                 } else {
-                    if (g.getName().contains("duration")) {
-                        goalTexts.add(g.getValueMin() + "h");
-                    } else {
-                        goalTexts.add(Integer.toString(g.getValueMin()));
-                    }
+                        goalTexts.add(g.getValueMin());
                 }
 
-                List<SleepData> goalData = sleepDataList.stream().filter(s -> s.getField().equals(g.getName())).collect(Collectors.toList());
+                List<SleepData> goalData = sleepDataList
+                        .stream()
+                        .filter(s -> s.getField().equals(g.getName()))
+                        .collect(Collectors.toList());
+
                 double percent = 0;
 
                 for (SleepData s : goalData) {
-                    if (DataHandler.getDoubleFromSleepDataValue(s) <= g.getValueMax() &&
-                            DataHandler.getDoubleFromSleepDataValue(s) >= g.getValueMin()) {
+                    if (DataHandler.getDoubleFromTime(s.getValue()) <= DataHandler.getDoubleFromTime(g.getValueMax()) &&
+                            DataHandler.getDoubleFromTime(s.getValue()) >= DataHandler.getDoubleFromTime(g.getValueMin())) {
                         percent++;
                     }
                 }

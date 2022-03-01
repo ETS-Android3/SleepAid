@@ -28,7 +28,7 @@ import com.example.sleepaid.Modal;
 import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
 import com.example.sleepaid.R;
-import com.example.sleepaid.SharedViewModel;
+import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.TextBox;
 
 import java.util.ArrayList;

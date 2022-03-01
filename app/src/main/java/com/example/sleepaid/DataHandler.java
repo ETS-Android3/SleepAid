@@ -23,6 +23,18 @@ public class DataHandler {
         return numbers;
     }
 
+    public static List<String> getGoalsFromString(String s) {
+        Matcher matcher = Pattern.compile("\\d+\\w*\\W*\\d+").matcher(s);
+
+        List<String> values = new ArrayList<>();
+
+        while (matcher.find()) {
+            values.add(matcher.group());
+        }
+
+        return values;
+    }
+
     public static String getFormattedDate(Date date) {
         return new SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(date);
     }
@@ -43,8 +55,8 @@ public class DataHandler {
         return new SimpleDateFormat("yyyy", Locale.getDefault()).format(date);
     }
 
-    public static double getDoubleFromSleepDataValue(SleepData sleepData) {
-        List<Integer> times = DataHandler.getIntsFromString(sleepData.getValue());
+    public static double getDoubleFromTime(String time) {
+        List<Integer> times = DataHandler.getIntsFromString(time);
 
         int hours = times.get(0);
         double minutes = times.size() > 1 ? times.get(1) / 60.0 : 0;
@@ -52,11 +64,11 @@ public class DataHandler {
         return hours + minutes;
     }
 
-    public static List<Double> getDoublesFromSleepDataValues(List<SleepData> sleepData) {
+    public static List<Double> getDoublesFromTimes(List<String> times) {
         List<Double> processedValues = new ArrayList<>();
 
-        for (SleepData s : sleepData) {
-            processedValues.add(getDoubleFromSleepDataValue(s));
+        for (String t : times) {
+            processedValues.add(getDoubleFromTime(t));
         }
 
         return processedValues;

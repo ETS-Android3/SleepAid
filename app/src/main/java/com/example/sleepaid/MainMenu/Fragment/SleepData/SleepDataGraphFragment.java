@@ -16,8 +16,7 @@ import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.SleepData.SleepData;
 import com.example.sleepaid.OnSwipeTouchListener;
 import com.example.sleepaid.R;
-import com.example.sleepaid.SharedViewModel;
-import com.google.common.collect.Lists;
+import com.example.sleepaid.Model.SharedViewModel;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.series.DataPoint;
@@ -162,8 +161,9 @@ public abstract class SleepDataGraphFragment extends Fragment {
                     .subscribe(
                             goalData -> {
                                 if (!goalData.isEmpty()) {
-                                    model.setGoalMax(
+                                    model.setGoal(
                                             goalName,
+                                            goalData.get(0).getValueMin(),
                                             goalData.get(0).getValueMax(),
                                             getResources().getColor(R.color.white_transparent),
                                             getResources().getColor(R.color.white_transparent)
@@ -172,14 +172,7 @@ public abstract class SleepDataGraphFragment extends Fragment {
                                     graph.addSeries(model.getGoalMaxLine(goalName));
                                     graph.addSeries(model.getGoalMaxPoint(goalName));
 
-                                    model.setGoalMin(
-                                            goalName,
-                                            goalData.get(0).getValueMin(),
-                                            getResources().getColor(R.color.white_transparent),
-                                            getResources().getColor(R.color.white_transparent)
-                                    );
-
-                                    if (model.getGoalMin(goalName) != model.getGoalMax(goalName)) {
+                                    if (!model.getGoalMin(goalName).equals(model.getGoalMax(goalName))) {
                                         graph.addSeries(model.getGoalMinLine(goalName));
                                         graph.addSeries(model.getGoalMinPoint(goalName));
                                     }
@@ -193,7 +186,7 @@ public abstract class SleepDataGraphFragment extends Fragment {
             graph.addSeries(model.getGoalMaxLine(goalName));
             graph.addSeries(model.getGoalMaxPoint(goalName));
 
-            if (model.getGoalMin(goalName) != model.getGoalMax(goalName)) {
+            if (!model.getGoalMin(goalName).equals(model.getGoalMax(goalName))) {
                 graph.addSeries(model.getGoalMinLine(goalName));
                 graph.addSeries(model.getGoalMinPoint(goalName));
             }
@@ -202,7 +195,9 @@ public abstract class SleepDataGraphFragment extends Fragment {
         }
     }
 
+    //TODO fix not loading for month and year breaking
     protected void loadFromDatabase(String name) {
+        //TODO check if it exists in model and period is the same first
         db.sleepDataDao()
                 .loadAllByDateRangeAndType(
                         DataHandler.getSQLiteDate(sleepDataFragment.rangeMin.getTime()),
@@ -236,8 +231,8 @@ public abstract class SleepDataGraphFragment extends Fragment {
                                 }
                             }
 
-                            //int goal = Math.max(model.getGoalMin(name), model.getGoalMax(name));
-                            graph.getViewport().setMaxY(Math.max(model.getGoalMax(name), Collections.max(processedSleepData)) + 1);
+                            double goal = DataHandler.getDoubleFromTime(model.getGoalMax(name));
+                            graph.getViewport().setMaxY(Math.max(goal, Collections.max(processedSleepData)) + 1);
 
                             int graphColor;
 
@@ -314,7 +309,7 @@ public abstract class SleepDataGraphFragment extends Fragment {
                     .findAny();
 
             if (sleepDataForDay.isPresent()) {
-                processedSleepData.add(DataHandler.getDoubleFromSleepDataValue(sleepDataForDay.get()));
+                processedSleepData.add(DataHandler.getDoubleFromTime(sleepDataForDay.get().getValue()));
             } else {
                 processedSleepData.add(0.0);
             }
@@ -346,7 +341,12 @@ public abstract class SleepDataGraphFragment extends Fragment {
                     .collect(Collectors.toList());
 
             if (!sleepDataForWeek.isEmpty()) {
-                List<Double> valuesForWeek = DataHandler.getDoublesFromSleepDataValues(sleepDataForWeek);
+                List<String> sleepDataForWeekValues = sleepDataForWeek
+                        .stream()
+                        .map(s -> s.getValue())
+                        .collect(Collectors.toList());
+
+                List<Double> valuesForWeek = DataHandler.getDoublesFromTimes(sleepDataForWeekValues);
 
                 double weeklyAverage = valuesForWeek
                         .stream()
@@ -377,20 +377,29 @@ public abstract class SleepDataGraphFragment extends Fragment {
                     .filter(s -> s.getDate().contains("-" + m + "-"))
                     .collect(Collectors.toList());
 
-            List<Double> valuesForMonth = DataHandler.getDoublesFromSleepDataValues(sleepDataForMonth);
+            if (!sleepDataForMonth.isEmpty()) {
+                List<String> sleepDataForMonthValues = sleepDataForMonth
+                        .stream()
+                        .map(s -> s.getValue())
+                        .collect(Collectors.toList());
 
-            double monthlyAverage = valuesForMonth
-                    .stream()
-                    .mapToDouble(v -> v)
-                    .average()
-                    .isPresent() ? valuesForMonth
-                    .stream()
-                    .mapToDouble(v -> v)
-                    .average()
-                    .getAsDouble() :
-                    0.0;
+                List<Double> valuesForMonth = DataHandler.getDoublesFromTimes(sleepDataForMonthValues);
 
-            processedSleepData.add(monthlyAverage);
+                double monthlyAverage = valuesForMonth
+                        .stream()
+                        .mapToDouble(v -> v)
+                        .average()
+                        .isPresent() ? valuesForMonth
+                        .stream()
+                        .mapToDouble(v -> v)
+                        .average()
+                        .getAsDouble() :
+                        0.0;
+
+                processedSleepData.add(monthlyAverage);
+            } else {
+                processedSleepData.add(0.0);
+            }
         }
 
         return processedSleepData;

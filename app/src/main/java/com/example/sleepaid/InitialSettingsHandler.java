@@ -75,21 +75,26 @@ public class InitialSettingsHandler {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         answerData -> {
-                            List<Integer> bedTimes = DataHandler.getIntsFromString(answerData.get(0));
-                            Goal bedtime = new Goal("Bedtime", bedTimes.get(0), bedTimes.get(1));
+                            //List<Integer> bedTimes = DataHandler.getIntsFromString(answerData.get(0));
+                            List<String> bedtimes = DataHandler.getGoalsFromString(answerData.get(0));
+                            Goal bedtime = new Goal("Bedtime", bedtimes.get(0), bedtimes.get(1));
                             goalList.add(bedtime);
 
-                            List<Integer> wakeupTimes = DataHandler.getIntsFromString(answerData.get(1));
+                            //List<Integer> wakeupTimes = DataHandler.getIntsFromString(answerData.get(1));
+                            List<String> wakeupTimes = DataHandler.getGoalsFromString(answerData.get(1));
                             Goal wakeupTime = new Goal("Wake-up time", wakeupTimes.get(0), wakeupTimes.get(1));
                             goalList.add(wakeupTime);
 
-                            int duration = bedTimes.get(0) <= 12 ?
-                                    12 + (wakeupTimes.get(0) - bedTimes.get(0)) :
-                                    (wakeupTimes.get(0) - bedTimes.get(0));
-                            Goal sleepDuration = new Goal("Sleep duration", duration, duration);
+                            int minBedtime = DataHandler.getIntsFromString(bedtimes.get(0)).get(0);
+                            int minWakeupTime = DataHandler.getIntsFromString(wakeupTimes.get(0)).get(0);
+
+                            int duration = minWakeupTime - minBedtime <= 0 ?
+                                    24 + (minWakeupTime - minBedtime) :
+                                    minWakeupTime - minBedtime;
+                            Goal sleepDuration = new Goal("Sleep duration", duration + "h", duration + "h");
                             goalList.add(sleepDuration);
 
-                            getAlarmList(wakeupTimes.get(0), bedTimes.get(0));
+                            getAlarmList(minWakeupTime, minBedtime);
                         },
                         Throwable::printStackTrace
                 );
@@ -114,6 +119,7 @@ public class InitialSettingsHandler {
             alarmList.add(morningAlarm);
         }
 
+        //TODO figure out AM and PM
         Alarm bedtimeAlarmBefore = new Alarm(3, (bedTime - 1) < 12 ? (bedTime - 1) + ":30 pm" : (bedTime - 1) + ":30 am", "M T W T F S S", "default");
         Alarm bedtimeAlarm = new Alarm(3, bedTime < 12 ? bedTime + ":00 pm" : bedTime + ":00 am", "M T W T F S S", "default");
         alarmList.add(bedtimeAlarmBefore);

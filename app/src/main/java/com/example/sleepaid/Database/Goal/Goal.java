@@ -20,11 +20,11 @@ public class Goal {
     @NonNull
     public String name;
     @NonNull
-    public int valueMin;
+    public String valueMin;
     @NonNull
-    public int valueMax;
+    public String valueMax;
 
-    public Goal(String name, int valueMin, int valueMax) {
+    public Goal(String name, String valueMin, String valueMax) {
         this.name = name;
         this.valueMin = valueMin;
         this.valueMax = valueMax;
@@ -38,11 +38,11 @@ public class Goal {
         return this.name;
     }
 
-    public int getValueMin() {
+    public String getValueMin() {
         return this.valueMin;
     }
 
-    public int getValueMax() {
+    public String getValueMax() {
         return this.valueMax;
     }
 }

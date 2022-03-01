@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.sleepaid.R;
-import com.example.sleepaid.SharedViewModel;
+import com.example.sleepaid.Model.SharedViewModel;
 
 public class GreetingFragment extends Fragment implements View.OnClickListener {
     private SharedViewModel model;

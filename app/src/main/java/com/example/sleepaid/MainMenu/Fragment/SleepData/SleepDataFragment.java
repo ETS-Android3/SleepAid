@@ -23,7 +23,7 @@ import com.example.sleepaid.DataHandler;
 import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.SleepData.SleepData;
 import com.example.sleepaid.R;
-import com.example.sleepaid.SharedViewModel;
+import com.example.sleepaid.Model.SharedViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.jjoe64.graphview.DefaultLabelFormatter;
 
