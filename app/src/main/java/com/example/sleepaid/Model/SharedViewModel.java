@@ -32,15 +32,7 @@ public class SharedViewModel extends ViewModel {
     private int graphMonthLength;
     private int graphYearLength;
 
-    private LineGraphSeries<DataPoint> sleepDurationLineSeries;
-    private PointsGraphSeries<DataPoint> sleepDurationPointsSeries;
-
-    private LineGraphSeries<DataPoint> wakeupTimeLineSeries;
-    private PointsGraphSeries<DataPoint> wakeupTimePointsSeries;
-
-    private LineGraphSeries<DataPoint> bedtimeLineSeries;
-    private PointsGraphSeries<DataPoint> bedtimePointsSeries;
-
+    private List<GraphSeriesModel> graphSeries = new ArrayList<>();
     private List<GoalModel> goals = new ArrayList<>();
 
     public void setQuestions(List<Question> questions) {
@@ -75,112 +67,40 @@ public class SharedViewModel extends ViewModel {
         this.graphYearLength = graphYearLength;
     }
 
-    public void setLineSeries(String fieldName, LineGraphSeries<DataPoint> lineSeries, int backgroundColor, int lineColor) {
-        switch (fieldName) {
-            case "Wake-up time":
-                this.wakeupTimeLineSeries = lineSeries;
-                break;
+    public void setSeries(String dataType,
+                          List<Double> data,
+                          String periodStart,
+                          String periodEnd,
+                          int seriesLength,
+                          int backgroundColor,
+                          int lineColor,
+                          int pointsColor) {
+        Optional<GraphSeriesModel> graphSeries = this.graphSeries.stream()
+                .filter(g -> g.getDataType().equals(dataType) &&
+                        g.getPeriod().equals(periodStart + "-" + periodEnd))
+                .findFirst();
 
-            case "Bedtime":
-                this.bedtimeLineSeries = lineSeries;
-                break;
-
-            //"Sleep duration"
-            default:
-                this.sleepDurationLineSeries = lineSeries;
-                break;
-        }
-
-        this.styleLineSeries(lineSeries, backgroundColor, lineColor);
-    }
-
-    private void styleLineSeries(LineGraphSeries<DataPoint> lineSeries, int backgroundColor, int lineColor) {
-        lineSeries.setDrawBackground(true);
-        lineSeries.setDrawDataPoints(true);
-
-        lineSeries.setBackgroundColor(backgroundColor);
-        lineSeries.setColor(lineColor);
-    }
-
-    private void setSleepDurationPointsSeries(PointsGraphSeries<DataPoint> sleepDurationPointsSeries, int pointsColor) {
-        this.sleepDurationPointsSeries = sleepDurationPointsSeries;
-
-        this.sleepDurationPointsSeries.setCustomShape(new PointsGraphSeries.CustomShape() {
-            @Override
-            public void draw(Canvas canvas, Paint paint, float x, float y, DataPointInterface dataPoint) {
-                paint.setColor(pointsColor);
-                paint.setTextSize(38);
-
-                int hours = (int)(dataPoint.getY() - 0.5);
-                int minutes = (int) (((dataPoint.getY() - 0.5) - hours) * 60);
-
-                String text = minutes == 0 ?
-                        hours + "h" :
-                        hours + "h" + minutes + "m";
-
-                canvas.drawText(text, x, y, paint);
-            }
-        });
-    }
-
-    private void setWakeupTimePointsSeries(PointsGraphSeries<DataPoint> wakeupTimePointsSeries, int pointsColor) {
-        this.wakeupTimePointsSeries = wakeupTimePointsSeries;
-
-        this.wakeupTimePointsSeries.setCustomShape(new PointsGraphSeries.CustomShape() {
-            @Override
-            public void draw(Canvas canvas, Paint paint, float x, float y, DataPointInterface dataPoint) {
-                paint.setColor(pointsColor);
-                paint.setTextSize(38);
-
-                int hours = (int)(dataPoint.getY() - 0.5);
-                int minutes = (int) (((dataPoint.getY() - 0.5) - hours) * 60);
-
-                String delimiter = minutes < 10 ? ":0" : ":";
-
-                //TODO figure out if it's AM or PM
-                String text = hours + delimiter + minutes + "AM";
-
-                canvas.drawText(text, x, y, paint);
-            }
-        });
-    }
-
-    private void setBedtimePointsSeries(PointsGraphSeries<DataPoint> bedtimePointsSeries, int pointsColor) {
-        this.bedtimePointsSeries = bedtimePointsSeries;
-
-        this.bedtimePointsSeries.setCustomShape(new PointsGraphSeries.CustomShape() {
-            @Override
-            public void draw(Canvas canvas, Paint paint, float x, float y, DataPointInterface dataPoint) {
-                paint.setColor(pointsColor);
-                paint.setTextSize(38);
-
-                int hours = (int)(dataPoint.getY() - 0.5);
-                int minutes = (int) (((dataPoint.getY() - 0.5) - hours) * 60);
-
-                String delimiter = minutes < 10 ? ":0" : ":";
-
-                //TODO figure out if it's AM or PM
-                String text = hours + delimiter + minutes + "PM";
-
-                canvas.drawText(text, x, y, paint);
-            }
-        });
-    }
-
-    public void setPointsSeries(String fieldName, PointsGraphSeries<DataPoint> pointsSeries, int pointsColor) {
-        switch (fieldName) {
-            case "Wake-up time":
-                this.setWakeupTimePointsSeries(pointsSeries, pointsColor);
-                break;
-
-            case "Bedtime":
-                this.setBedtimePointsSeries(pointsSeries, pointsColor);
-                break;
-
-            //"Sleep duration"
-            default:
-                this.setSleepDurationPointsSeries(pointsSeries, pointsColor);
-                break;
+        if (graphSeries.isPresent()) {
+            graphSeries.get().update(
+                    data,
+                    periodStart,
+                    periodEnd,
+                    seriesLength,
+                    backgroundColor,
+                    lineColor,
+                    pointsColor
+            );
+        } else {
+            this.graphSeries.add(new GraphSeriesModel(
+                    dataType,
+                    data,
+                    periodStart,
+                    periodEnd,
+                    seriesLength,
+                    backgroundColor,
+                    lineColor,
+                    pointsColor
+            ));
         }
     }
 
@@ -198,7 +118,7 @@ public class SharedViewModel extends ViewModel {
                     goalValueMin,
                     goalValueMax,
                     lineColor,
-                    this.getGraphPeriodLength(),
+                    this.getGraphYearLength(),
                     pointColor
             );
         } else {
@@ -207,7 +127,7 @@ public class SharedViewModel extends ViewModel {
                     goalValueMin,
                     goalValueMax,
                     lineColor,
-                    this.getGraphPeriodLength(),
+                    this.getGraphYearLength(),
                     pointColor
             ));
         }
@@ -259,32 +179,49 @@ public class SharedViewModel extends ViewModel {
         }
     }
 
-    public LineGraphSeries<DataPoint> getLineSeries(String fieldName) {
-        switch (fieldName) {
-            case "Wake-up time":
-                return this.wakeupTimeLineSeries;
+    public List<Double> getSeriesData(String dataType,
+                                      String periodStart,
+                                      String periodEnd) {
+        Optional<GraphSeriesModel> graphSeries = this.graphSeries.stream()
+                .filter(g -> g.getDataType().equals(dataType) &&
+                        g.getPeriod().equals(periodStart + "-" + periodEnd))
+                .findFirst();
 
-            case "Bedtime":
-                return this.bedtimeLineSeries;
-
-            //"Sleep duration"
-            default:
-                return this.sleepDurationLineSeries;
+        if (graphSeries.isPresent()) {
+            return graphSeries.get().getData();
         }
+
+        return null;
     }
 
-    public PointsGraphSeries<DataPoint> getPointsSeries(String fieldName) {
-        switch (fieldName) {
-            case "Wake-up time":
-                return this.wakeupTimePointsSeries;
+    public LineGraphSeries<DataPoint> getLineSeries(String dataType,
+                                                    String periodStart,
+                                                    String periodEnd) {
+        Optional<GraphSeriesModel> graphSeries = this.graphSeries.stream()
+                .filter(g -> g.getDataType().equals(dataType) &&
+                        g.getPeriod().equals(periodStart + "-" + periodEnd))
+                .findFirst();
 
-            case "Bedtime":
-                return this.bedtimePointsSeries;
-
-            //"Sleep duration"
-            default:
-                return this.sleepDurationPointsSeries;
+        if (graphSeries.isPresent()) {
+            return graphSeries.get().getLineSeries();
         }
+
+        return null;
+    }
+
+    public PointsGraphSeries<DataPoint> getPointsSeries(String dataType,
+                                                        String periodStart,
+                                                        String periodEnd) {
+        Optional<GraphSeriesModel> graphSeries = this.graphSeries.stream()
+                .filter(g -> g.getDataType().equals(dataType) &&
+                        g.getPeriod().equals(periodStart + "-" + periodEnd))
+                .findFirst();
+
+        if (graphSeries.isPresent()) {
+            return graphSeries.get().getPointsSeries();
+        }
+
+        return null;
     }
 
     public String getGoalMin(String goalName) {

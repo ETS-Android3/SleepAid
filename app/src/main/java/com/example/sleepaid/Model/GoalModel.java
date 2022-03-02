@@ -49,7 +49,7 @@ public class GoalModel {
         double goalValueNumber = DataHandler.getDoubleFromTime(goalValue);
 
         this.goalMinLine = this.createGoalLine(goalValueNumber, lineColor, lineLength);
-        this.goalMinPoint = this.createGoalPoint(goalValue, goalValueNumber, -1, pointColor);
+        this.goalMinPoint = this.createGoalPoint(goalValue, goalValueNumber, -0.5, pointColor);
     }
 
     public void setGoalMax(String goalValue, int lineColor, int lineLength, int pointColor) {
@@ -58,7 +58,7 @@ public class GoalModel {
         double goalValueNumber = DataHandler.getDoubleFromTime(goalValue);
 
         this.goalMaxLine = this.createGoalLine(goalValueNumber, lineColor, lineLength);
-        this.goalMaxPoint = this.createGoalPoint(goalValue, goalValueNumber, 1, pointColor);
+        this.goalMaxPoint = this.createGoalPoint(goalValue, goalValueNumber, 0.25, pointColor);
     }
 
     public String getGoalName() {
@@ -118,11 +118,11 @@ public class GoalModel {
         goalLine.setDrawAsPath(true);
     }
 
-    public PointsGraphSeries<DataPoint> createGoalPoint(String goalText, double goalValue, int position, int pointColor) {
+    public PointsGraphSeries<DataPoint> createGoalPoint(String goalText, double goalValue, double ratio, int pointColor) {
         PointsGraphSeries<DataPoint> goalPoint = new PointsGraphSeries<>();
 
         goalPoint.appendData(
-                new DataPoint(0, goalValue + 0.25 * position),
+                new DataPoint(0, goalValue + ratio),
                 true,
                 1);
 

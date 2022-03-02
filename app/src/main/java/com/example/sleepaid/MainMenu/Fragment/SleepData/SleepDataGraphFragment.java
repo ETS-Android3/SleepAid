@@ -45,6 +45,8 @@ public abstract class SleepDataGraphFragment extends Fragment {
 
     protected GraphView graph;
 
+    private int maxGraphSize;
+
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
         sleepDataFragment = (SleepDataFragment) getParentFragment().getParentFragment();
@@ -89,6 +91,17 @@ public abstract class SleepDataGraphFragment extends Fragment {
     }
 
     protected void loadGraph(Date min, Date max) {
+        // for February in non-leap years we only have 4 weeks
+        if (sleepDataFragment.rangeMin.get(Calendar.MONTH) == 1 &&
+                sleepDataFragment.rangeMin.get(Calendar.YEAR) % 4 != 0 &&
+                model.getGraphViewType().equals("month")) {
+            this.maxGraphSize = model.getGraphPeriodLength() - 1;
+        } else {
+            this.maxGraphSize = model.getGraphPeriodLength();
+        }
+
+        System.out.println(maxGraphSize);
+
         String period;
 
         if (DataHandler.getFormattedDate(sleepDataFragment.rangeMax.getTime())
@@ -121,31 +134,20 @@ public abstract class SleepDataGraphFragment extends Fragment {
         TextView graphTitle = sleepDataFragment.getView().findViewById(R.id.graphTitle);
         graphTitle.setText(period);
 
+        graph.getViewport().setMaxX(this.maxGraphSize - 1);
+        graph.getGridLabelRenderer().setNumHorizontalLabels(this.maxGraphSize);
+
         switch (model.getGraphViewType()) {
             case "month":
-                // for February in non-leap years only show 4 weeks
-                if (sleepDataFragment.rangeMin.get(Calendar.MONTH) == 1 &&
-                    sleepDataFragment.rangeMin.get(Calendar.YEAR) % 4 != 0) {
-                    graph.getViewport().setMaxX(model.getGraphMonthLength() - 2);
-                    graph.getGridLabelRenderer().setNumHorizontalLabels(model.getGraphMonthLength() - 1);
-                    graph.getGridLabelRenderer().setLabelFormatter(sleepDataFragment.getMonthLabelFormatter(model.getGraphMonthLength() - 1));
-                } else {
-                    graph.getViewport().setMaxX(model.getGraphMonthLength() - 1);
-                    graph.getGridLabelRenderer().setNumHorizontalLabels(model.getGraphMonthLength());
-                    graph.getGridLabelRenderer().setLabelFormatter(sleepDataFragment.getMonthLabelFormatter(model.getGraphMonthLength()));
-                }
+                graph.getGridLabelRenderer().setLabelFormatter(sleepDataFragment.getMonthLabelFormatter(this.maxGraphSize));
                 break;
 
             case "year":
-                graph.getViewport().setMaxX(model.getGraphYearLength() - 1);
-                graph.getGridLabelRenderer().setNumHorizontalLabels(model.getGraphYearLength());
                 graph.getGridLabelRenderer().setLabelFormatter(sleepDataFragment.getYearLabelFormatter());
                 break;
 
             //"week"
             default:
-                graph.getViewport().setMaxX(model.getGraphWeekLength() - 1);
-                graph.getGridLabelRenderer().setNumHorizontalLabels(model.getGraphWeekLength());
                 graph.getGridLabelRenderer().setLabelFormatter(sleepDataFragment.getWeekLabelFormatter());
                 break;
         }
@@ -195,80 +197,66 @@ public abstract class SleepDataGraphFragment extends Fragment {
         }
     }
 
-    //TODO fix not loading for month and year breaking
     protected void loadFromDatabase(String name) {
-        //TODO check if it exists in model and period is the same first
-        db.sleepDataDao()
-                .loadAllByDateRangeAndType(
-                        DataHandler.getSQLiteDate(sleepDataFragment.rangeMin.getTime()),
-                        DataHandler.getSQLiteDate(sleepDataFragment.rangeMax.getTime()),
-                        name
-                )
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        sleepData -> {
-                            List<Double> processedSleepData = this.processFromDatabase(sleepData);
+        String periodStart = DataHandler.getSQLiteDate(sleepDataFragment.rangeMin.getTime());
+        String periodEnd = DataHandler.getSQLiteDate(sleepDataFragment.rangeMax.getTime());
 
-                            LineGraphSeries<DataPoint> lineGraphSeries = new LineGraphSeries<>();
-                            PointsGraphSeries<DataPoint> pointsGraphSeries = new PointsGraphSeries<>();
+        if (model.getLineSeries(name, periodStart, periodEnd) == null) {
+            db.sleepDataDao()
+                    .loadAllByDateRangeAndType(
+                            periodStart,
+                            periodEnd,
+                            name
+                    )
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            sleepData -> {
+                                List<Double> processedSleepData = this.processFromDatabase(sleepData);
 
-                            int maxGraphSize = model.getGraphPeriodLength();
+                                double goal = DataHandler.getDoubleFromTime(model.getGoalMax(name));
+                                graph.getViewport().setMaxY(Math.max(goal, Collections.max(processedSleepData)) + 1);
 
-                            for (int i = 0; i < maxGraphSize; i++) {
-                                lineGraphSeries.appendData(
-                                        new DataPoint(i, processedSleepData.get(i)),
-                                        true,
-                                        maxGraphSize
+                                int graphColor;
+
+                                switch (name) {
+                                    case "Wake-up time":
+                                        graphColor = getResources().getColor(R.color.lightest_purple_sleep_transparent);
+                                        break;
+
+                                    case "Bedtime":
+                                        graphColor = getResources().getColor(R.color.darkest_purple_sleep_transparent);
+                                        break;
+
+                                    //"Sleep duration"
+                                    default:
+                                        graphColor = getResources().getColor(R.color.purple_sleep_transparent);
+                                        break;
+                                }
+
+                                model.setSeries(
+                                        name,
+                                        processedSleepData,
+                                        periodStart,
+                                        periodEnd,
+                                        this.maxGraphSize,
+                                        graphColor,
+                                        getResources().getColor(R.color.white),
+                                        getResources().getColor(R.color.white)
                                 );
 
-                                if (processedSleepData.get(i) != 0) {
-                                    pointsGraphSeries.appendData(
-                                            new DataPoint(Math.max(0, i - 0.15), processedSleepData.get(i) + 0.5),
-                                            true,
-                                            maxGraphSize
-                                    );
-                                }
-                            }
+                                graph.addSeries(model.getLineSeries(name, periodStart, periodEnd));
+                                //graph.addSeries(model.getPointsSeries(name, periodStart, periodEnd));
+                            },
+                            Throwable::printStackTrace
+                    );
+        } else {
+            double goal = DataHandler.getDoubleFromTime(model.getGoalMax(name));
+            graph.getViewport().setMaxY(Math.max(goal, Collections.max(model.getSeriesData(name, periodStart, periodEnd))) + 1);
 
-                            double goal = DataHandler.getDoubleFromTime(model.getGoalMax(name));
-                            graph.getViewport().setMaxY(Math.max(goal, Collections.max(processedSleepData)) + 1);
-
-                            int graphColor;
-
-                            switch (name) {
-                                case "Wake-up time":
-                                    graphColor = getResources().getColor(R.color.lightest_purple_sleep_transparent);
-                                    break;
-
-                                case "Bedtime":
-                                    graphColor = getResources().getColor(R.color.darkest_purple_sleep_transparent);
-                                    break;
-
-                                //"Sleep duration"
-                                default:
-                                    graphColor = getResources().getColor(R.color.purple_sleep_transparent);
-                                    break;
-                            }
-
-                            model.setLineSeries(
-                                    name,
-                                    lineGraphSeries,
-                                    graphColor,
-                                    getResources().getColor(R.color.white)
-                            );
-
-                            model.setPointsSeries(
-                                    name,
-                                    pointsGraphSeries,
-                                    getResources().getColor(R.color.white)
-                            );
-
-                            graph.addSeries(model.getLineSeries(name));
-                            //graph.addSeries(model.getPointsSeries(name));
-                        },
-                        Throwable::printStackTrace
-                );
+            graph.addSeries(model.getLineSeries(name, periodStart, periodEnd));
+            //graph.addSeries(model.getPointsSeries(name, periodStart, periodEnd));
+        }
     }
 
     private List<Double> processFromDatabase(List<SleepData> sleepData) {
@@ -281,10 +269,10 @@ public abstract class SleepDataGraphFragment extends Fragment {
 
         switch (model.getGraphViewType()) {
             case "month":
-                this.processMonthData(sleepData);
+                return this.processMonthData(sleepData);
 
             case "year":
-                this.processYearData(sleepData);
+                return this.processYearData(sleepData);
 
             //"week"
             default:
