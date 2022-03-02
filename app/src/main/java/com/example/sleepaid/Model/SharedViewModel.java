@@ -1,22 +1,27 @@
 package com.example.sleepaid.Model;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
 import androidx.lifecycle.ViewModel;
 
+import com.example.sleepaid.DataHandler;
 import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
+import com.google.common.graph.Graph;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @SuppressLint("NewApi")
 public class SharedViewModel extends ViewModel {
@@ -71,7 +76,6 @@ public class SharedViewModel extends ViewModel {
                           List<Double> data,
                           String periodStart,
                           String periodEnd,
-                          int seriesLength,
                           int backgroundColor,
                           int lineColor,
                           int pointsColor) {
@@ -85,7 +89,6 @@ public class SharedViewModel extends ViewModel {
                     data,
                     periodStart,
                     periodEnd,
-                    seriesLength,
                     backgroundColor,
                     lineColor,
                     pointsColor
@@ -96,7 +99,6 @@ public class SharedViewModel extends ViewModel {
                     data,
                     periodStart,
                     periodEnd,
-                    seriesLength,
                     backgroundColor,
                     lineColor,
                     pointsColor
@@ -105,10 +107,11 @@ public class SharedViewModel extends ViewModel {
     }
 
     public void setGoal(String goalName,
-                             String goalValueMin,
-                             String goalValueMax,
-                             int lineColor,
-                             int pointColor) {
+                        String goalValueMin,
+                        String goalValueMax,
+                        int lineColor,
+                        int pointColor,
+                        Bitmap icon) {
         Optional<GoalModel> goal = this.goals.stream()
                 .filter(g -> g.getGoalName().equals(goalName))
                 .findFirst();
@@ -119,7 +122,8 @@ public class SharedViewModel extends ViewModel {
                     goalValueMax,
                     lineColor,
                     this.getGraphYearLength(),
-                    pointColor
+                    pointColor,
+                    icon
             );
         } else {
             this.goals.add(new GoalModel(
@@ -128,7 +132,8 @@ public class SharedViewModel extends ViewModel {
                     goalValueMax,
                     lineColor,
                     this.getGraphYearLength(),
-                    pointColor
+                    pointColor,
+                    icon
             ));
         }
     }
@@ -179,16 +184,16 @@ public class SharedViewModel extends ViewModel {
         }
     }
 
-    public List<Double> getSeriesData(String dataType,
-                                      String periodStart,
-                                      String periodEnd) {
+    private GraphSeriesModel getSeriesModel(String dataType,
+                                           String periodStart,
+                                           String periodEnd) {
         Optional<GraphSeriesModel> graphSeries = this.graphSeries.stream()
                 .filter(g -> g.getDataType().equals(dataType) &&
                         g.getPeriod().equals(periodStart + "-" + periodEnd))
                 .findFirst();
 
         if (graphSeries.isPresent()) {
-            return graphSeries.get().getData();
+            return graphSeries.get();
         }
 
         return null;
@@ -197,13 +202,10 @@ public class SharedViewModel extends ViewModel {
     public LineGraphSeries<DataPoint> getLineSeries(String dataType,
                                                     String periodStart,
                                                     String periodEnd) {
-        Optional<GraphSeriesModel> graphSeries = this.graphSeries.stream()
-                .filter(g -> g.getDataType().equals(dataType) &&
-                        g.getPeriod().equals(periodStart + "-" + periodEnd))
-                .findFirst();
+        GraphSeriesModel graphSeriesModel = this.getSeriesModel(dataType, periodStart, periodEnd);
 
-        if (graphSeries.isPresent()) {
-            return graphSeries.get().getLineSeries();
+        if (graphSeriesModel != null) {
+            return graphSeriesModel.getLineSeries();
         }
 
         return null;
@@ -212,87 +214,100 @@ public class SharedViewModel extends ViewModel {
     public PointsGraphSeries<DataPoint> getPointsSeries(String dataType,
                                                         String periodStart,
                                                         String periodEnd) {
-        Optional<GraphSeriesModel> graphSeries = this.graphSeries.stream()
-                .filter(g -> g.getDataType().equals(dataType) &&
-                        g.getPeriod().equals(periodStart + "-" + periodEnd))
+        GraphSeriesModel graphSeriesModel = this.getSeriesModel(dataType, periodStart, periodEnd);
+
+        if (graphSeriesModel != null) {
+            return graphSeriesModel.getPointsSeries();
+        }
+
+        return null;
+    }
+
+    private GoalModel getGoalModel(String goalName) {
+        Optional<GoalModel> goal = this.goals.stream()
+                .filter(g -> g.getGoalName().equals(goalName))
                 .findFirst();
 
-        if (graphSeries.isPresent()) {
-            return graphSeries.get().getPointsSeries();
+        if (goal.isPresent()) {
+            return goal.get();
         }
 
         return null;
     }
 
     public String getGoalMin(String goalName) {
-        Optional<GoalModel> goal = this.goals.stream()
-                .filter(g -> g.getGoalName().equals(goalName))
-                .findFirst();
+        GoalModel goalModel = this.getGoalModel(goalName);
 
-        if (goal.isPresent()) {
-            return goal.get().getGoalMin();
+        if (goalModel != null) {
+            return goalModel.getGoalMin();
         }
 
         return null;
     }
 
     public LineGraphSeries<DataPoint> getGoalMinLine(String goalName) {
-        Optional<GoalModel> goal = this.goals.stream()
-                .filter(g -> g.getGoalName().equals(goalName))
-                .findFirst();
+        GoalModel goalModel = this.getGoalModel(goalName);
 
-        if (goal.isPresent()) {
-            return goal.get().getGoalMinLine();
+        if (goalModel != null) {
+            return goalModel.getGoalMinLine();
         }
 
         return null;
     }
 
     public PointsGraphSeries<DataPoint> getGoalMinPoint(String goalName) {
-        Optional<GoalModel> goal = this.goals.stream()
-                .filter(g -> g.getGoalName().equals(goalName))
-                .findFirst();
+        GoalModel goalModel = this.getGoalModel(goalName);
 
-        if (goal.isPresent()) {
-            return goal.get().getGoalMinPoint();
+        if (goalModel != null) {
+            return goalModel.getGoalMinPoint();
         }
 
         return null;
     }
 
     public String getGoalMax(String goalName) {
-        Optional<GoalModel> goal = this.goals.stream()
-                .filter(g -> g.getGoalName().equals(goalName))
-                .findFirst();
+        GoalModel goalModel = this.getGoalModel(goalName);
 
-        if (goal.isPresent()) {
-            return goal.get().getGoalMax();
+        if (goalModel != null) {
+            return goalModel.getGoalMax();
         }
 
         return null;
     }
 
     public LineGraphSeries<DataPoint> getGoalMaxLine(String goalName) {
-        Optional<GoalModel> goal = this.goals.stream()
-                .filter(g -> g.getGoalName().equals(goalName))
-                .findFirst();
+        GoalModel goalModel = this.getGoalModel(goalName);
 
-        if (goal.isPresent()) {
-            return goal.get().getGoalMaxLine();
+        if (goalModel != null) {
+            return goalModel.getGoalMaxLine();
         }
 
         return null;
     }
 
     public PointsGraphSeries<DataPoint> getGoalMaxPoint(String goalName) {
-        Optional<GoalModel> goal = this.goals.stream()
-                .filter(g -> g.getGoalName().equals(goalName))
-                .findFirst();
+        GoalModel goalModel = this.getGoalModel(goalName);
 
-        if (goal.isPresent()) {
-            return goal.get().getGoalMaxPoint();
+        if (goalModel != null) {
+            return goalModel.getGoalMaxPoint();
         }
 
         return null;
+    }
+
+    public double getMaxY(String dataType,
+                          String periodStart,
+                          String periodEnd) {
+        GraphSeriesModel graphSeriesModel = this.getSeriesModel(dataType, periodStart, periodEnd);
+        List<Double> data = graphSeriesModel.getData();
+
+        double maxValue = Collections.max(data);
+
+        GoalModel goalModel = this.getGoalModel(dataType);
+
+        double goalValue = DataHandler.getDoubleFromTime(goalModel.getGoalMax());
+        goalValue += goalModel.getTranslation(1);
+
+        return Math.max(goalValue, maxValue) + 1;
     }
 }

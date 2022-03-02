@@ -1,6 +1,8 @@
 package com.example.sleepaid.MainMenu.Fragment.SleepData;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -19,9 +21,6 @@ import com.example.sleepaid.R;
 import com.example.sleepaid.Model.SharedViewModel;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
-import com.jjoe64.graphview.series.PointsGraphSeries;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,6 +45,8 @@ public abstract class SleepDataGraphFragment extends Fragment {
     protected GraphView graph;
 
     private int maxGraphSize;
+
+    private int[] translation;
 
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
@@ -100,8 +101,6 @@ public abstract class SleepDataGraphFragment extends Fragment {
             this.maxGraphSize = model.getGraphPeriodLength();
         }
 
-        System.out.println(maxGraphSize);
-
         String period;
 
         if (DataHandler.getFormattedDate(sleepDataFragment.rangeMax.getTime())
@@ -154,6 +153,8 @@ public abstract class SleepDataGraphFragment extends Fragment {
     }
 
     protected void loadGoal(String goalName) {
+        Bitmap goalIcon = BitmapFactory.decodeResource(getResources(), R.drawable.trophy_icon);
+
         if (model.getGoalMinLine(goalName) == null &&
                 model.getGoalMaxLine(goalName) == null) {
             db.goalDao()
@@ -167,8 +168,9 @@ public abstract class SleepDataGraphFragment extends Fragment {
                                             goalName,
                                             goalData.get(0).getValueMin(),
                                             goalData.get(0).getValueMax(),
-                                            getResources().getColor(R.color.white_transparent),
-                                            getResources().getColor(R.color.white_transparent)
+                                            getResources().getColor(R.color.white),
+                                            getResources().getColor(R.color.white),
+                                            goalIcon
                                     );
 
                                     graph.addSeries(model.getGoalMaxLine(goalName));
@@ -212,10 +214,9 @@ public abstract class SleepDataGraphFragment extends Fragment {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             sleepData -> {
-                                List<Double> processedSleepData = this.processFromDatabase(sleepData);
+                                this.setTranslation(name, sleepData);
 
-                                double goal = DataHandler.getDoubleFromTime(model.getGoalMax(name));
-                                graph.getViewport().setMaxY(Math.max(goal, Collections.max(processedSleepData)) + 1);
+                                List<Double> processedSleepData = this.processFromDatabase(sleepData);
 
                                 int graphColor;
 
@@ -239,30 +240,54 @@ public abstract class SleepDataGraphFragment extends Fragment {
                                         processedSleepData,
                                         periodStart,
                                         periodEnd,
-                                        this.maxGraphSize,
                                         graphColor,
                                         getResources().getColor(R.color.white),
                                         getResources().getColor(R.color.white)
                                 );
 
+                                graph.getViewport().setMaxY(model.getMaxY(name, periodStart, periodEnd));
+
                                 graph.addSeries(model.getLineSeries(name, periodStart, periodEnd));
+                                //TODO add click on point and popup with value
                                 //graph.addSeries(model.getPointsSeries(name, periodStart, periodEnd));
                             },
                             Throwable::printStackTrace
                     );
         } else {
-            double goal = DataHandler.getDoubleFromTime(model.getGoalMax(name));
-            graph.getViewport().setMaxY(Math.max(goal, Collections.max(model.getSeriesData(name, periodStart, periodEnd))) + 1);
+            graph.getViewport().setMaxY(model.getMaxY(name, periodStart, periodEnd));
 
             graph.addSeries(model.getLineSeries(name, periodStart, periodEnd));
             //graph.addSeries(model.getPointsSeries(name, periodStart, periodEnd));
         }
     }
 
+    private void setTranslation(String dataType, List<SleepData> sleepData) {
+        if (!sleepData.isEmpty()) {
+            List<String> sleepDataValues = sleepData
+                    .stream()
+                    .map(s -> s.getValue())
+                    .collect(Collectors.toList());
+
+            List<Double> sleepDataNumberValues = DataHandler.getDoublesFromTimes(sleepDataValues);
+
+            this.translation = new int[sleepDataNumberValues.size()];
+
+            if (dataType.equals("Bedtime")) {
+                for (int i = 0; i < sleepDataNumberValues.size(); i++) {
+                    if (sleepDataNumberValues.get(i) > 12 && sleepDataNumberValues.get(i) < 24) {
+                        translation[i] = -12;
+                    } else if (sleepDataNumberValues.get(i) >= 0) {
+                        translation[i] = 12;
+                    }
+                }
+            }
+        }
+    }
+
     private List<Double> processFromDatabase(List<SleepData> sleepData) {
         if (sleepData.isEmpty()) {
             List<Double> processedSleepData = new ArrayList(Arrays.asList(new Double[model.getGraphPeriodLength()]));
-            Collections.fill(processedSleepData, 0.0);
+            Collections.fill(processedSleepData, -1.0);
 
             return processedSleepData;
         }
@@ -297,9 +322,12 @@ public abstract class SleepDataGraphFragment extends Fragment {
                     .findAny();
 
             if (sleepDataForDay.isPresent()) {
-                processedSleepData.add(DataHandler.getDoubleFromTime(sleepDataForDay.get().getValue()));
+                double value = DataHandler.getDoubleFromTime(sleepDataForDay.get().getValue());
+                value += translation[sleepData.indexOf(sleepDataForDay.get())];
+
+                processedSleepData.add(value);
             } else {
-                processedSleepData.add(0.0);
+                processedSleepData.add(-1.0);
             }
 
             day.add(Calendar.DAY_OF_WEEK, 1);
@@ -329,12 +357,11 @@ public abstract class SleepDataGraphFragment extends Fragment {
                     .collect(Collectors.toList());
 
             if (!sleepDataForWeek.isEmpty()) {
-                List<String> sleepDataForWeekValues = sleepDataForWeek
+                List<Double> valuesForWeek = sleepDataForWeek
                         .stream()
-                        .map(s -> s.getValue())
+                        .map(s -> DataHandler.getDoubleFromTime(s.getValue()) +
+                                translation[sleepData.indexOf(s)])
                         .collect(Collectors.toList());
-
-                List<Double> valuesForWeek = DataHandler.getDoublesFromTimes(sleepDataForWeekValues);
 
                 double weeklyAverage = valuesForWeek
                         .stream()
@@ -344,7 +371,7 @@ public abstract class SleepDataGraphFragment extends Fragment {
 
                 processedSleepData.add(weeklyAverage);
             } else {
-                processedSleepData.add(0.0);
+                processedSleepData.add(-1.0);
             }
 
             weekStart.add(Calendar.DAY_OF_WEEK, 7);
@@ -366,12 +393,11 @@ public abstract class SleepDataGraphFragment extends Fragment {
                     .collect(Collectors.toList());
 
             if (!sleepDataForMonth.isEmpty()) {
-                List<String> sleepDataForMonthValues = sleepDataForMonth
+                List<Double> valuesForMonth = sleepDataForMonth
                         .stream()
-                        .map(s -> s.getValue())
+                        .map(s -> DataHandler.getDoubleFromTime(s.getValue()) +
+                                translation[sleepData.indexOf(s)])
                         .collect(Collectors.toList());
-
-                List<Double> valuesForMonth = DataHandler.getDoublesFromTimes(sleepDataForMonthValues);
 
                 double monthlyAverage = valuesForMonth
                         .stream()
@@ -386,7 +412,7 @@ public abstract class SleepDataGraphFragment extends Fragment {
 
                 processedSleepData.add(monthlyAverage);
             } else {
-                processedSleepData.add(0.0);
+                processedSleepData.add(-1.0);
             }
         }
 

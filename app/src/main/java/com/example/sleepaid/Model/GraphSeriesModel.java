@@ -1,5 +1,6 @@
 package com.example.sleepaid.Model;
 
+import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
@@ -9,11 +10,14 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
 import java.util.List;
+import java.util.Optional;
 
+@SuppressLint("NewApi")
 public class GraphSeriesModel {
     private String dataType;
 
     private List<Double> data;
+    private int[] translation;
 
     private LineGraphSeries<DataPoint> lineSeries;
     private PointsGraphSeries<DataPoint> pointsSeries;
@@ -25,48 +29,60 @@ public class GraphSeriesModel {
                             List<Double> data,
                             String periodStart,
                             String periodEnd,
-                            int seriesLength,
                             int backgroundColor,
                             int lineColor,
                             int pointsColor) {
         this.dataType = dataType;
 
         this.data = data;
+        this.setTranslation(data);
 
         this.periodStart = periodStart;
         this.periodEnd = periodEnd;
 
-        this.setLineSeries(data, seriesLength, backgroundColor, lineColor);
-        this.setPointsSeries(data, seriesLength, pointsColor);
+        this.setLineSeries(data, backgroundColor, lineColor);
+        this.setPointsSeries(data, pointsColor);
     }
 
     public void update(List<Double> data,
                        String periodStart,
                        String periodEnd,
-                       int seriesLength,
                        int backgroundColor,
                        int lineColor,
                        int pointsColor) {
         this.data = data;
+        this.setTranslation(data);
 
         this.periodStart = periodStart;
         this.periodEnd = periodEnd;
 
-        this.setLineSeries(data, seriesLength, backgroundColor, lineColor);
-        this.setPointsSeries(data, seriesLength, pointsColor);
+        this.setLineSeries(data, backgroundColor, lineColor);
+        this.setPointsSeries(data, pointsColor);
     }
 
-    public void setLineSeries(List<Double> data,
-                              int seriesLength,
+    private void setTranslation(List<Double> data) {
+        this.translation = new int[data.size()];
+
+        if (this.dataType.equals("Bedtime")) {
+            for (int i = 0; i < data.size(); i++) {
+                if (data.get(i) > 0 && data.get(i) < 12) {
+                    translation[i] = 12;
+                } else if (data.get(i) >= 12) {
+                    translation[i] = -12;
+                }
+            }
+        }
+    }
+
+    private void setLineSeries(List<Double> data,
                               int backgroundColor,
                               int lineColor) {
-        this.lineSeries = this.createLineSeries(data, seriesLength, backgroundColor, lineColor);
+        this.lineSeries = this.createLineSeries(data, backgroundColor, lineColor);
     }
 
-    public void setPointsSeries(List<Double> data,
-                                int seriesLength,
+    private void setPointsSeries(List<Double> data,
                                 int pointsColor) {
-        this.pointsSeries = this.createPointsSeries(data, seriesLength, pointsColor);
+        this.pointsSeries = this.createPointsSeries(data, pointsColor);
     }
 
     public String getDataType() {
@@ -75,6 +91,10 @@ public class GraphSeriesModel {
 
     public List<Double> getData() {
         return this.data;
+    }
+
+    public int getTranslation(int i) {
+        return this.translation[i];
     }
 
     public LineGraphSeries<DataPoint> getLineSeries() {
@@ -90,16 +110,15 @@ public class GraphSeriesModel {
     }
 
     private LineGraphSeries<DataPoint> createLineSeries(List<Double> data,
-                                                        int seriesLength,
                                                         int backgroundColor,
                                                         int lineColor) {
         LineGraphSeries<DataPoint> lineSeries = new LineGraphSeries<>();
 
-        for (int i = 0; i < seriesLength; i++) {
+        for (int i = 0; i < data.size(); i++) {
             lineSeries.appendData(
-                    new DataPoint(i, data.get(i)),
+                    new DataPoint(i, Math.max(0, data.get(i))),
                     true,
-                    seriesLength
+                    data.size()
             );
         }
 
@@ -118,19 +137,16 @@ public class GraphSeriesModel {
         lineSeries.setColor(lineColor);
     }
 
-    public PointsGraphSeries<DataPoint> createPointsSeries(List<Double> data,
-                                                           int seriesLength,
+    private PointsGraphSeries<DataPoint> createPointsSeries(List<Double> data,
                                                            int pointsColor) {
         PointsGraphSeries<DataPoint> pointsSeries = new PointsGraphSeries<>();
 
-        for (int i = 0; i < seriesLength; i++) {
-            if (data.get(i) != 0) {
-                pointsSeries.appendData(
-                        new DataPoint(i, data.get(i) + 0.5),
-                        true,
-                        seriesLength
-                );
-            }
+        for (int i = 0; i < data.size(); i++) {
+            pointsSeries.appendData(
+                    new DataPoint(i, Math.max(0, data.get(i))),
+                    true,
+                    data.size()
+            );
         }
 
         this.stylePointsSeries(pointsSeries, pointsColor);
@@ -146,8 +162,14 @@ public class GraphSeriesModel {
                 paint.setColor(pointsColor);
                 paint.setTextSize(38);
 
-                int hours = (int)(dataPoint.getY() - 0.5);
-                int minutes = (int) (((dataPoint.getY() - 0.5) - hours) * 60);
+                Optional<Double> point = data.stream()
+                        .filter(d -> Math.max(0, d) == dataPoint.getY())
+                        .findFirst();
+
+                int index = data.indexOf(point.get());
+
+                int hours = (int)(dataPoint.getY() + translation[index]);
+                int minutes = (int) (((dataPoint.getY() + translation[index]) - hours) * 60);
 
                 String text = getPointText(hours, minutes);
 

@@ -1,8 +1,11 @@
 package com.example.sleepaid.Model;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
+import android.graphics.Rect;
 
 import com.example.sleepaid.DataHandler;
 import com.jjoe64.graphview.series.DataPoint;
@@ -10,8 +13,12 @@ import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
+import java.util.List;
+
 public class GoalModel {
     private String goalName;
+
+    private int[] translation;
 
     private String goalMin;
     private String goalMax;
@@ -27,42 +34,81 @@ public class GoalModel {
                      String goalValueMax,
                      int lineColor,
                      int lineLength,
-                     int pointColor) {
+                     int pointColor,
+                     Bitmap icon) {
         this.goalName = goalName;
 
-        this.setGoalMin(goalValueMin, lineColor, lineLength, pointColor);
-        this.setGoalMax(goalValueMax, lineColor, lineLength, pointColor);
+        this.setTranslation(goalValueMin, goalValueMax);
+
+        this.setGoalMin(goalValueMin, lineColor, lineLength, pointColor, icon);
+        this.setGoalMax(goalValueMax, lineColor, lineLength, pointColor, icon);
     }
 
     public void update(String goalValueMin,
                        String goalValueMax,
                        int lineColor,
                        int lineLength,
-                       int pointColor) {
-        this.setGoalMin(goalValueMin, lineColor, lineLength, pointColor);
-        this.setGoalMin(goalValueMax, lineColor, lineLength, pointColor);
+                       int pointColor,
+                       Bitmap icon) {
+        this.setTranslation(goalValueMin, goalValueMax);
+
+        this.setGoalMin(goalValueMin, lineColor, lineLength, pointColor, icon);
+        this.setGoalMin(goalValueMax, lineColor, lineLength, pointColor, icon);
     }
 
-    public void setGoalMin(String goalValue, int lineColor, int lineLength, int pointColor) {
+    private void setTranslation(String goalValueMin, String goalValueMax) {
+        this.translation = new int[2];
+
+        double goalValueMinNumber = DataHandler.getDoubleFromTime(goalValueMin);
+        double goalValueMaxNumber = DataHandler.getDoubleFromTime(goalValueMax);
+
+        if (this.goalName.equals("Bedtime")) {
+            if (goalValueMinNumber > 12 && goalValueMinNumber < 24) {
+                translation[0] = -12;
+            } else if (goalValueMinNumber >= 0) {
+                translation[0] = 12;
+            }
+
+            if (goalValueMaxNumber > 12 && goalValueMaxNumber < 24) {
+                translation[1] = -12;
+            } else if (goalValueMinNumber >= 0) {
+                translation[1] = 12;
+            }
+        }
+    }
+
+    private void setGoalMin(String goalValue,
+                            int lineColor,
+                            int lineLength,
+                            int pointColor,
+                            Bitmap icon) {
         this.goalMin = goalValue;
 
         double goalValueNumber = DataHandler.getDoubleFromTime(goalValue);
 
-        this.goalMinLine = this.createGoalLine(goalValueNumber, lineColor, lineLength);
-        this.goalMinPoint = this.createGoalPoint(goalValue, goalValueNumber, -0.5, pointColor);
+        this.goalMinLine = this.createGoalLine(goalValueNumber, 0, lineColor, lineLength);
+        this.goalMinPoint = this.createGoalPoint(goalValue, goalValueNumber, 0, -0.5, pointColor, icon);
     }
 
-    public void setGoalMax(String goalValue, int lineColor, int lineLength, int pointColor) {
+    private void setGoalMax(String goalValue,
+                            int lineColor,
+                            int lineLength,
+                            int pointColor,
+                            Bitmap icon) {
         this.goalMax = goalValue;
 
         double goalValueNumber = DataHandler.getDoubleFromTime(goalValue);
 
-        this.goalMaxLine = this.createGoalLine(goalValueNumber, lineColor, lineLength);
-        this.goalMaxPoint = this.createGoalPoint(goalValue, goalValueNumber, 0.25, pointColor);
+        this.goalMaxLine = this.createGoalLine(goalValueNumber, 1, lineColor, lineLength);
+        this.goalMaxPoint = this.createGoalPoint(goalValue, goalValueNumber, 1, 0.25, pointColor, icon);
     }
 
     public String getGoalName() {
         return this.goalName;
+    }
+
+    public int getTranslation(int i) {
+        return this.translation[i];
     }
 
     public String getGoalMin() {
@@ -89,12 +135,15 @@ public class GoalModel {
         return this.goalMaxPoint;
     }
 
-    private LineGraphSeries<DataPoint> createGoalLine(double goalValue, int lineColor, int lineLength) {
+    private LineGraphSeries<DataPoint> createGoalLine(double goalValue,
+                                                      int goalType,
+                                                      int lineColor,
+                                                      int lineLength) {
         LineGraphSeries<DataPoint> goalLine = new LineGraphSeries<>();
 
         for (int i = 0; i < lineLength; i++) {
             goalLine.appendData(
-                    new DataPoint(i, goalValue),
+                    new DataPoint(i, goalValue + this.translation[goalType]),
                     true,
                     lineLength
             );
@@ -118,27 +167,40 @@ public class GoalModel {
         goalLine.setDrawAsPath(true);
     }
 
-    public PointsGraphSeries<DataPoint> createGoalPoint(String goalText, double goalValue, double ratio, int pointColor) {
+    private PointsGraphSeries<DataPoint> createGoalPoint(String goalText,
+                                                         double goalValue,
+                                                         int goalType,
+                                                         double ratio,
+                                                         int pointColor,
+                                                         Bitmap icon) {
         PointsGraphSeries<DataPoint> goalPoint = new PointsGraphSeries<>();
 
         goalPoint.appendData(
-                new DataPoint(0, goalValue + ratio),
+                new DataPoint(0, goalValue + this.translation[goalType] + ratio),
                 true,
                 1);
 
-        this.styleGoalPoint(goalText, goalPoint, pointColor);
+        this.styleGoalPoint(goalText, goalPoint, pointColor, icon);
 
         return goalPoint;
     }
 
-    private void styleGoalPoint(String goalText, PointsGraphSeries<DataPoint> goalPoint, int pointColor) {
+    private void styleGoalPoint(String goalText,
+                                PointsGraphSeries<DataPoint> goalPoint,
+                                int pointColor,
+                                Bitmap icon) {
         goalPoint.setCustomShape(new PointsGraphSeries.CustomShape() {
             @Override
             public void draw(Canvas canvas, Paint paint, float x, float y, DataPointInterface dataPoint) {
                 paint.setColor(pointColor);
                 paint.setTextSize(38);
 
-                canvas.drawText(goalText, x, y, paint);
+                //TODO make goal icon work
+                //float left = (float) dataPoint.getX() - 0.25f;
+                //float top = y * 0.75f * (float) dataPoint.getY();
+
+                //canvas.drawBitmap(icon, left, top, null);
+                canvas.drawText("Goal: " + goalText, x, y, paint);
             }
         });
     }
