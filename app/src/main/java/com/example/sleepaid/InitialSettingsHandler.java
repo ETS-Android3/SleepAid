@@ -115,13 +115,13 @@ public class InitialSettingsHandler {
         for (int i = 0; i < 4; i++) {
             String newWakeupTime = (i == 0) ? wakeupTime + ":00" : wakeupTime + ":" + i * 10;
 
-            Alarm morningAlarm = new Alarm(1,  newWakeupTime + " am", "M T W T F S S", "default");
+            Alarm morningAlarm = new Alarm(1,  newWakeupTime, "M T W T F S S", "default");
             alarmList.add(morningAlarm);
         }
 
         //TODO figure out AM and PM
-        Alarm bedtimeAlarmBefore = new Alarm(3, (bedTime - 1) < 12 ? (bedTime - 1) + ":30 pm" : (bedTime - 1) + ":30 am", "M T W T F S S", "default");
-        Alarm bedtimeAlarm = new Alarm(3, bedTime < 12 ? bedTime + ":00 pm" : bedTime + ":00 am", "M T W T F S S", "default");
+        Alarm bedtimeAlarmBefore = new Alarm(3, (bedTime - 1) + ":30", "M T W T F S S", "default");
+        Alarm bedtimeAlarm = new Alarm(3, bedTime + ":00", "M T W T F S S", "default");
         alarmList.add(bedtimeAlarmBefore);
         alarmList.add(bedtimeAlarm);
 
