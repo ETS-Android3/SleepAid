@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/alarms_graph"
+    app:startDestination="@id/morningAlarmsFragment">
+    <fragment
+        android:id="@+id/morningAlarmsFragment"
+        android:name="com.example.sleepaid.MainMenu.Fragment.Alarms.MorningAlarmsFragment"
+        android:label="MorningAlarmsFragment" />
+    <fragment
+        android:id="@+id/napAlarmsFragment"
+        android:name="com.example.sleepaid.MainMenu.Fragment.Alarms.NapAlarmsFragment"
+        android:label="NapAlarmsFragment" />
+    <fragment
+        android:id="@+id/bedtimeAlarmsFragment"
+        android:name="com.example.sleepaid.MainMenu.Fragment.Alarms.BedtimeAlarmsFragment"
+        android:label="BedtimeAlarmsFragment" />
+</navigation>

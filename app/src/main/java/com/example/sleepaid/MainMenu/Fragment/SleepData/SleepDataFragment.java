@@ -59,12 +59,13 @@ public class SleepDataFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_sleep_data, container, false);
     }
 
+    //TODO make back button exit app
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
         NavHostFragment navHostFragment = (NavHostFragment) getChildFragmentManager().findFragmentById(R.id.graph);
 
         NavController navController = navHostFragment.getNavController();
-        BottomNavigationView bottomMenu = getView().findViewById(R.id.bottomMenu);
+        BottomNavigationView bottomMenu = view.findViewById(R.id.bottomMenu);
 
         NavigationUI.setupWithNavController(bottomMenu, navController);
 
@@ -72,10 +73,10 @@ public class SleepDataFragment extends Fragment {
 
         db = AppDatabase.getDatabase(App.getContext());
 
-        previousButton = getView().findViewById(R.id.previousButton);
+        previousButton = view.findViewById(R.id.previousButton);
         previousButton.setOnClickListener(loadPeriod);
 
-        nextButton = getView().findViewById(R.id.nextButton);
+        nextButton = view.findViewById(R.id.nextButton);
         nextButton.setOnClickListener(loadPeriod);
 
         ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(
@@ -85,7 +86,7 @@ public class SleepDataFragment extends Fragment {
         );
         arrayAdapter.setDropDownViewResource(R.layout.calendar_item_dropdown);
 
-        Spinner calendarDropdown = getView().findViewById(R.id.calendarDropdown);
+        Spinner calendarDropdown = view.findViewById(R.id.calendarDropdown);
         calendarDropdown.setAdapter(arrayAdapter);
         calendarDropdown.setOnItemSelectedListener(changeGraphViewType);
 

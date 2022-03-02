@@ -7,9 +7,9 @@
     android:orientation="vertical">
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/alarms"
+        android:id="@+id/alarmList"
         android:name="androidx.navigation.fragment.NavHostFragment"
-        app:navGraph="@navigation/alarms_graph"
+        app:navGraph="@navigation/alarm_list_graph"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginHorizontal="10dp"
@@ -17,7 +17,7 @@
         app:layout_constraintBottom_toTopOf="@id/bottomMenu" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addButton"
+        android:id="@+id/addAlarmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"

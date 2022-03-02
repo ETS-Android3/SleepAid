@@ -39,4 +39,8 @@
         <item name="itemIconTint">@color/bottom_navigation_style</item>
         <item name="itemTextColor">@color/bottom_navigation_style</item>
     </style>
+
+    <style name="TimePicker" parent="Widget.MaterialComponents.TimePicker">
+        <item name="android:textSize">25sp</item>
+    </style>
 </resources>

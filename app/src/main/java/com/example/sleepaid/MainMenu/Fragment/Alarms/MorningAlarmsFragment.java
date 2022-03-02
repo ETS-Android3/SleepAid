@@ -25,19 +25,7 @@ public class MorningAlarmsFragment extends AlarmListFragment {
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-    }
 
-    public void loadAlarmList() {
-        db.alarmDao()
-                .loadAllByTypes(new int[]{1})
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        alarmData -> {
-                            this.alarmList = alarmData;
-                            super.loadAlarmList();
-                        },
-                        Throwable::printStackTrace
-                );
+        this.loadAlarmList(1);
     }
 }

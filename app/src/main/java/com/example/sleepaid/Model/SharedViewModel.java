@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import androidx.lifecycle.ViewModel;
 
 import com.example.sleepaid.DataHandler;
+import com.example.sleepaid.Database.Alarm.Alarm;
 import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
@@ -39,6 +40,7 @@ public class SharedViewModel extends ViewModel {
 
     private List<GraphSeriesModel> graphSeries = new ArrayList<>();
     private List<GoalModel> goals = new ArrayList<>();
+    private List<AlarmListModel> alarms = new ArrayList<>();
 
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
@@ -79,13 +81,10 @@ public class SharedViewModel extends ViewModel {
                           int backgroundColor,
                           int lineColor,
                           int pointsColor) {
-        Optional<GraphSeriesModel> graphSeries = this.graphSeries.stream()
-                .filter(g -> g.getDataType().equals(dataType) &&
-                        g.getPeriod().equals(periodStart + "-" + periodEnd))
-                .findFirst();
+        GraphSeriesModel graphSeries = this.getSeriesModel(dataType, periodStart, periodEnd);
 
-        if (graphSeries.isPresent()) {
-            graphSeries.get().update(
+        if (graphSeries != null) {
+            graphSeries.update(
                     data,
                     periodStart,
                     periodEnd,
@@ -112,12 +111,10 @@ public class SharedViewModel extends ViewModel {
                         int lineColor,
                         int pointColor,
                         Bitmap icon) {
-        Optional<GoalModel> goal = this.goals.stream()
-                .filter(g -> g.getGoalName().equals(goalName))
-                .findFirst();
+        GoalModel goal = this.getGoalModel(goalName);
 
-        if (goal.isPresent()) {
-            goal.get().update(
+        if (goal != null) {
+            goal.update(
                     goalValueMin,
                     goalValueMax,
                     lineColor,
@@ -134,6 +131,20 @@ public class SharedViewModel extends ViewModel {
                     this.getGraphYearLength(),
                     pointColor,
                     icon
+            ));
+        }
+    }
+
+    public void setAlarms(int alarmType,
+                           List<Alarm> alarmList) {
+        AlarmListModel alarm = this.getAlarmListModel(alarmType);
+
+        if (alarm != null) {
+            alarm.update(alarmList);
+        } else {
+            this.alarms.add(new AlarmListModel(
+                    alarmType,
+                    alarmList
             ));
         }
     }
@@ -309,5 +320,27 @@ public class SharedViewModel extends ViewModel {
         goalValue += goalModel.getTranslation(1);
 
         return Math.max(goalValue, maxValue) + 1;
+    }
+
+    public AlarmListModel getAlarmListModel(int alarmType) {
+        Optional<AlarmListModel> alarm = this.alarms.stream()
+                .filter(a -> a.getAlarmType() == alarmType)
+                .findFirst();
+
+        if (alarm.isPresent()) {
+            return alarm.get();
+        }
+
+        return null;
+    }
+
+    public List<Alarm> getAlarmList(int alarmType) {
+        AlarmListModel alarmListModel = this.getAlarmListModel(alarmType);
+
+        if (alarmListModel != null) {
+            return alarmListModel.getAlarmList();
+        }
+
+        return null;
     }
 }

@@ -38,11 +38,11 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public abstract class SleepDataGraphFragment extends Fragment {
     protected SleepDataFragment sleepDataFragment;
 
-    protected AppDatabase db;
+    private AppDatabase db;
 
-    protected SharedViewModel model;
+    private SharedViewModel model;
 
-    protected GraphView graph;
+    private GraphView graph;
 
     private int maxGraphSize;
 
@@ -57,7 +57,7 @@ public abstract class SleepDataGraphFragment extends Fragment {
 
         model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
-        graph = getView().findViewById(R.id.sleepDataGraph);
+        graph = view.findViewById(R.id.sleepDataGraph);
 
         graph.getGridLabelRenderer().setGridColor(getResources().getColor(R.color.white));
         graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.NONE);
@@ -199,7 +199,7 @@ public abstract class SleepDataGraphFragment extends Fragment {
         }
     }
 
-    protected void loadFromDatabase(String name) {
+    private void loadFromDatabase(String name) {
         String periodStart = DataHandler.getSQLiteDate(sleepDataFragment.rangeMin.getTime());
         String periodEnd = DataHandler.getSQLiteDate(sleepDataFragment.rangeMax.getTime());
 
