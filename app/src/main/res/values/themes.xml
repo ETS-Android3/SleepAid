@@ -16,6 +16,8 @@
         <item name="radioButtonStyle">@style/RadioButton.White</item>
         <item name="android:windowBackground">@color/purple_sleep</item>
         <item name="bottomNavigationStyle">@style/BottomNavigation</item>
+        <item name="editTextStyle">@style/EditText</item>
+        <item name="checkboxStyle">@style/Checkbox</item>
     </style>
 
     <style name="Button.White" parent="Theme.SleepAid">
@@ -42,5 +44,19 @@
 
     <style name="TimePicker" parent="Widget.MaterialComponents.TimePicker">
         <item name="android:textSize">25sp</item>
+    </style>
+
+    <style name="EditText" parent="Widget.AppCompat.EditText">
+        <item name="backgroundTint">@color/edit_text_style</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/light_grey</item>
+        <item name="android:textCursorDrawable">@null</item>
+        <item name="android:inputType">textCapSentences</item>
+    </style>
+
+    <style name="Checkbox" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">20sp</item>
+        <item name="buttonTint">@color/purple_sleep</item>
     </style>
 </resources>

@@ -16,5 +16,7 @@
         <item name="radioButtonStyle">@style/RadioButton.White</item>
         <item name="android:windowBackground">@color/purple_sleep</item>
         <item name="bottomNavigationStyle">@style/BottomNavigation</item>
+        <item name="editTextStyle">@style/EditText</item>
+        <item name="checkboxStyle">@style/Checkbox</item>
     </style>
 </resources>
