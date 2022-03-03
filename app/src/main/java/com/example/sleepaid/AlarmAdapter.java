@@ -13,6 +13,7 @@ import java.util.List;
 public class AlarmAdapter extends BaseAdapter {
     private Context context;
 
+    private List<Integer> ids;
     private List<String> times;
     private List<String> days;
 
@@ -20,11 +21,13 @@ public class AlarmAdapter extends BaseAdapter {
     private int colorInactive;
 
     public AlarmAdapter(Context context,
+                        List<Integer> ids,
                         List<String> times,
                         List<String> days,
                         int colorActive,
                         int colorInactive) {
         this.context = context;
+        this.ids = ids;
         this.times = times;
         this.days = days;
         this.colorActive = colorActive;
@@ -47,16 +50,17 @@ public class AlarmAdapter extends BaseAdapter {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View row = inflater.inflate(R.layout.alarm_row, parent, false);
+        row.setId(this.ids.get(position));
 
         TextView timeText = row.findViewById(R.id.time);
-        timeText.setText(times.get(position));
+        timeText.setText(this.times.get(position));
 
         int[] dayIds = {R.id.monday, R.id.tuesday, R.id.wednesday, R.id.thursday, R.id.friday, R.id.saturday, R.id.sunday};
 
         for (int i = 0; i < 7; i++) {
             TextView day = row.findViewById(dayIds[i]);
 
-            if (days.get(position).charAt(i) == '1') {
+            if (this.days.get(position).charAt(i) == '1') {
                 day.setTextColor(colorActive);
                 day.setTypeface(null, Typeface.BOLD);
             } else {

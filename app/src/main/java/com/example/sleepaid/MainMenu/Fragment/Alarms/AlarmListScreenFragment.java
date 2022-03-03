@@ -28,7 +28,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class AlarmListScreenFragment extends Fragment implements View.OnClickListener {
     private AppDatabase db;
 
-    protected AlarmListFragment alarmListFragment;
+    private SharedViewModel model;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -40,7 +40,9 @@ public class AlarmListScreenFragment extends Fragment implements View.OnClickLis
 
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
-        db = AppDatabase.getDatabase(App.getContext());
+        this.db = AppDatabase.getDatabase(App.getContext());
+
+        this.model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
         FloatingActionButton addAlarmButton = view.findViewById(R.id.addAlarmButton);
         addAlarmButton.setOnClickListener(this);
@@ -67,6 +69,8 @@ public class AlarmListScreenFragment extends Fragment implements View.OnClickLis
     }
 
     public void onClick(View view) {
+        this.model.setSelectedAlarm(null);
+
         NavHostFragment.findNavController(this).navigate(R.id.configureAlarmAction);
     }
 }

@@ -3,6 +3,7 @@ package com.example.sleepaid.MainMenu.Fragment.Alarms;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,8 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
 
     private SharedViewModel model;
 
+    int[] days;
+
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
@@ -51,9 +54,11 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
     //TODO override back button with "are you sure" dialog
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
-        db = AppDatabase.getDatabase(App.getContext());
+        this.db = AppDatabase.getDatabase(App.getContext());
 
-        model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+        this.model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+
+        this.days = new int[]{R.id.monday, R.id.tuesday, R.id.wednesday, R.id.thursday, R.id.friday, R.id.saturday, R.id.sunday};
 
         Button cancelAlarmConfigurationButton = view.findViewById(R.id.cancelAlarmConfigurationButton);
         cancelAlarmConfigurationButton.setOnClickListener(this);
@@ -61,26 +66,27 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
         Button saveAlarmConfigurationButton = view.findViewById(R.id.saveAlarmConfigurationButton);
         saveAlarmConfigurationButton.setOnClickListener(this);
 
-        this.presetAlarmTime(model.getAlarmViewType());
+        this.loadAlarm(model.getAlarmViewType(), model.getSelectedAlarm());
     }
 
     public void onClick(View view) {
         if (view.getId() == R.id.saveAlarmConfigurationButton) {
-            int currentAlarmType = model.getAlarmViewType();
+            int currentAlarmType = this.model.getAlarmViewType();
 
             Alarm alarm = this.createAlarm(currentAlarmType);
 
-            db.alarmDao()
+            this.db.alarmDao()
                     .insert(Arrays.asList(alarm))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             () -> {
-                                List<Alarm> newAlarmList = new ArrayList<>(model.getAlarmList(currentAlarmType));
+                                List<Alarm> newAlarmList = new ArrayList<>(this.model.getAlarmList(currentAlarmType));
                                 newAlarmList.add(alarm);
                                 Collections.sort(newAlarmList);
 
-                                model.setAlarms(currentAlarmType, newAlarmList);
+                                this.model.setAlarms(currentAlarmType, newAlarmList);
+                                this.model.setSelectedAlarm(null);
 
                                 NavHostFragment.findNavController(this).navigate(R.id.exitAlarmConfigurationAction);
                             },
@@ -88,14 +94,37 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
                     );
         } else {
             //TODO add "are you sure" dialog here
+            this.model.setSelectedAlarm(null);
+
             NavHostFragment.findNavController(this).navigate(R.id.exitAlarmConfigurationAction);
         }
     }
 
-    private void presetAlarmTime(int alarmType) {
+    private void loadAlarm(int alarmType, Alarm selectedAlarm) {
         TimePicker alarmTimePicker = getView().findViewById(R.id.alarmTimePicker);
         alarmTimePicker.setIs24HourView(true);
 
+        if (selectedAlarm != null) {
+            List<Integer> alarmTimes = DataHandler.getIntsFromString(selectedAlarm.getTime());
+
+            alarmTimePicker.setHour(alarmTimes.get(0));
+            alarmTimePicker.setMinute(alarmTimes.get(1));
+
+            for (int i = 0; i < 7; i++) {
+                CheckBox day = getView().findViewById(this.days[i]);
+
+                if (selectedAlarm.getDays().charAt(i) == '1') {
+                    day.setSelected(true);
+                } else {
+                    day.setSelected(false);
+                }
+            }
+        } else {
+            this.presetAlarmTime(alarmType, alarmTimePicker);
+        }
+    }
+
+    private void presetAlarmTime(int alarmType, TimePicker alarmTimePicker) {
         switch (alarmType) {
             //"nap"
             case 2:
@@ -109,7 +138,7 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
                         "Wake-up time" :
                         "Bedtime";
 
-                if (model.getGoalMin(goalName) == null) {
+                if (this.model.getGoalMin(goalName) == null) {
                     db.goalDao()
                             .loadAllByNames(new String[]{goalName})
                             .subscribeOn(Schedulers.io())
@@ -117,7 +146,7 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
                             .subscribe(
                                     goalData -> {
                                         if (!goalData.isEmpty()) {
-                                            model.setGoal(
+                                            this.model.setGoal(
                                                     goalName,
                                                     goalData.get(0).getValueMin(),
                                                     goalData.get(0).getValueMax(),
@@ -125,7 +154,7 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
                                                     getResources().getColor(R.color.white)
                                             );
 
-                                            List<Integer> goalBedtimes = DataHandler.getIntsFromString(model.getGoalMin(goalName));
+                                            List<Integer> goalBedtimes = DataHandler.getIntsFromString(this.model.getGoalMin(goalName));
 
                                             alarmTimePicker.setHour(goalBedtimes.get(0));
                                             alarmTimePicker.setMinute(goalBedtimes.get(1));
@@ -134,7 +163,7 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
                                     Throwable::printStackTrace
                             );
                 } else {
-                    List<Integer> goalBedtimes = DataHandler.getIntsFromString(model.getGoalMin(goalName));
+                    List<Integer> goalBedtimes = DataHandler.getIntsFromString(this.model.getGoalMin(goalName));
 
                     alarmTimePicker.setHour(goalBedtimes.get(0));
                     alarmTimePicker.setMinute(goalBedtimes.get(1));
@@ -144,10 +173,9 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
     }
 
     private Alarm createAlarm(int alarmType) {
-        int[] days = {R.id.monday, R.id.tuesday, R.id.wednesday, R.id.thursday, R.id.friday, R.id.saturday, R.id.sunday};
         String daysPicked = "";
 
-        for (int d : days) {
+        for (int d : this.days) {
             CheckBox checkbox = getView().findViewById(d);
 
             daysPicked = checkbox.isChecked() ?
