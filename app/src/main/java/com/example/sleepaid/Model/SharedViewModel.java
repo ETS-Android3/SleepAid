@@ -115,8 +115,7 @@ public class SharedViewModel extends ViewModel {
                         String goalValueMin,
                         String goalValueMax,
                         int lineColor,
-                        int pointColor,
-                        Bitmap icon) {
+                        int pointColor) {
         GoalModel goal = this.getGoalModel(goalName);
 
         if (goal != null) {
@@ -125,8 +124,7 @@ public class SharedViewModel extends ViewModel {
                     goalValueMax,
                     lineColor,
                     this.getGraphYearLength(),
-                    pointColor,
-                    icon
+                    pointColor
             );
         } else {
             this.goals.add(new GoalModel(
@@ -135,8 +133,7 @@ public class SharedViewModel extends ViewModel {
                     goalValueMax,
                     lineColor,
                     this.getGraphYearLength(),
-                    pointColor,
-                    icon
+                    pointColor
             ));
         }
     }

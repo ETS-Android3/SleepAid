@@ -169,8 +169,7 @@ public abstract class SleepDataGraphFragment extends Fragment {
                                             goalData.get(0).getValueMin(),
                                             goalData.get(0).getValueMax(),
                                             getResources().getColor(R.color.white),
-                                            getResources().getColor(R.color.white),
-                                            goalIcon
+                                            getResources().getColor(R.color.white)
                                     );
 
                                     graph.addSeries(model.getGoalMaxLine(goalName));

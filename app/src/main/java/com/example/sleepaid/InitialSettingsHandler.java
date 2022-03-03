@@ -1,14 +1,18 @@
 package com.example.sleepaid;
 
+import android.app.Activity;
 import android.content.Intent;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.sleepaid.Database.Alarm.Alarm;
 import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.Configuration.Configuration;
 import com.example.sleepaid.Database.Goal.Goal;
+import com.example.sleepaid.MainMenu.Activity.MainMenuScreen;
+import com.example.sleepaid.Model.SharedViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,19 +127,19 @@ public class InitialSettingsHandler {
             alarmList.add(morningAlarm);
         }
 
-        int bedHourEarly = (bedHour - 1) < 0 ?
+        int bedHourBefore = (bedHour - 1) < 0 ?
                 24 + (bedHour - 1) :
                 bedHour - 1;
 
-        String timeEarly = bedHourEarly < 10 ?
-                "0" + bedHourEarly :
-                Integer.toString(bedHourEarly);
+        String timeBefore = bedHourBefore < 10 ?
+                "0" + bedHourBefore :
+                Integer.toString(bedHourBefore);
 
         String time = bedHour < 10 ?
                 "0" + bedHour :
                 Integer.toString(bedHour);
 
-        Alarm bedtimeAlarmBefore = new Alarm(3, timeEarly + ":30", "1111111", "default");
+        Alarm bedtimeAlarmBefore = new Alarm(3, timeBefore + ":30", "1111111", "default");
         Alarm bedtimeAlarm = new Alarm(3, time + ":00", "1111111", "default");
         alarmList.add(bedtimeAlarmBefore);
         alarmList.add(bedtimeAlarm);

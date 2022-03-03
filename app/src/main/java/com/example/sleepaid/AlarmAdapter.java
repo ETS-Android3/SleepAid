@@ -49,7 +49,6 @@ public class AlarmAdapter extends BaseAdapter {
         View row = inflater.inflate(R.layout.alarm_row, parent, false);
 
         TextView timeText = row.findViewById(R.id.time);
-
         timeText.setText(times.get(position));
 
         int[] dayIds = {R.id.monday, R.id.tuesday, R.id.wednesday, R.id.thursday, R.id.friday, R.id.saturday, R.id.sunday};

@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.sleepaid.App;
+import com.example.sleepaid.DataHandler;
 import com.example.sleepaid.Database.Alarm.Alarm;
 import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Model.SharedViewModel;
@@ -47,6 +48,7 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
         return inflater.inflate(R.layout.fragment_alarm_configuration_screen, container, false);
     }
 
+    //TODO override back button with "are you sure" dialog
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
         db = AppDatabase.getDatabase(App.getContext());
@@ -59,38 +61,14 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
         Button saveAlarmConfigurationButton = view.findViewById(R.id.saveAlarmConfigurationButton);
         saveAlarmConfigurationButton.setOnClickListener(this);
 
-        TimePicker alarmTimePicker = view.findViewById(R.id.alarmTimePicker);
-        alarmTimePicker.setIs24HourView(true);
+        this.presetAlarmTime(model.getAlarmViewType());
     }
 
     public void onClick(View view) {
         if (view.getId() == R.id.saveAlarmConfigurationButton) {
             int currentAlarmType = model.getAlarmViewType();
 
-            int[] days = {R.id.monday, R.id.tuesday, R.id.wednesday, R.id.thursday, R.id.friday, R.id.saturday, R.id.sunday};
-            String daysPicked = "";
-
-            for (int d : days) {
-                CheckBox checkbox = getView().findViewById(d);
-
-                daysPicked = checkbox.isChecked() ?
-                        daysPicked + "1" :
-                        daysPicked + "0";
-            }
-
-            TimePicker alarmTimePicker = getView().findViewById(R.id.alarmTimePicker);
-
-            String hours = alarmTimePicker.getHour() < 10 ?
-                    "0" + alarmTimePicker.getHour() :
-                    Integer.toString(alarmTimePicker.getHour());
-
-            String minutes = alarmTimePicker.getMinute() < 10 ?
-                    "0" + alarmTimePicker.getMinute() :
-                    Integer.toString(alarmTimePicker.getMinute());
-
-            String time = hours + ":" + minutes;
-
-            Alarm alarm = new Alarm(currentAlarmType, time, daysPicked, "default");
+            Alarm alarm = this.createAlarm(currentAlarmType);
 
             db.alarmDao()
                     .insert(Arrays.asList(alarm))
@@ -109,7 +87,86 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
                             Throwable::printStackTrace
                     );
         } else {
+            //TODO add "are you sure" dialog here
             NavHostFragment.findNavController(this).navigate(R.id.exitAlarmConfigurationAction);
         }
+    }
+
+    private void presetAlarmTime(int alarmType) {
+        TimePicker alarmTimePicker = getView().findViewById(R.id.alarmTimePicker);
+        alarmTimePicker.setIs24HourView(true);
+
+        switch (alarmType) {
+            //"nap"
+            case 2:
+                alarmTimePicker.setHour(12);
+                alarmTimePicker.setMinute(0);
+                break;
+
+            //"morning" or "bedtime"
+            default:
+                String goalName = alarmType == 1 ?
+                        "Wake-up time" :
+                        "Bedtime";
+
+                if (model.getGoalMin(goalName) == null) {
+                    db.goalDao()
+                            .loadAllByNames(new String[]{goalName})
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(
+                                    goalData -> {
+                                        if (!goalData.isEmpty()) {
+                                            model.setGoal(
+                                                    goalName,
+                                                    goalData.get(0).getValueMin(),
+                                                    goalData.get(0).getValueMax(),
+                                                    getResources().getColor(R.color.white),
+                                                    getResources().getColor(R.color.white)
+                                            );
+
+                                            List<Integer> goalBedtimes = DataHandler.getIntsFromString(model.getGoalMin(goalName));
+
+                                            alarmTimePicker.setHour(goalBedtimes.get(0));
+                                            alarmTimePicker.setMinute(goalBedtimes.get(1));
+                                        }
+                                    },
+                                    Throwable::printStackTrace
+                            );
+                } else {
+                    List<Integer> goalBedtimes = DataHandler.getIntsFromString(model.getGoalMin(goalName));
+
+                    alarmTimePicker.setHour(goalBedtimes.get(0));
+                    alarmTimePicker.setMinute(goalBedtimes.get(1));
+                }
+                break;
+        }
+    }
+
+    private Alarm createAlarm(int alarmType) {
+        int[] days = {R.id.monday, R.id.tuesday, R.id.wednesday, R.id.thursday, R.id.friday, R.id.saturday, R.id.sunday};
+        String daysPicked = "";
+
+        for (int d : days) {
+            CheckBox checkbox = getView().findViewById(d);
+
+            daysPicked = checkbox.isChecked() ?
+                    daysPicked + "1" :
+                    daysPicked + "0";
+        }
+
+        TimePicker alarmTimePicker = getView().findViewById(R.id.alarmTimePicker);
+
+        String hours = alarmTimePicker.getHour() < 10 ?
+                "0" + alarmTimePicker.getHour() :
+                Integer.toString(alarmTimePicker.getHour());
+
+        String minutes = alarmTimePicker.getMinute() < 10 ?
+                "0" + alarmTimePicker.getMinute() :
+                Integer.toString(alarmTimePicker.getMinute());
+
+        String time = hours + ":" + minutes;
+
+        return new Alarm(alarmType, time, daysPicked, "default");
     }
 }

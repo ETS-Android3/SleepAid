@@ -34,26 +34,24 @@ public class GoalModel {
                      String goalValueMax,
                      int lineColor,
                      int lineLength,
-                     int pointColor,
-                     Bitmap icon) {
+                     int pointColor) {
         this.goalName = goalName;
 
         this.setTranslation(goalValueMin, goalValueMax);
 
-        this.setGoalMin(goalValueMin, lineColor, lineLength, pointColor, icon);
-        this.setGoalMax(goalValueMax, lineColor, lineLength, pointColor, icon);
+        this.setGoalMin(goalValueMin, lineColor, lineLength, pointColor);
+        this.setGoalMax(goalValueMax, lineColor, lineLength, pointColor);
     }
 
     public void update(String goalValueMin,
                        String goalValueMax,
                        int lineColor,
                        int lineLength,
-                       int pointColor,
-                       Bitmap icon) {
+                       int pointColor) {
         this.setTranslation(goalValueMin, goalValueMax);
 
-        this.setGoalMin(goalValueMin, lineColor, lineLength, pointColor, icon);
-        this.setGoalMin(goalValueMax, lineColor, lineLength, pointColor, icon);
+        this.setGoalMin(goalValueMin, lineColor, lineLength, pointColor);
+        this.setGoalMin(goalValueMax, lineColor, lineLength, pointColor);
     }
 
     private void setTranslation(String goalValueMin, String goalValueMax) {
@@ -80,27 +78,25 @@ public class GoalModel {
     private void setGoalMin(String goalValue,
                             int lineColor,
                             int lineLength,
-                            int pointColor,
-                            Bitmap icon) {
+                            int pointColor) {
         this.goalMin = goalValue;
 
         double goalValueNumber = DataHandler.getDoubleFromTime(goalValue);
 
         this.goalMinLine = this.createGoalLine(goalValueNumber, 0, lineColor, lineLength);
-        this.goalMinPoint = this.createGoalPoint(goalValue, goalValueNumber, 0, -0.5, pointColor, icon);
+        this.goalMinPoint = this.createGoalPoint(goalValue, goalValueNumber, 0, -0.5, pointColor);
     }
 
     private void setGoalMax(String goalValue,
                             int lineColor,
                             int lineLength,
-                            int pointColor,
-                            Bitmap icon) {
+                            int pointColor) {
         this.goalMax = goalValue;
 
         double goalValueNumber = DataHandler.getDoubleFromTime(goalValue);
 
         this.goalMaxLine = this.createGoalLine(goalValueNumber, 1, lineColor, lineLength);
-        this.goalMaxPoint = this.createGoalPoint(goalValue, goalValueNumber, 1, 0.25, pointColor, icon);
+        this.goalMaxPoint = this.createGoalPoint(goalValue, goalValueNumber, 1, 0.25, pointColor);
     }
 
     public String getGoalName() {
@@ -171,8 +167,7 @@ public class GoalModel {
                                                          double goalValue,
                                                          int goalType,
                                                          double ratio,
-                                                         int pointColor,
-                                                         Bitmap icon) {
+                                                         int pointColor) {
         PointsGraphSeries<DataPoint> goalPoint = new PointsGraphSeries<>();
 
         goalPoint.appendData(
@@ -180,15 +175,14 @@ public class GoalModel {
                 true,
                 1);
 
-        this.styleGoalPoint(goalText, goalPoint, pointColor, icon);
+        this.styleGoalPoint(goalText, goalPoint, pointColor);
 
         return goalPoint;
     }
 
     private void styleGoalPoint(String goalText,
                                 PointsGraphSeries<DataPoint> goalPoint,
-                                int pointColor,
-                                Bitmap icon) {
+                                int pointColor) {
         goalPoint.setCustomShape(new PointsGraphSeries.CustomShape() {
             @Override
             public void draw(Canvas canvas, Paint paint, float x, float y, DataPointInterface dataPoint) {
