@@ -38,6 +38,8 @@ public class SharedViewModel extends ViewModel {
     private int graphMonthLength;
     private int graphYearLength;
 
+    private int alarmViewType;
+
     private List<GraphSeriesModel> graphSeries = new ArrayList<>();
     private List<GoalModel> goals = new ArrayList<>();
     private List<AlarmListModel> alarms = new ArrayList<>();
@@ -72,6 +74,10 @@ public class SharedViewModel extends ViewModel {
 
     public void setGraphYearLength(int graphYearLength) {
         this.graphYearLength = graphYearLength;
+    }
+
+    public void setAlarmViewType(int alarmViewType) {
+        this.alarmViewType = alarmViewType;
     }
 
     public void setSeries(String dataType,
@@ -193,6 +199,10 @@ public class SharedViewModel extends ViewModel {
             default:
                 return this.graphWeekLength;
         }
+    }
+
+    public int getAlarmViewType() {
+        return this.alarmViewType;
     }
 
     private GraphSeriesModel getSeriesModel(String dataType,

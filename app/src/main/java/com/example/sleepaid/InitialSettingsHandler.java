@@ -85,16 +85,16 @@ public class InitialSettingsHandler {
                             Goal wakeupTime = new Goal("Wake-up time", wakeupTimes.get(0), wakeupTimes.get(1));
                             goalList.add(wakeupTime);
 
-                            int minBedtime = DataHandler.getIntsFromString(bedtimes.get(0)).get(0);
-                            int minWakeupTime = DataHandler.getIntsFromString(wakeupTimes.get(0)).get(0);
+                            int minBedHour = DataHandler.getIntsFromString(bedtimes.get(0)).get(0);
+                            int minWakeupHour = DataHandler.getIntsFromString(wakeupTimes.get(0)).get(0);
 
-                            int duration = minWakeupTime - minBedtime <= 0 ?
-                                    24 + (minWakeupTime - minBedtime) :
-                                    minWakeupTime - minBedtime;
+                            int duration = minWakeupHour - minBedHour <= 0 ?
+                                    24 + (minWakeupHour - minBedHour) :
+                                    minWakeupHour - minBedHour;
                             Goal sleepDuration = new Goal("Sleep duration", duration + "h", duration + "h");
                             goalList.add(sleepDuration);
 
-                            getAlarmList(minWakeupTime, minBedtime);
+                            getAlarmList(minWakeupHour, minBedHour);
                         },
                         Throwable::printStackTrace
                 );
@@ -111,17 +111,32 @@ public class InitialSettingsHandler {
                 );
     }
 
-    private void getAlarmList(int wakeupTime, int bedTime) {
+    private void getAlarmList(int wakeupHour, int bedHour) {
         for (int i = 0; i < 4; i++) {
-            String newWakeupTime = (i == 0) ? wakeupTime + ":00" : wakeupTime + ":" + i * 10;
+            String time = wakeupHour < 10 ?
+                    "0" + wakeupHour :
+                    Integer.toString(wakeupHour);
 
-            Alarm morningAlarm = new Alarm(1,  newWakeupTime, "M T W T F S S", "default");
+            String newWakeupTime = (i == 0) ? time + ":00" : time + ":" + i * 10;
+
+            Alarm morningAlarm = new Alarm(1,  newWakeupTime, "1111111", "default");
             alarmList.add(morningAlarm);
         }
 
-        //TODO figure out AM and PM
-        Alarm bedtimeAlarmBefore = new Alarm(3, (bedTime - 1) + ":30", "M T W T F S S", "default");
-        Alarm bedtimeAlarm = new Alarm(3, bedTime + ":00", "M T W T F S S", "default");
+        int bedHourEarly = (bedHour - 1) < 0 ?
+                24 + (bedHour - 1) :
+                bedHour - 1;
+
+        String timeEarly = bedHourEarly < 10 ?
+                "0" + bedHourEarly :
+                Integer.toString(bedHourEarly);
+
+        String time = bedHour < 10 ?
+                "0" + bedHour :
+                Integer.toString(bedHour);
+
+        Alarm bedtimeAlarmBefore = new Alarm(3, timeEarly + ":30", "1111111", "default");
+        Alarm bedtimeAlarm = new Alarm(3, time + ":00", "1111111", "default");
         alarmList.add(bedtimeAlarmBefore);
         alarmList.add(bedtimeAlarm);
 

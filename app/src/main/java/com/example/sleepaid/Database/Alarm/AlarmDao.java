@@ -18,7 +18,7 @@ public interface AlarmDao {
     @Query("SELECT * FROM Alarm WHERE alarmId IN (:alarmIds) ORDER BY alarmId")
     Single<List<Alarm>> loadAllByIds(int[] alarmIds);
 
-    @Query("SELECT * FROM Alarm WHERE type IN (:types) ORDER BY type")
+    @Query("SELECT * FROM Alarm WHERE type IN (:types) ORDER BY type, time")
     Single<List<Alarm>> loadAllByTypes(int[] types);
 
     @Query("SELECT * FROM Alarm WHERE time IN (:times) ORDER BY time")

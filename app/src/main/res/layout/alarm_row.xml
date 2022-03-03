@@ -22,11 +22,78 @@
 
     <!-- Alarm days -->
     <TextView
-        android:id="@+id/days"
+        android:id="@+id/monday"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/time"
         android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:text="M"
+        android:textColor="@color/black"
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/tuesday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/monday"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:text="T"
+        android:textColor="@color/black"
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/wednesday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/tuesday"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:text="W"
+        android:textColor="@color/black"
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/thursday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/wednesday"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:text="T"
+        android:textColor="@color/black"
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/friday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/thursday"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:text="F"
+        android:textColor="@color/black"
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/saturday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/friday"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:text="S"
+        android:textColor="@color/black"
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/sunday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/saturday"
+        android:layout_centerVertical="true"
+        android:text="S"
         android:textColor="@color/black"
         android:textSize="15dp" />
 

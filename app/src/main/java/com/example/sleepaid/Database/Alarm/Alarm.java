@@ -6,6 +6,7 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
+import com.example.sleepaid.DataHandler;
 import com.example.sleepaid.Database.AlarmType.AlarmType;
 
 @Entity(foreignKeys = {
@@ -16,7 +17,7 @@ import com.example.sleepaid.Database.AlarmType.AlarmType;
                 onDelete = ForeignKey.CASCADE
         )
 })
-public class Alarm {
+public class Alarm implements Comparable<Alarm> {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "alarmId")
     public int id;
@@ -54,5 +55,23 @@ public class Alarm {
 
     public String getSound() {
         return this.sound;
+    }
+
+    @Override
+    public int compareTo(Alarm newAlarm) {
+        double newAlarmTime = DataHandler.getDoubleFromTime(newAlarm.getTime());
+        double currentAlarmTime = DataHandler.getDoubleFromTime(this.time);
+
+        int result;
+
+        if ((currentAlarmTime - newAlarmTime) < 0) {
+            result = -1;
+        } else if ((currentAlarmTime - newAlarmTime) > 0) {
+            result = 1;
+        } else {
+            result = 0;
+        }
+
+        return result;
     }
 }

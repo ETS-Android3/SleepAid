@@ -17,6 +17,7 @@ import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,6 +38,8 @@ public abstract class AlarmListFragment extends Fragment {
     }
 
     protected void loadAlarmList(int alarmType) {
+        model.setAlarmViewType(alarmType);
+
         if (model.getAlarmListModel(alarmType) == null) {
             db.alarmDao()
                     .loadAllByTypes(new int[]{alarmType})
@@ -44,6 +47,7 @@ public abstract class AlarmListFragment extends Fragment {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             alarmData -> {
+                                Collections.sort(alarmData);
                                 model.setAlarms(alarmType, alarmData);
 
                                 fillListView(alarmData);
@@ -64,7 +68,9 @@ public abstract class AlarmListFragment extends Fragment {
             AlarmAdapter alarmAdapter = new AlarmAdapter(
                     App.getContext(),
                     alarmList.stream().map(Alarm::getTime).collect(Collectors.toList()),
-                    alarmList.stream().map(Alarm::getDays).collect(Collectors.toList())
+                    alarmList.stream().map(Alarm::getDays).collect(Collectors.toList()),
+                    getResources().getColor(R.color.purple_sleep),
+                    getResources().getColor(R.color.black_transparent)
             );
 
             list.setAdapter(alarmAdapter);
