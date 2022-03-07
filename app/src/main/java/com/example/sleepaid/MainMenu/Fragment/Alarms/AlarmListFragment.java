@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,6 +29,7 @@ import com.example.sleepaid.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -43,8 +45,6 @@ public abstract class AlarmListFragment extends Fragment implements AdapterView.
     private SharedViewModel model;
 
     private AlarmListScreenFragment alarmListScreenFragment;
-
-    private AlarmAdapter alarmAdapter;
 
     private List<Alarm> alarmList;
 
@@ -95,15 +95,15 @@ public abstract class AlarmListFragment extends Fragment implements AdapterView.
 
             AlarmAdapter alarmAdapter = new AlarmAdapter(
                     App.getContext(),
+                    this,
                     alarmList.stream().map(a -> alarmList.indexOf(a)).collect(Collectors.toList()),
                     alarmList.stream().map(Alarm::getTime).collect(Collectors.toList()),
                     alarmList.stream().map(Alarm::getDays).collect(Collectors.toList()),
-                    getResources().getColor(R.color.lightest_purple_sleep_transparent),
+                    alarmList.stream().map(Alarm::getIsOn).collect(Collectors.toList()),
+                    getResources().getColor(R.color.lavender_sleep_transparent),
                     getResources().getColor(R.color.purple_sleep),
                     getResources().getColor(R.color.black_transparent)
             );
-
-            this.alarmAdapter = alarmAdapter;
 
             list.setAdapter(alarmAdapter);
             alarmAdapter.notifyDataSetChanged();
@@ -123,6 +123,34 @@ public abstract class AlarmListFragment extends Fragment implements AdapterView.
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
         ((ListView) view).setItemChecked(position, !((AlarmAdapter)adapterView.getAdapter()).isPositionChecked(position));
         return false;
+    }
+
+    public void toggleAlarms(List<Integer> selectedIds, int isOn) {
+        List<Alarm> alarmsToSwitch = this.alarmList
+                .stream()
+                .filter(a -> selectedIds.contains(this.alarmList.indexOf(a)))
+                .collect(Collectors.toList());
+
+        alarmList.removeAll(alarmsToSwitch);
+
+        for (Alarm a : alarmsToSwitch) {
+            a.setIsOn(isOn);
+        }
+
+        this.db.alarmDao()
+                .update(alarmsToSwitch)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        () -> {
+                            alarmList.addAll(alarmsToSwitch);
+                            Collections.sort(alarmList);
+                            this.model.setAlarms(model.getAlarmViewType(), alarmList);
+
+                            this.fillListView(alarmList);
+                        },
+                        Throwable::printStackTrace
+                );
     }
 
     public void deleteRows(List<Integer> selectedIds) {

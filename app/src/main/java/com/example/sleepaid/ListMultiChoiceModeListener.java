@@ -5,11 +5,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AbsListView;
 
-import androidx.fragment.app.Fragment;
-
 import com.example.sleepaid.MainMenu.Fragment.Alarms.AlarmListFragment;
-
-import java.util.Set;
 
 public class ListMultiChoiceModeListener implements AbsListView.MultiChoiceModeListener {
     private int count = 0;
@@ -37,8 +33,19 @@ public class ListMultiChoiceModeListener implements AbsListView.MultiChoiceModeL
 
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         // Respond to clicks on the actions in the CAB
-        if (item.getItemId() == R.id.delete) {
-            this.fragment.deleteRows(this.alarmAdapter.getSelectedIds());
+        switch(item.getItemId()) {
+            case R.id.turnOn:
+                this.fragment.toggleAlarms(this.alarmAdapter.getSelectedIds(), 1);
+                break;
+
+            case R.id.turnOff:
+                this.fragment.toggleAlarms(this.alarmAdapter.getSelectedIds(), 0);
+                break;
+
+            //"delete"
+            default:
+                this.fragment.deleteRows(this.alarmAdapter.getSelectedIds());
+                break;
         }
 
         mode.finish();
@@ -55,6 +62,7 @@ public class ListMultiChoiceModeListener implements AbsListView.MultiChoiceModeL
         // Here you can make any necessary updates to the activity when
         // the CAB is removed. By default, selected items are deselected/unchecked.
         this.alarmAdapter.clearSelection();
+        this.count = 0;
     }
 
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {

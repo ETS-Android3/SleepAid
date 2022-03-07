@@ -29,12 +29,19 @@ public class Alarm implements Comparable<Alarm> {
     public String days;
     @NonNull
     public String sound;
+    @NonNull
+    public int isOn;
 
-    public Alarm(int type, String time, String days, String sound) {
+    public Alarm(int type,
+                 String time,
+                 String days,
+                 String sound,
+                 int isOn) {
         this.type = type;
         this.time = time;
         this.days = days;
         this.sound = sound;
+        this.isOn = isOn;
     }
 
     public int getId() {
@@ -57,6 +64,10 @@ public class Alarm implements Comparable<Alarm> {
         return this.sound;
     }
 
+    public int getIsOn() {
+        return this.isOn;
+    }
+
     public void setTime(String time) {
         this.time = time;
     }
@@ -67,6 +78,10 @@ public class Alarm implements Comparable<Alarm> {
 
     public void setSound(String sound) {
         this.sound = sound;
+    }
+
+    public void setIsOn(int isOn) {
+        this.isOn = isOn;
     }
 
     @Override

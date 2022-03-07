@@ -187,12 +187,13 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
     }
 
     private Alarm createAlarm(int alarmType) {
-        return new Alarm(alarmType, this.getTime(), this.getDaysPicked(), "default");
+        return new Alarm(alarmType, this.getTime(), this.getDaysPicked(), "default", 1);
     }
 
     private void updateAlarm(Alarm alarm) {
         alarm.setTime(this.getTime());
         alarm.setDays(this.getDaysPicked());
+        alarm.setIsOn(1);
         //TODO set sound
     }
 

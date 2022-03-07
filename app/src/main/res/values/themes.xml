@@ -19,6 +19,10 @@
         <item name="editTextStyle">@style/EditText</item>
         <item name="checkboxStyle">@style/Checkbox</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeStyle">@style/ActionModeStyle</item>
+        <item name="actionModeCloseDrawable">@drawable/close_icon</item>
+        <item name="actionModeCloseButtonStyle">@style/CloseButtonStyle</item>
+        <item name="actionMenuTextColor">@color/white</item>
     </style>
 
     <style name="Button.White" parent="Theme.SleepAid">
@@ -59,5 +63,14 @@
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">20sp</item>
         <item name="buttonTint">@color/purple_sleep</item>
+    </style>
+
+    <style name="ActionModeStyle" parent="Widget.AppCompat.ActionMode">
+        <item name="android:backgroundTint">@color/darker_purple_sleep</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="CloseButtonStyle" parent="Widget.AppCompat.ActionButton.CloseMode">
+        <item name="android:tint">@color/white</item>
     </style>
 </resources>

@@ -7,20 +7,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.ToggleButton;
+
+import com.example.sleepaid.MainMenu.Fragment.Alarms.AlarmListFragment;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 public class AlarmAdapter extends BaseAdapter {
     private Context context;
+    private AlarmListFragment fragment;
 
     private List<Integer> ids;
     private List<String> times;
     private List<String> days;
+    private List<Integer> isOn;
 
     private int colorSelected;
     private int colorActive;
@@ -29,16 +34,20 @@ public class AlarmAdapter extends BaseAdapter {
     private HashMap<Integer, Boolean> selection = new HashMap<>();
 
     public AlarmAdapter(Context context,
+                        AlarmListFragment fragment,
                         List<Integer> ids,
                         List<String> times,
                         List<String> days,
+                        List<Integer> isOn,
                         int colorSelected,
                         int colorActive,
                         int colorInactive) {
         this.context = context;
+        this.fragment = fragment;
         this.ids = ids;
         this.times = times;
         this.days = days;
+        this.isOn = isOn;
         this.colorSelected = colorSelected;
         this.colorActive = colorActive;
         this.colorInactive = colorInactive;
@@ -83,6 +92,19 @@ public class AlarmAdapter extends BaseAdapter {
                 day.setTypeface(Typeface.DEFAULT);
             }
         }
+
+        ToggleButton onOffButton = row.findViewById(R.id.onOffButton);
+        onOffButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (buttonView.isPressed()) {
+                    int checked = isChecked ? 1 : 0;
+                    fragment.toggleAlarms(Arrays.asList(position), checked);
+                }
+            }
+        });
+
+        onOffButton.setChecked(this.isOn.get(position) == 1);
 
         row.getBackground().setTint(this.isPositionChecked(position) ? this.colorSelected : Color.WHITE);
 

@@ -19,5 +19,9 @@
         <item name="editTextStyle">@style/EditText</item>
         <item name="checkboxStyle">@style/Checkbox</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeStyle">@style/ActionModeStyle</item>
+        <item name="actionModeCloseDrawable">@drawable/close_icon</item>
+        <item name="actionModeCloseButtonStyle">@style/CloseButtonStyle</item>
+        <item name="actionMenuTextColor">@color/white</item>
     </style>
 </resources>
