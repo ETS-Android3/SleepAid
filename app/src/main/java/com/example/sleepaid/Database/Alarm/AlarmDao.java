@@ -1,9 +1,11 @@
 package com.example.sleepaid.Database.Alarm;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -32,4 +34,10 @@ public interface AlarmDao {
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     Completable insert(List<Alarm> alarms);
+
+    @Update
+    Completable update(List<Alarm> alarms);
+
+    @Delete
+    Completable delete(List<Alarm> alarms);
 }

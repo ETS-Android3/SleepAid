@@ -1,9 +1,7 @@
 package com.example.sleepaid.MainMenu.Fragment.Alarms;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,14 +21,11 @@ import com.example.sleepaid.Database.Alarm.Alarm;
 import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -73,25 +68,46 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
         if (view.getId() == R.id.saveAlarmConfigurationButton) {
             int currentAlarmType = this.model.getAlarmViewType();
 
-            Alarm alarm = this.createAlarm(currentAlarmType);
+            if (model.getSelectedAlarm() == null) {
+                Alarm alarm = this.createAlarm(currentAlarmType);
 
-            this.db.alarmDao()
-                    .insert(Arrays.asList(alarm))
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            () -> {
-                                List<Alarm> newAlarmList = new ArrayList<>(this.model.getAlarmList(currentAlarmType));
-                                newAlarmList.add(alarm);
-                                Collections.sort(newAlarmList);
+                this.db.alarmDao()
+                        .insert(Arrays.asList(alarm))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                () -> {
+                                    List<Alarm> newAlarmList = new ArrayList<>(this.model.getAlarmList(currentAlarmType));
+                                    newAlarmList.add(alarm);
+                                    Collections.sort(newAlarmList);
 
-                                this.model.setAlarms(currentAlarmType, newAlarmList);
-                                this.model.setSelectedAlarm(null);
+                                    this.model.setAlarms(currentAlarmType, newAlarmList);
+                                    this.model.setSelectedAlarm(null);
 
-                                NavHostFragment.findNavController(this).navigate(R.id.exitAlarmConfigurationAction);
-                            },
-                            Throwable::printStackTrace
-                    );
+                                    NavHostFragment.findNavController(this).navigate(R.id.exitAlarmConfigurationAction);
+                                },
+                                Throwable::printStackTrace
+                        );
+            } else {
+                this.updateAlarm(this.model.getSelectedAlarm());
+
+                this.db.alarmDao()
+                        .update(Arrays.asList(this.model.getSelectedAlarm()))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                () -> {
+                                    List<Alarm> newAlarmList = new ArrayList<>(this.model.getAlarmList(currentAlarmType));
+                                    Collections.sort(newAlarmList);
+
+                                    this.model.setAlarms(currentAlarmType, newAlarmList);
+                                    this.model.setSelectedAlarm(null);
+
+                                    NavHostFragment.findNavController(this).navigate(R.id.exitAlarmConfigurationAction);
+                                },
+                                Throwable::printStackTrace
+                        );
+            }
         } else {
             //TODO add "are you sure" dialog here
             this.model.setSelectedAlarm(null);
@@ -113,18 +129,16 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
             for (int i = 0; i < 7; i++) {
                 CheckBox day = getView().findViewById(this.days[i]);
 
-                if (selectedAlarm.getDays().charAt(i) == '1') {
-                    day.setSelected(true);
-                } else {
-                    day.setSelected(false);
+                if (selectedAlarm.getDays().charAt(i) == '0') {
+                    day.setChecked(false);
                 }
             }
         } else {
-            this.presetAlarmTime(alarmType, alarmTimePicker);
+            this.presetAlarm(alarmType, alarmTimePicker);
         }
     }
 
-    private void presetAlarmTime(int alarmType, TimePicker alarmTimePicker) {
+    private void presetAlarm(int alarmType, TimePicker alarmTimePicker) {
         switch (alarmType) {
             //"nap"
             case 2:
@@ -173,16 +187,16 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
     }
 
     private Alarm createAlarm(int alarmType) {
-        String daysPicked = "";
+        return new Alarm(alarmType, this.getTime(), this.getDaysPicked(), "default");
+    }
 
-        for (int d : this.days) {
-            CheckBox checkbox = getView().findViewById(d);
+    private void updateAlarm(Alarm alarm) {
+        alarm.setTime(this.getTime());
+        alarm.setDays(this.getDaysPicked());
+        //TODO set sound
+    }
 
-            daysPicked = checkbox.isChecked() ?
-                    daysPicked + "1" :
-                    daysPicked + "0";
-        }
-
+    private String getTime() {
         TimePicker alarmTimePicker = getView().findViewById(R.id.alarmTimePicker);
 
         String hours = alarmTimePicker.getHour() < 10 ?
@@ -193,8 +207,20 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
                 "0" + alarmTimePicker.getMinute() :
                 Integer.toString(alarmTimePicker.getMinute());
 
-        String time = hours + ":" + minutes;
+        return hours + ":" + minutes;
+    }
 
-        return new Alarm(alarmType, time, daysPicked, "default");
+    private String getDaysPicked() {
+        String daysPicked = "";
+
+        for (int d : this.days) {
+            CheckBox checkbox = getView().findViewById(d);
+
+            daysPicked = checkbox.isChecked() ?
+                    daysPicked + "1" :
+                    daysPicked + "0";
+        }
+
+        return daysPicked;
     }
 }

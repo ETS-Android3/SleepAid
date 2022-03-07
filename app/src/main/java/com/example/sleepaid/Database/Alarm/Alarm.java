@@ -57,6 +57,18 @@ public class Alarm implements Comparable<Alarm> {
         return this.sound;
     }
 
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public void setDays(String days) {
+        this.days = days;
+    }
+
+    public void setSound(String sound) {
+        this.sound = sound;
+    }
+
     @Override
     public int compareTo(Alarm newAlarm) {
         double newAlarmTime = DataHandler.getDoubleFromTime(newAlarm.getTime());

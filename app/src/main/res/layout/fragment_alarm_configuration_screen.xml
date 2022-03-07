@@ -9,7 +9,6 @@
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="15dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/buttons">
 
@@ -176,7 +175,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginTop="20dp"
-                    android:layout_marginBottom="15dp"
+                    android:layout_marginBottom="10dp"
                     android:layout_marginHorizontal="5dp"
                     app:layout_constraintTop_toBottomOf="@+id/alarmVibration"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -214,26 +213,28 @@
             android:id="@+id/cancelAlarmConfigurationButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
             android:layout_marginStart="50dp"
             android:text="Cancel"
             android:textAlignment="center"
             android:textSize="22.5sp"
             android:textColor="@color/white"
             android:backgroundTint="@android:color/transparent"
+            android:paddingHorizontal="30dp"
+            android:paddingVertical="20dp"
             android:layout_alignParentStart="true"/>
 
         <Button
             android:id="@+id/saveAlarmConfigurationButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
             android:layout_marginEnd="50dp"
             android:text="Save"
             android:textAlignment="center"
             android:textSize="22.5sp"
             android:textColor="@color/white"
             android:backgroundTint="@android:color/transparent"
+            android:paddingHorizontal="30dp"
+            android:paddingVertical="20dp"
             android:layout_alignParentEnd="true" />
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

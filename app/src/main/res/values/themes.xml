@@ -18,6 +18,7 @@
         <item name="bottomNavigationStyle">@style/BottomNavigation</item>
         <item name="editTextStyle">@style/EditText</item>
         <item name="checkboxStyle">@style/Checkbox</item>
+        <item name="windowActionModeOverlay">true</item>
     </style>
 
     <style name="Button.White" parent="Theme.SleepAid">
