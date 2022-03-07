@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
@@ -187,14 +189,21 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
     }
 
     private Alarm createAlarm(int alarmType) {
-        return new Alarm(alarmType, this.getTime(), this.getDaysPicked(), "default", 1);
+        return new Alarm(alarmType, this.getName(), this.getTime(), this.getDaysPicked(), "default", 1);
     }
 
     private void updateAlarm(Alarm alarm) {
+        alarm.setName(this.getName());
         alarm.setTime(this.getTime());
         alarm.setDays(this.getDaysPicked());
         alarm.setIsOn(1);
         //TODO set sound
+    }
+
+    private String getName() {
+        EditText name = getView().findViewById(R.id.alarmName);
+
+        return name.getText().toString();
     }
 
     private String getTime() {

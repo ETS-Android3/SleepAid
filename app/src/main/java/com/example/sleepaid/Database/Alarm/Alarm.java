@@ -1,13 +1,22 @@
 package com.example.sleepaid.Database.Alarm;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
+import com.example.sleepaid.AlarmBroadcastReceiver;
 import com.example.sleepaid.DataHandler;
 import com.example.sleepaid.Database.AlarmType.AlarmType;
+
+import java.util.Calendar;
+import java.util.List;
 
 @Entity(foreignKeys = {
         @ForeignKey(
@@ -23,6 +32,7 @@ public class Alarm implements Comparable<Alarm> {
     public int id;
 
     public int type;
+    public String name;
     @NonNull
     public String time;
     @NonNull
@@ -33,11 +43,13 @@ public class Alarm implements Comparable<Alarm> {
     public int isOn;
 
     public Alarm(int type,
+                 String name,
                  String time,
                  String days,
                  String sound,
                  int isOn) {
         this.type = type;
+        this.name = name;
         this.time = time;
         this.days = days;
         this.sound = sound;
@@ -50,6 +62,10 @@ public class Alarm implements Comparable<Alarm> {
 
     public int getType() {
         return this.type;
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     public String getTime() {
@@ -66,6 +82,10 @@ public class Alarm implements Comparable<Alarm> {
 
     public int getIsOn() {
         return this.isOn;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setTime(String time) {
@@ -100,5 +120,63 @@ public class Alarm implements Comparable<Alarm> {
         }
 
         return result;
+    }
+
+    public void schedule(Context context) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
+
+        boolean recurring = this.days.contains("1") ? true : false;
+        intent.putExtra(AlarmBroadcastReceiver.RECURRING, recurring);
+
+        intent.putExtra(AlarmBroadcastReceiver.MONDAY, this.days.charAt(0) == '1');
+        intent.putExtra(AlarmBroadcastReceiver.TUESDAY, this.days.charAt(1) == '1');
+        intent.putExtra(AlarmBroadcastReceiver.WEDNESDAY, this.days.charAt(2) == '1');
+        intent.putExtra(AlarmBroadcastReceiver.THURSDAY, this.days.charAt(3) == '1');
+        intent.putExtra(AlarmBroadcastReceiver.FRIDAY, this.days.charAt(4) == '1');
+        intent.putExtra(AlarmBroadcastReceiver.SATURDAY, this.days.charAt(5) == '1');
+        intent.putExtra(AlarmBroadcastReceiver.SUNDAY, this.days.charAt(6) == '1');
+
+        intent.putExtra(AlarmBroadcastReceiver.TITLE, this.name);
+
+        PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, 0);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+
+        List<Integer> time = DataHandler.getIntsFromString(this.time);
+        calendar.set(Calendar.HOUR_OF_DAY, time.get(0));
+        calendar.set(Calendar.MINUTE, time.get(1));
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        // if alarm time has already passed, increment day by 1
+        if (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
+            calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 1);
+        }
+
+        if (!recurring) {
+            alarmManager.setExact(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.getTimeInMillis(),
+                    alarmPendingIntent
+            );
+        } else {
+            final long RUN_DAILY = 24 * 60 * 60 * 1000;
+            alarmManager.setRepeating(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.getTimeInMillis(),
+                    RUN_DAILY,
+                    alarmPendingIntent
+            );
+        }
+    }
+
+    public void cancel(Context context) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
+        PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, 0);
+        alarmManager.cancel(alarmPendingIntent);
     }
 }
