@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/greetingFragment"
-        android:name="com.example.sleepaid.Questionnaire.Fragment.GreetingFragment"
+        android:name="com.example.sleepaid.Fragment.Questionnaire.GreetingFragment"
         android:label="GreetingFragment">
         <action
             android:id="@+id/startQuestionnaireAction"
@@ -15,7 +15,7 @@
     </fragment>
     <fragment
         android:id="@+id/questionnaireFragment"
-        android:name="com.example.sleepaid.Questionnaire.Fragment.QuestionnaireFragment"
+        android:name="com.example.sleepaid.Fragment.Questionnaire.QuestionnaireFragment"
         android:label="QuestionnaireFragment" >
         <action
             android:id="@+id/exitQuestionnaireAction"
@@ -26,7 +26,7 @@
     </fragment>
     <fragment
         android:id="@+id/questionnaireSummaryFragment"
-        android:name="com.example.sleepaid.Questionnaire.Fragment.QuestionnaireSummaryFragment"
+        android:name="com.example.sleepaid.Fragment.Questionnaire.QuestionnaireSummaryFragment"
         android:label="fragment_questionnaire_summary"
         tools:layout="@layout/fragment_questionnaire_summary" >
         <action
@@ -38,6 +38,6 @@
     </fragment>
     <activity
         android:id="@+id/mainMenuScreen"
-        android:name="com.example.sleepaid.MainMenu.Activity.MainMenuScreen"
+        android:name="com.example.sleepaid.Activity.MainMenuScreen"
         android:label="MainMenuScreen" />
 </navigation>

@@ -26,7 +26,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.example.sleepaid.TextBox
+        <com.example.sleepaid.Component.TextBox
             android:id="@+id/information"
             android:layout_width="0dp"
             app:layout_constraintWidth_max="wrap"

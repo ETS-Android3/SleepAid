@@ -6,14 +6,14 @@
 
     <fragment
         android:id="@+id/sleepDurationGraphFragment"
-        android:name="com.example.sleepaid.MainMenu.Fragment.SleepData.SleepDurationGraphFragment"
+        android:name="com.example.sleepaid.Fragment.SleepData.SleepDurationGraphFragment"
         android:label="SleepDurationGraphFragment" />
     <fragment
         android:id="@+id/wakeupTimeGraphFragment"
-        android:name="com.example.sleepaid.MainMenu.Fragment.SleepData.WakeupTimeGraphFragment"
+        android:name="com.example.sleepaid.Fragment.SleepData.WakeupTimeGraphFragment"
         android:label="WakeupTimeGraphFragment" />
     <fragment
         android:id="@+id/bedTimeGraphFragment"
-        android:name="com.example.sleepaid.MainMenu.Fragment.SleepData.BedtimeGraphFragment"
+        android:name="com.example.sleepaid.Fragment.SleepData.BedtimeGraphFragment"
         android:label="BedTimeGraphFragment" />
 </navigation>

@@ -1,20 +1,15 @@
 package com.example.sleepaid.Model;
 
 import android.annotation.SuppressLint;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 
 import androidx.lifecycle.ViewModel;
 
-import com.example.sleepaid.DataHandler;
+import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Database.Alarm.Alarm;
 import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
-import com.google.common.graph.Graph;
 import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
@@ -22,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @SuppressLint("NewApi")
 public class SharedViewModel extends ViewModel {

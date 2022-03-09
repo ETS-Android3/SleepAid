@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:name=".App"
@@ -18,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SleepAid">
         <activity
-            android:name=".Questionnaire.Activity.QuestionnaireScreen"
+            android:name=".Activity.QuestionnaireScreen"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,22 +28,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
-            android:name=".MainMenu.Activity.MainMenuScreen"
+            android:name=".Activity.MainMenuScreen"
             android:exported="true">
         </activity>
-        <activity android:name=".RingActivity">
-        </activity>
 
-        <receiver android:name=".AlarmBroadcastReceiver"
+        <receiver android:name=".Service.AlarmBroadcastReceiverService"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <service android:name=".AlarmService" />
-        <service android:name=".RescheduleAlarmsService" />
+        <receiver android:name=".Service.AlarmActionBroadcastReceiverService"
+            android:exported="false"/>
+
+        <service android:name=".Service.AlarmService" />
+        <service android:name=".Service.RescheduleAlarmsService" />
 
         <meta-data
             android:name="preloaded_fonts"

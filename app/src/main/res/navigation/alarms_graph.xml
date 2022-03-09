@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/alarmListScreenFragment"
-        android:name="com.example.sleepaid.MainMenu.Fragment.Alarms.AlarmListScreenFragment"
+        android:name="com.example.sleepaid.Fragment.Alarms.AlarmListScreenFragment"
         android:label="AlarmListScreenFragment" >
         <action
             android:id="@+id/configureAlarmAction"
@@ -14,7 +14,7 @@
     </fragment>
     <fragment
         android:id="@+id/alarmConfigurationScreenFragment"
-        android:name="com.example.sleepaid.MainMenu.Fragment.Alarms.AlarmConfigurationScreenFragment"
+        android:name="com.example.sleepaid.Fragment.Alarms.AlarmConfigurationScreenFragment"
         android:label="AlarmConfigurationScreenFragment" >
         <action
             android:id="@+id/exitAlarmConfigurationAction"

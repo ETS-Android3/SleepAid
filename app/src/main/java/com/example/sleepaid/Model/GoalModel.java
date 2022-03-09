@@ -1,19 +1,14 @@
 package com.example.sleepaid.Model;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
-import android.graphics.Rect;
 
-import com.example.sleepaid.DataHandler;
+import com.example.sleepaid.Handler.DataHandler;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
-
-import java.util.List;
 
 public class GoalModel {
     private String goalName;

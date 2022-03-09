@@ -99,7 +99,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/graph" />
 
-            <com.example.sleepaid.CircleBox
+            <com.example.sleepaid.Component.CircleBox
                 android:id="@+id/middleBox"
                 android:layout_width="100dp"
                 android:layout_height="100dp"

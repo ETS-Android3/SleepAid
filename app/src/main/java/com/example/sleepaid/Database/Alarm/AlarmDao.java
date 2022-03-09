@@ -1,5 +1,6 @@
 package com.example.sleepaid.Database.Alarm;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -15,7 +16,7 @@ import io.reactivex.rxjava3.core.Single;
 @Dao
 public interface AlarmDao {
     @Query("SELECT * FROM Alarm ORDER BY time")
-    Single<List<Alarm>> getAll();
+    LiveData<List<Alarm>> getAll();
 
     @Query("SELECT * FROM Alarm WHERE alarmId IN (:alarmIds) ORDER BY alarmId")
     Single<List<Alarm>> loadAllByIds(int[] alarmIds);

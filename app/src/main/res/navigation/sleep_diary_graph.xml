@@ -5,10 +5,10 @@
     app:startDestination="@id/morningSleepDiaryFragment">
     <fragment
         android:id="@+id/morningSleepDiaryFragment"
-        android:name="com.example.sleepaid.MainMenu.Fragment.SleepDiary.MorningSleepDiaryFragment"
+        android:name="com.example.sleepaid.Fragment.SleepDiary.MorningSleepDiaryFragment"
         android:label="MorningSleepDiaryFragment" />
     <fragment
         android:id="@+id/bedtimeSleepDiaryFragment"
-        android:name="com.example.sleepaid.MainMenu.Fragment.SleepDiary.BedtimeSleepDiaryFragment"
+        android:name="com.example.sleepaid.Fragment.SleepDiary.BedtimeSleepDiaryFragment"
         android:label="BedtimeSleepDiaryFragment" />
 </navigation>

@@ -6,22 +6,22 @@
 
     <fragment
         android:id="@+id/sleepDataFragment"
-        android:name="com.example.sleepaid.MainMenu.Fragment.SleepData.SleepDataFragment"
+        android:name="com.example.sleepaid.Fragment.SleepData.SleepDataFragment"
         android:label="Sleep data" />
     <fragment
         android:id="@+id/alarmsFragment"
-        android:name="com.example.sleepaid.MainMenu.Fragment.Alarms.AlarmsFragment"
+        android:name="com.example.sleepaid.Fragment.Alarms.AlarmsFragment"
         android:label="Alarms" />
     <fragment
         android:id="@+id/goalsFragment"
-        android:name="com.example.sleepaid.MainMenu.Fragment.Goals.GoalsFragment"
+        android:name="com.example.sleepaid.Fragment.Goals.GoalsFragment"
         android:label="Goals" />
     <fragment
         android:id="@+id/sleepDiaryFragment"
-        android:name="com.example.sleepaid.MainMenu.Fragment.SleepDiary.SleepDiaryFragment"
+        android:name="com.example.sleepaid.Fragment.SleepDiary.SleepDiaryFragment"
         android:label="Sleep diary" />
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.example.sleepaid.MainMenu.Fragment.Settings.SettingsFragment"
+        android:name="com.example.sleepaid.Fragment.Settings.SettingsFragment"
         android:label="Settings" />
 </navigation>
