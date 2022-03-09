@@ -15,24 +15,25 @@ public class AlarmActionBroadcastReceiverService extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals("SNOOZE")) {
-            this.snoozeAlarm(context);
+            this.snoozeAlarm(context, intent);
         }
         else {
             this.dismissAlarm(context);
         }
     }
 
-    private void snoozeAlarm(Context context) {
+    private void snoozeAlarm(Context context, Intent intent) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.add(Calendar.MINUTE, 10);
+        calendar.add(Calendar.MINUTE, 5);
 
         Alarm alarm = new Alarm(
                 new Random().nextInt(Integer.MAX_VALUE),
                 "Snooze",
                 calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE),
                 "0000000",
-                "default",
+                intent.getStringExtra("SOUND"),
+                intent.getIntExtra("VIBRATE", 1),
                 1
         );
 

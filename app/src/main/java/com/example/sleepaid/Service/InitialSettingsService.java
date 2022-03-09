@@ -122,7 +122,7 @@ public class InitialSettingsService {
 
             String newWakeupTime = (i == 0) ? time + ":00" : time + ":" + i * 10;
 
-            Alarm morningAlarm = new Alarm(1, null,  newWakeupTime, "1111111", "default", 1);
+            Alarm morningAlarm = new Alarm(1, null,  newWakeupTime, "1111111", "default", 1, 1);
             alarmList.add(morningAlarm);
         }
 
@@ -138,8 +138,8 @@ public class InitialSettingsService {
                 "0" + bedHour :
                 Integer.toString(bedHour);
 
-        Alarm bedtimeAlarmBefore = new Alarm(3,null, timeBefore + ":30", "1111111", "default", 1);
-        Alarm bedtimeAlarm = new Alarm(3, null,time + ":00", "1111111", "default", 1);
+        Alarm bedtimeAlarmBefore = new Alarm(3,null, timeBefore + ":30", "1111111", "default", 1, 1);
+        Alarm bedtimeAlarm = new Alarm(3, null,time + ":00", "1111111", "default", 1, 1);
         alarmList.add(bedtimeAlarmBefore);
         alarmList.add(bedtimeAlarm);
 

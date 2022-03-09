@@ -42,6 +42,8 @@ public class Alarm implements Comparable<Alarm> {
     @NonNull
     public String sound;
     @NonNull
+    public int vibrate;
+    @NonNull
     public int isOn;
 
     public Alarm(int type,
@@ -49,12 +51,14 @@ public class Alarm implements Comparable<Alarm> {
                  String time,
                  String days,
                  String sound,
+                 int vibrate,
                  int isOn) {
         this.type = type;
         this.name = name;
         this.time = time;
         this.days = days;
         this.sound = sound;
+        this.vibrate = vibrate;
         this.isOn = isOn;
     }
 
@@ -82,6 +86,10 @@ public class Alarm implements Comparable<Alarm> {
         return this.sound;
     }
 
+    public int getVibrate() {
+        return this.vibrate;
+    }
+
     public int getIsOn() {
         return this.isOn;
     }
@@ -102,8 +110,8 @@ public class Alarm implements Comparable<Alarm> {
         this.sound = sound;
     }
 
-    public void setIsOn(int isOn) {
-        this.isOn = isOn;
+    public void setVibrate(int vibrate) {
+        this.vibrate = vibrate;
     }
 
     @Override
@@ -129,12 +137,14 @@ public class Alarm implements Comparable<Alarm> {
 
         Intent intent = new Intent(context, AlarmBroadcastReceiverService.class);
 
-        intent.putExtra(AlarmBroadcastReceiverService.ID, this.id);
-        intent.putExtra(AlarmBroadcastReceiverService.NAME, this.name == null ? "" : this.name);
-        intent.putExtra(AlarmBroadcastReceiverService.TIME, this.time);
+        intent.putExtra("ID", this.id);
+        intent.putExtra("NAME", this.name == null ? "" : this.name);
+        intent.putExtra("TIME", this.time);
+        intent.putExtra("SOUND", this.sound);
+        intent.putExtra("VIBRATE", this.vibrate);
 
         boolean recurring = this.days.contains("1");
-        intent.putExtra(AlarmBroadcastReceiverService.RECURRING, recurring);
+        intent.putExtra("RECURRING", recurring);
 
         PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_MUTABLE);
 
@@ -147,8 +157,8 @@ public class Alarm implements Comparable<Alarm> {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
-        // If alarm time has already passed, increment day by 1
-        if (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
+        // If alarm time has already passed and it's not a recurring alarm, increment day by 1
+        if (calendar.getTimeInMillis() <= System.currentTimeMillis() && !recurring) {
             calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 1);
         }
 
@@ -166,10 +176,14 @@ public class Alarm implements Comparable<Alarm> {
 
         Intent intent = new Intent(context, AlarmBroadcastReceiverService.class);
 
+        intent.putExtra("ID", this.id);
+        intent.putExtra("NAME", this.name == null ? "" : this.name);
+        intent.putExtra("TIME", this.time);
+        intent.putExtra("SOUND", this.sound);
+        intent.putExtra("VIBRATE", this.vibrate);
+
         boolean recurring = this.days.contains("1");
-        intent.putExtra(AlarmBroadcastReceiverService.RECURRING, recurring);
-        intent.putExtra(AlarmBroadcastReceiverService.NAME, this.name);
-        intent.putExtra(AlarmBroadcastReceiverService.ID, this.id);
+        intent.putExtra("RECURRING", recurring);
 
         PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_MUTABLE);
 

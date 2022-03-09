@@ -7,11 +7,6 @@ import android.content.Intent;
 
 @SuppressLint("NewApi")
 public class AlarmBroadcastReceiverService extends BroadcastReceiver {
-    public static final String ID = "ID";
-    public static final String NAME = "NAME";
-    public static final String TIME = "TIME";
-    public static final String RECURRING = "RECURRING";
-
     @Override
     public void onReceive(Context context, Intent intent) {
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
@@ -20,7 +15,7 @@ public class AlarmBroadcastReceiverService extends BroadcastReceiver {
         else {
             startAlarmService(context, intent);
 
-            if (intent.getBooleanExtra(RECURRING, false)) {
+            if (intent.getBooleanExtra("RECURRING", false)) {
                 startRepeatAlarmService(context, intent);
             }
         }
@@ -28,13 +23,19 @@ public class AlarmBroadcastReceiverService extends BroadcastReceiver {
 
     private void startAlarmService(Context context, Intent intent) {
         Intent intentService = new Intent(context, AlarmService.class);
-        intentService.putExtra(NAME, intent.getStringExtra(NAME));
+
+        intentService.putExtra("NAME", intent.getStringExtra("NAME"));
+        intentService.putExtra("TIME", intent.getStringExtra("TIME"));
+        intentService.putExtra("SOUND", intent.getStringExtra("SOUND"));
+        intentService.putExtra("VIBRATE", intent.getIntExtra("VIBRATE", 1));
+
         context.startForegroundService(intentService);
     }
 
     private void startRepeatAlarmService(Context context, Intent intent) {
         Intent intentService = new Intent(context, RepeatAlarmService.class);
-        intentService.putExtra(ID, intent.getIntExtra(ID, 0));
+        intentService.putExtra("ID", intent.getIntExtra("ID", 0));
+
         context.startForegroundService(intentService);
     }
 

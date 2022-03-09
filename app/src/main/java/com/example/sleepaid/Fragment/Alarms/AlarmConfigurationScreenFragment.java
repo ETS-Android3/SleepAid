@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TimePicker;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -92,6 +93,7 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
                                 Throwable::printStackTrace
                         );
             } else {
+                //TODO fix time not updating in alarm notification
                 this.updateAlarm(this.model.getSelectedAlarm());
 
                 this.db.alarmDao()
@@ -100,6 +102,8 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 () -> {
+                                    this.model.getSelectedAlarm().schedule(App.getContext());
+
                                     List<Alarm> newAlarmList = new ArrayList<>(this.model.getAlarmList(currentAlarmType));
                                     Collections.sort(newAlarmList);
 
@@ -136,6 +140,9 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
                     day.setChecked(false);
                 }
             }
+
+            ToggleButton vibrateButton = getView().findViewById(R.id.vibrateButton);
+            vibrateButton.setChecked(selectedAlarm.getVibrate() == 1);
         } else {
             this.presetAlarm(alarmType, alarmTimePicker);
         }
@@ -190,15 +197,23 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
     }
 
     private Alarm createAlarm(int alarmType) {
-        return new Alarm(alarmType, this.getName(), this.getTime(), this.getDaysPicked(), "default", 1);
+        return new Alarm(
+                alarmType,
+                this.getName(),
+                this.getTime(),
+                this.getDaysPicked(),
+                this.getSound(),
+                this.getVibrate(),
+                1
+        );
     }
 
     private void updateAlarm(Alarm alarm) {
         alarm.setName(this.getName());
         alarm.setTime(this.getTime());
         alarm.setDays(this.getDaysPicked());
-        alarm.schedule(App.getContext());
-        //TODO set sound
+        alarm.setSound(this.getSound());
+        alarm.setVibrate(this.getVibrate());
     }
 
     private String getName() {
@@ -233,5 +248,16 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
         }
 
         return daysPicked;
+    }
+
+    //TODO
+    private String getSound() {
+        return "default";
+    }
+
+    private int getVibrate() {
+        ToggleButton vibrateButton = getView().findViewById(R.id.vibrateButton);
+
+        return vibrateButton.isChecked() ? 1 : 0;
     }
 }

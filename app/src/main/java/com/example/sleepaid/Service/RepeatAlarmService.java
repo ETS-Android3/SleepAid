@@ -31,7 +31,7 @@ public class RepeatAlarmService extends Service {
         AppDatabase db = AppDatabase.getDatabase(App.getContext());
 
         db.alarmDao()
-                .loadAllByIds(new int[]{intent.getIntExtra(AlarmBroadcastReceiverService.ID, 0)})
+                .loadAllByIds(new int[]{intent.getIntExtra("ID", 0)})
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
