@@ -2,7 +2,6 @@
 <androidx.fragment.app.FragmentContainerView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:theme="@style/Theme.SleepAid"
     android:name="androidx.navigation.fragment.NavHostFragment"
     app:navGraph="@navigation/questionnaire_screen_graph"
     android:id="@+id/content"

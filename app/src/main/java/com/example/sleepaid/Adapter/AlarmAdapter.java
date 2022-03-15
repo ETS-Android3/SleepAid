@@ -8,8 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.example.sleepaid.Fragment.Alarms.AlarmListFragment;
 import com.example.sleepaid.R;
@@ -24,6 +27,7 @@ public class AlarmAdapter extends BaseAdapter {
     private AlarmListFragment fragment;
 
     private List<Integer> ids;
+    private List<String> names;
     private List<String> times;
     private List<String> days;
     private List<Integer> isOn;
@@ -37,6 +41,7 @@ public class AlarmAdapter extends BaseAdapter {
     public AlarmAdapter(Context context,
                         AlarmListFragment fragment,
                         List<Integer> ids,
+                        List<String> names,
                         List<String> times,
                         List<String> days,
                         List<Integer> isOn,
@@ -46,6 +51,7 @@ public class AlarmAdapter extends BaseAdapter {
         this.context = context;
         this.fragment = fragment;
         this.ids = ids;
+        this.names = names;
         this.times = times;
         this.days = days;
         this.isOn = isOn;
@@ -77,6 +83,15 @@ public class AlarmAdapter extends BaseAdapter {
 
         row.setId(this.ids.get(position));
 
+        TextView nameText = row.findViewById(R.id.name);
+
+        if (this.names.get(position) == null || this.names.get(position).equals("")) {
+            nameText.setVisibility(View.GONE);
+        } else {
+            nameText.setText(this.names.get(position));
+            nameText.setVisibility(View.VISIBLE);
+        }
+
         TextView timeText = row.findViewById(R.id.time);
         timeText.setText(this.times.get(position));
 
@@ -94,7 +109,7 @@ public class AlarmAdapter extends BaseAdapter {
             }
         }
 
-        ToggleButton onOffButton = row.findViewById(R.id.onOffButton);
+        SwitchCompat onOffButton = row.findViewById(R.id.onOffButton);
         onOffButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

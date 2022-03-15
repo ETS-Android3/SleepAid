@@ -114,6 +114,10 @@ public class Alarm implements Comparable<Alarm> {
         this.vibrate = vibrate;
     }
 
+    public void setIsOn(int isOn) {
+        this.isOn = isOn;
+    }
+
     @Override
     public int compareTo(Alarm newAlarm) {
         double newAlarmTime = DataHandler.getDoubleFromTime(newAlarm.getTime());
@@ -138,6 +142,7 @@ public class Alarm implements Comparable<Alarm> {
         Intent intent = new Intent(context, AlarmBroadcastReceiverService.class);
 
         intent.putExtra("ID", this.id);
+        intent.putExtra("TYPE", this.type);
         intent.putExtra("NAME", this.name == null ? "" : this.name);
         intent.putExtra("TIME", this.time);
         intent.putExtra("SOUND", this.sound);
@@ -146,10 +151,9 @@ public class Alarm implements Comparable<Alarm> {
         boolean recurring = this.days.contains("1");
         intent.putExtra("RECURRING", recurring);
 
-        PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_MUTABLE);
+        PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
 
         List<Integer> time = DataHandler.getIntsFromString(this.time);
         calendar.set(Calendar.HOUR_OF_DAY, time.get(0));
@@ -157,18 +161,31 @@ public class Alarm implements Comparable<Alarm> {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
-        // If alarm time has already passed and it's not a recurring alarm, increment day by 1
-        if (calendar.getTimeInMillis() <= System.currentTimeMillis() && !recurring) {
-            calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 1);
+        // If alarm time has already passed and it's not a recurring alarm, increment day by 1 and schedule it.
+        // If it is recurring, schedule it for the recurring days
+        if (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
+            if (!recurring) {
+                calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 1);
+
+                alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        calendar.getTimeInMillis(),
+                        alarmPendingIntent
+                );
+
+                this.isOn = 1;
+            } else {
+                this.scheduleRepeat(context);
+            }
+        } else {
+            alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.getTimeInMillis(),
+                    alarmPendingIntent
+            );
+
+            this.isOn = 1;
         }
-
-        alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                calendar.getTimeInMillis(),
-                alarmPendingIntent
-        );
-
-        this.isOn = 1;
     }
 
     public void scheduleRepeat(Context context) {
@@ -177,6 +194,7 @@ public class Alarm implements Comparable<Alarm> {
         Intent intent = new Intent(context, AlarmBroadcastReceiverService.class);
 
         intent.putExtra("ID", this.id);
+        intent.putExtra("TYPE", this.type);
         intent.putExtra("NAME", this.name == null ? "" : this.name);
         intent.putExtra("TIME", this.time);
         intent.putExtra("SOUND", this.sound);
@@ -185,7 +203,7 @@ public class Alarm implements Comparable<Alarm> {
         boolean recurring = this.days.contains("1");
         intent.putExtra("RECURRING", recurring);
 
-        PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_MUTABLE);
+        PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
@@ -220,7 +238,7 @@ public class Alarm implements Comparable<Alarm> {
     public void cancel(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlarmBroadcastReceiverService.class);
-        PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_MUTABLE);
+        PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.cancel(alarmPendingIntent);
         this.isOn = 0;
     }

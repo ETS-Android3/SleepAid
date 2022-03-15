@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.SleepAid" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.SleepAid" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -72,5 +72,12 @@
 
     <style name="CloseButtonStyle" parent="Widget.AppCompat.ActionButton.CloseMode">
         <item name="android:tint">@color/white</item>
+    </style>
+
+    <style name="SwitchStyle" parent="Widget.AppCompat.CompoundButton.Switch">
+        <item name="colorControlActivated">@color/purple_sleep</item>
+        <item name="colorSwitchThumbNormal">@color/light_grey</item>
+        <item name="android:colorForeground">@color/dark_grey</item>
+        <item name="android:showText">false</item>
     </style>
 </resources>

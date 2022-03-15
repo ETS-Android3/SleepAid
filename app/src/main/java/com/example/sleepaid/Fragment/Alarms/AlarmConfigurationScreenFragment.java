@@ -8,11 +8,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
@@ -86,14 +88,12 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
                                     Collections.sort(newAlarmList);
 
                                     this.model.setAlarms(currentAlarmType, newAlarmList);
-                                    this.model.setSelectedAlarm(null);
 
                                     NavHostFragment.findNavController(this).navigate(R.id.exitAlarmConfigurationAction);
                                 },
                                 Throwable::printStackTrace
                         );
             } else {
-                //TODO fix time not updating in alarm notification
                 this.updateAlarm(this.model.getSelectedAlarm());
 
                 this.db.alarmDao()
@@ -133,6 +133,9 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
             alarmTimePicker.setHour(alarmTimes.get(0));
             alarmTimePicker.setMinute(alarmTimes.get(1));
 
+            EditText alarmName = getView().findViewById(R.id.alarmName);
+            alarmName.setText(selectedAlarm.getName() == null ? "" : selectedAlarm.getName());
+
             for (int i = 0; i < 7; i++) {
                 CheckBox day = getView().findViewById(this.days[i]);
 
@@ -141,7 +144,7 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
                 }
             }
 
-            ToggleButton vibrateButton = getView().findViewById(R.id.vibrateButton);
+            SwitchCompat vibrateButton = getView().findViewById(R.id.vibrateButton);
             vibrateButton.setChecked(selectedAlarm.getVibrate() == 1);
         } else {
             this.presetAlarm(alarmType, alarmTimePicker);
@@ -214,6 +217,7 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
         alarm.setDays(this.getDaysPicked());
         alarm.setSound(this.getSound());
         alarm.setVibrate(this.getVibrate());
+        alarm.setIsOn(1);
     }
 
     private String getName() {
@@ -256,7 +260,7 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
     }
 
     private int getVibrate() {
-        ToggleButton vibrateButton = getView().findViewById(R.id.vibrateButton);
+        SwitchCompat vibrateButton = getView().findViewById(R.id.vibrateButton);
 
         return vibrateButton.isChecked() ? 1 : 0;
     }

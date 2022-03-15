@@ -36,21 +36,19 @@ public class AlarmService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Intent notificationIntent = new Intent(this, AlarmActionBroadcastReceiverService.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_MUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent snoozeIntent = new Intent(this, AlarmActionBroadcastReceiverService.class);
         snoozeIntent.setAction("SNOOZE");
         snoozeIntent.putExtra("SOUND", intent.getStringExtra("SOUND"));
         snoozeIntent.putExtra("VIBRATE", intent.getIntExtra("VIBRATE", 1));
 
-        PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(this, 0, snoozeIntent, PendingIntent.FLAG_MUTABLE);
+        PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(this, 0, snoozeIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent dismissIntent = new Intent(this, AlarmActionBroadcastReceiverService.class);
         dismissIntent.setAction("DISMISS");
-        dismissIntent.putExtra("SOUND", intent.getStringExtra("SOUND"));
-        dismissIntent.putExtra("VIBRATE", intent.getIntExtra("VIBRATE", 1));
 
-        PendingIntent dismissPendingIntent = PendingIntent.getBroadcast(this, 0, dismissIntent, PendingIntent.FLAG_MUTABLE);
+        PendingIntent dismissPendingIntent = PendingIntent.getBroadcast(this, 0, dismissIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification notification = new NotificationCompat.Builder(this, App.CHANNEL_ID)
                 .setContentTitle(intent.getStringExtra("NAME"))
@@ -61,7 +59,6 @@ public class AlarmService extends Service {
                 .addAction(R.drawable.delete_icon, "Dismiss", dismissPendingIntent)
                 .build();
 
-        System.out.println(intent.getStringExtra("SOUND"));
         this.mediaPlayer = MediaPlayer.create(this, this.sounds.get(intent.getStringExtra("SOUND")));
         this.mediaPlayer.setLooping(true);
         this.mediaPlayer.start();

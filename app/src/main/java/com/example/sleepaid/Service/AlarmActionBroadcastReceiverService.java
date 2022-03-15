@@ -27,10 +27,18 @@ public class AlarmActionBroadcastReceiverService extends BroadcastReceiver {
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.add(Calendar.MINUTE, 5);
 
+        String hour = calendar.get(Calendar.HOUR_OF_DAY) < 10 ?
+                "0" + calendar.get(Calendar.HOUR_OF_DAY) :
+                Integer.toString(calendar.get(Calendar.HOUR_OF_DAY));
+
+        String minute = calendar.get(Calendar.MINUTE) < 10 ?
+                "0" + calendar.get(Calendar.MINUTE) :
+                Integer.toString(calendar.get(Calendar.MINUTE));
+
         Alarm alarm = new Alarm(
-                new Random().nextInt(Integer.MAX_VALUE),
+                intent.getIntExtra("TYPE", 1),
                 "Snooze",
-                calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE),
+                hour + ":" + minute,
                 "0000000",
                 intent.getStringExtra("SOUND"),
                 intent.getIntExtra("VIBRATE", 1),

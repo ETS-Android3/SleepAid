@@ -86,6 +86,7 @@ public abstract class AlarmListFragment extends Fragment implements AdapterView.
                     App.getContext(),
                     this,
                     alarmList.stream().map(a -> alarmList.indexOf(a)).collect(Collectors.toList()),
+                    alarmList.stream().map(Alarm::getName).collect(Collectors.toList()),
                     alarmList.stream().map(Alarm::getTime).collect(Collectors.toList()),
                     alarmList.stream().map(Alarm::getDays).collect(Collectors.toList()),
                     alarmList.stream().map(Alarm::getIsOn).collect(Collectors.toList()),
