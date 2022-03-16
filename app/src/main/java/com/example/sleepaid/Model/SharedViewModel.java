@@ -9,12 +9,14 @@ import com.example.sleepaid.Database.Alarm.Alarm;
 import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
+import com.example.sleepaid.R;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,9 +37,16 @@ public class SharedViewModel extends ViewModel {
     private int alarmViewType;
     private Alarm selectedAlarm;
 
+    private HashMap<String, Integer> alarmSounds;
+
     private List<GraphSeriesModel> graphSeries = new ArrayList<>();
     private List<GoalModel> goals = new ArrayList<>();
     private List<AlarmListModel> alarms = new ArrayList<>();
+
+    public SharedViewModel() {
+        this.alarmSounds = new HashMap<>();
+        this.alarmSounds.put("default", R.raw.alarm);
+    }
 
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
@@ -203,6 +212,10 @@ public class SharedViewModel extends ViewModel {
 
     public Alarm getSelectedAlarm() {
         return this.selectedAlarm;
+    }
+
+    public int getSound(String soundName) {
+        return this.alarmSounds.get(soundName);
     }
 
     private GraphSeriesModel getSeriesModel(String dataType,

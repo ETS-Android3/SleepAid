@@ -8,6 +8,7 @@
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/dropdown_item_shape.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/dropdown_shape.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/ic_launcher_background.xml" value="0.13974358974358975" />
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/purple_button.xml" value="0.1515" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/rounded_shape.xml" value="0.1703125" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/activity_alarms_screen.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/activity_goals_screen.xml" value="0.1" />
@@ -28,7 +29,7 @@
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/calendar_item_dropdown.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/circle_box.xml" value="0.144017094017094" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/fragment_alarm_configuration.xml" value="0.1311965811965812" />
-        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/fragment_alarm_configuration_screen.xml" value="0.4388020833333333" />
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/fragment_alarm_configuration_screen.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/fragment_alarm_list.xml" value="0.1311965811965812" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/fragment_alarm_list_screen.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/fragment_alarm_screen_host.xml" value="0.1311965811965812" />
@@ -59,6 +60,8 @@
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/menu/graph_menu.xml" value="0.144017094017094" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/menu/main_menu.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/menu/sleep_diary_menu.xml" value="0.1" />
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/xml/preferences.xml" value="0.1" />
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/xml/prefs.xml" value="0.1311965811965812" />
       </map>
     </option>
   </component>

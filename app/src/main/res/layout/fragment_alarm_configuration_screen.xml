@@ -134,12 +134,16 @@
                         android:layout_alignParentStart="true"
                         android:layout_centerVertical="true"/>
 
-                    //TODO add something for picking sounds
-                    <ToggleButton
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/selectSoundButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:layout_alignParentEnd="true" />
+                        android:background="@drawable/purple_button"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentEnd="true"
+                        android:name="androidx.navigation.fragment.NavHostFragment"
+                        app:navGraph="@navigation/alarm_sounds_graph"
+                        android:theme="@style/Theme.SleepAid"/>
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -167,7 +171,7 @@
                         android:id="@+id/vibrateButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:checked="false"
+                        android:checked="true"
                         android:theme="@style/SwitchStyle"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"/>

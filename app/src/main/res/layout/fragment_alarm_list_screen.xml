@@ -9,6 +9,7 @@
         android:id="@+id/alarmList"
         android:name="androidx.navigation.fragment.NavHostFragment"
         app:navGraph="@navigation/alarm_list_graph"
+        android:theme="@style/Theme.SleepAid"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="10dp"
