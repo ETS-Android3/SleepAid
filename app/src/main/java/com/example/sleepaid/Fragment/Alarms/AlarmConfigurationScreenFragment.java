@@ -136,9 +136,8 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (isChecked) {
-            long[] pattern = {0, 100, 1000};
             Vibrator vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
-            vibrator.vibrate(pattern, 0);
+            vibrator.vibrate(100);
         }
     }
 
@@ -247,15 +246,7 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
     private String getTime() {
         TimePicker alarmTimePicker = getView().findViewById(R.id.alarmTimePicker);
 
-        String hours = alarmTimePicker.getHour() < 10 ?
-                "0" + alarmTimePicker.getHour() :
-                Integer.toString(alarmTimePicker.getHour());
-
-        String minutes = alarmTimePicker.getMinute() < 10 ?
-                "0" + alarmTimePicker.getMinute() :
-                Integer.toString(alarmTimePicker.getMinute());
-
-        return hours + ":" + minutes;
+        return DataHandler.getFormattedTime(alarmTimePicker.getHour(), alarmTimePicker.getMinute());
     }
 
     private String getDaysPicked() {

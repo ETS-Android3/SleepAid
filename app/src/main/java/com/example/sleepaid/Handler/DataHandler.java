@@ -2,6 +2,7 @@ package com.example.sleepaid.Handler;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -31,6 +32,18 @@ public class DataHandler {
         }
 
         return values;
+    }
+
+    public static String getFormattedTime(int hours, int minutes) {
+         String newHour = hours < 10 ?
+                "0" + hours :
+                Integer.toString(hours);
+
+        String newMinute = minutes < 10 ?
+                "0" + minutes :
+                Integer.toString(minutes);
+
+        return newHour + ":" + newMinute;
     }
 
     public static String getFormattedDate(Date date) {

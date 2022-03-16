@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
+import com.example.sleepaid.Handler.DataHandler;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -190,8 +191,7 @@ public class GraphSeriesModel {
 
             //"Wake-up time" or "Bedtime
             default:
-                String delimiter = minutes < 10 ? ":0" : ":";
-                text = hours + delimiter + minutes;
+                text = DataHandler.getFormattedTime(hours, minutes);
                 break;
         }
 
