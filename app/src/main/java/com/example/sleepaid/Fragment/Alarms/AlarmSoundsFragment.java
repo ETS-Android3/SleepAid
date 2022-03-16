@@ -2,6 +2,7 @@ package com.example.sleepaid.Fragment.Alarms;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
@@ -15,6 +16,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.view.ContextThemeWrapper;
@@ -27,6 +29,7 @@ import androidx.preference.PreferenceFragmentCompat;
 
 import com.example.sleepaid.Adapter.AlarmAdapter;
 import com.example.sleepaid.App;
+import com.example.sleepaid.Component.Modal;
 import com.example.sleepaid.Database.Alarm.Alarm;
 import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.Option.Option;
@@ -55,6 +58,27 @@ public class AlarmSoundsFragment extends Fragment implements View.OnClickListene
     private MediaPlayer mediaPlayer;
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                AppCompatRadioButton selectedSoundOption = getView().findViewById(radioGroup.getCheckedRadioButtonId());
+                String selectedSound = (String) selectedSoundOption.getText();
+
+                if (!model.getSelectedConfiguration().getSound().equals(selectedSound)) {
+                    exitAlarmSound();
+                } else {
+                    cancelAlarmSound();
+                }
+            }
+        };
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
@@ -75,8 +99,46 @@ public class AlarmSoundsFragment extends Fragment implements View.OnClickListene
         this.loadSounds();
     }
 
+    private void exitAlarmSound() {
+        if (this.mediaPlayer != null) {
+            this.mediaPlayer.stop();
+        }
+
+        DialogInterface.OnClickListener discardAction = new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                cancelAlarmSound();
+            }
+        };
+
+        DialogInterface.OnClickListener saveAction = new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                saveAlarmSound();
+            }
+        };
+
+        Modal.show(
+                requireActivity(),
+                getString(R.string.exit_alarm_sound),
+                getString(R.string.save_modal),
+                saveAction,
+                getString(R.string.discard_modal),
+                discardAction
+        );
+    }
+
+    private void cancelAlarmSound() {
+        NavHostFragment.findNavController(this).navigate(R.id.exitAlarmSoundAction);
+    }
+
+    private void saveAlarmSound() {
+        AppCompatRadioButton selectedSound = getView().findViewById(this.radioGroup.getCheckedRadioButtonId());
+        this.model.getSelectedConfiguration().setSound((String) selectedSound.getText());
+
+        NavHostFragment.findNavController(this).navigate(R.id.exitAlarmSoundAction);
+    }
+
     private void loadSounds() {
-        String currentAlarmSound = this.model.getSelectedSound();
+        String currentAlarmSound = this.model.getSelectedConfiguration().getSound();
 
         int sizeInDp = (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
@@ -130,12 +192,9 @@ public class AlarmSoundsFragment extends Fragment implements View.OnClickListene
         }
 
         if (view.getId() == R.id.saveAlarmSoundButton) {
-            AppCompatRadioButton selectedSound = getView().findViewById(this.radioGroup.getCheckedRadioButtonId());
-            this.model.setSelectedSound((String) selectedSound.getText());
-
-            NavHostFragment.findNavController(this).navigate(R.id.exitAlarmSoundAction);
+            this.saveAlarmSound();
         } else if (view.getId() == R.id.cancelAlarmSoundButton) {
-            NavHostFragment.findNavController(this).navigate(R.id.exitAlarmSoundAction);
+            this.cancelAlarmSound();
         }
     }
 

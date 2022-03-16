@@ -116,7 +116,7 @@ public class InitialSettingsService {
 
     private void getAlarmList(int wakeupHour, int bedHour) {
         for (int i = 0; i < 4; i++) {
-            Alarm morningAlarm = new Alarm(1, null,  DataHandler.getFormattedTime(wakeupHour, i * 10), "1111111", "Default", 1, 1);
+            Alarm morningAlarm = new Alarm(1, "",  DataHandler.getFormattedTime(wakeupHour, i * 10), "1111111", "Default", 1, 1);
             alarmList.add(morningAlarm);
         }
 
@@ -124,8 +124,8 @@ public class InitialSettingsService {
                 24 + (bedHour - 1) :
                 bedHour - 1;
 
-        Alarm bedtimeAlarmBefore = new Alarm(3,null, DataHandler.getFormattedTime(bedHourBefore, 30), "1111111", "Default", 1, 1);
-        Alarm bedtimeAlarm = new Alarm(3, null,DataHandler.getFormattedTime(bedHour, 0), "1111111", "Default", 1, 1);
+        Alarm bedtimeAlarmBefore = new Alarm(3,"", DataHandler.getFormattedTime(bedHourBefore, 30), "1111111", "Default", 1, 1);
+        Alarm bedtimeAlarm = new Alarm(3, "",DataHandler.getFormattedTime(bedHour, 0), "1111111", "Default", 1, 1);
         alarmList.add(bedtimeAlarmBefore);
         alarmList.add(bedtimeAlarm);
 

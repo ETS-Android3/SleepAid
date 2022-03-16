@@ -70,7 +70,7 @@ dependencies {
     implementation 'io.reactivex.rxjava3:rxjava:3.0.0'
 
     // Navigation UI
-    def nav_version = "2.4.0"
+    def nav_version = "2.4.1"
 
     // Java language implementation
     implementation "androidx.navigation:navigation-fragment:$nav_version"

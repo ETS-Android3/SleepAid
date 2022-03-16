@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 
 import com.example.sleepaid.App;
+import com.example.sleepaid.Fragment.MainMenuFragment;
 import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.SleepData.SleepData;
@@ -32,7 +33,7 @@ import java.util.Calendar;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class SleepDataFragment extends Fragment {
+public class SleepDataFragment extends MainMenuFragment {
     private SharedViewModel model;
 
     private AppDatabase db;

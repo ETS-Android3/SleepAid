@@ -8,9 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.sleepaid.Fragment.MainMenuFragment;
 import com.example.sleepaid.R;
 
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends MainMenuFragment {
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,

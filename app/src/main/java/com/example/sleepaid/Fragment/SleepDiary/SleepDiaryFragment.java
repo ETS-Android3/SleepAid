@@ -12,10 +12,11 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.sleepaid.Fragment.MainMenuFragment;
 import com.example.sleepaid.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class SleepDiaryFragment extends Fragment {
+public class SleepDiaryFragment extends MainMenuFragment {
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,

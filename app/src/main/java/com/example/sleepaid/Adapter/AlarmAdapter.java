@@ -85,7 +85,7 @@ public class AlarmAdapter extends BaseAdapter {
 
         TextView nameText = row.findViewById(R.id.name);
 
-        if (this.names.get(position) == null || this.names.get(position).equals("")) {
+        if (this.names.get(position).equals("")) {
             nameText.setVisibility(View.GONE);
         } else {
             nameText.setText(this.names.get(position));

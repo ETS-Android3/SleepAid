@@ -1,7 +1,9 @@
 package com.example.sleepaid.Fragment.Alarms;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -16,7 +18,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.sleepaid.App;
+import com.example.sleepaid.Database.Alarm.Alarm;
 import com.example.sleepaid.Database.AppDatabase;
+import com.example.sleepaid.Fragment.MainMenuFragment;
 import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -25,7 +29,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class AlarmListScreenFragment extends Fragment implements View.OnClickListener {
+public class AlarmListScreenFragment extends MainMenuFragment implements View.OnClickListener {
     private AppDatabase db;
 
     private SharedViewModel model;
@@ -70,7 +74,6 @@ public class AlarmListScreenFragment extends Fragment implements View.OnClickLis
 
     public void onClick(View view) {
         this.model.setSelectedAlarm(null);
-        this.model.setSelectedSound(null);
 
         NavHostFragment.findNavController(this).navigate(R.id.configureAlarmAction);
     }

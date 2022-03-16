@@ -108,7 +108,7 @@ public abstract class AlarmListFragment extends Fragment implements AdapterView.
         Alarm selectedAlarm = this.alarmList.get(position);
 
         this.model.setSelectedAlarm(selectedAlarm);
-        this.model.setSelectedSound(selectedAlarm.getSound());
+        this.model.setSelectedConfiguration(selectedAlarm);
 
         NavHostFragment.findNavController(this.alarmListScreenFragment).navigate(R.id.configureAlarmAction);
     }

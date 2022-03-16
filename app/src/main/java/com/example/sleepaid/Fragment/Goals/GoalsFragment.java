@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.example.sleepaid.App;
+import com.example.sleepaid.Fragment.MainMenuFragment;
 import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.Goal.Goal;
@@ -28,7 +29,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 @SuppressLint("NewApi")
-public class GoalsFragment extends Fragment {
+public class GoalsFragment extends MainMenuFragment {
     AppDatabase db;
 
     List<Goal> goalList;

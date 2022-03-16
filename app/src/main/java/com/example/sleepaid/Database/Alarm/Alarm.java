@@ -34,6 +34,7 @@ public class Alarm implements Comparable<Alarm> {
     public int id;
 
     public int type;
+    @NonNull
     public String name;
     @NonNull
     public String time;
@@ -134,6 +135,14 @@ public class Alarm implements Comparable<Alarm> {
         }
 
         return result;
+    }
+
+    public boolean equals(Alarm newAlarm) {
+        return this.name.equals(newAlarm.getName()) &&
+                this.time.equals(newAlarm.getTime()) &&
+                this.days.equals(newAlarm.getDays()) &&
+                this.sound.equals(newAlarm.getSound()) &&
+                this.vibrate == newAlarm.getVibrate();
     }
 
     public void schedule(Context context) {

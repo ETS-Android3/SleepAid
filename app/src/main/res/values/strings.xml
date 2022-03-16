@@ -6,11 +6,16 @@
     <string name="exit_questionnaire">Are you sure you want to exit the questionnaire?\nYour answers will not be saved.</string>
     <string name="question_validation">Please select an option.</string>
 
+    <string name="exit_alarm_configuration">Save your changes or discard them?</string>
+    <string name="exit_alarm_sound">Save your choice or discard it?</string>
+
     <string name="wakeup_time">Based on this information and your previous choice, your recommended wake up time is&#160;</string>
 
     <string name="yes_modal">Yes</string>
     <string name="ok_modal">Ok</string>
     <string name="cancel_modal">Cancel</string>
+    <string name="save_modal">Save</string>
+    <string name="discard_modal">Discard</string>
 
     <string name="start_button">Let\'s start&#160;&#160;&#160;></string>
     <string name="next_button">Next&#160;&#160;&#160;></string>
