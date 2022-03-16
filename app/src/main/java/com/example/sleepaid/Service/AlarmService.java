@@ -20,17 +20,12 @@ import com.example.sleepaid.R;
 import java.util.HashMap;
 
 public class AlarmService extends Service {
-    private HashMap<String, Integer> sounds;
-
     private MediaPlayer mediaPlayer;
     private Vibrator vibrator;
 
     @Override
     public void onCreate() {
         super.onCreate();
-
-        this.sounds = new HashMap<>();
-        sounds.put("default", R.raw.alarm);
 
         this.vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
     }
@@ -61,7 +56,7 @@ public class AlarmService extends Service {
                 .addAction(R.drawable.delete_icon, "Dismiss", dismissPendingIntent)
                 .build();
 
-        this.mediaPlayer = MediaPlayer.create(this, this.sounds.get(intent.getStringExtra("SOUND")));
+        this.mediaPlayer = MediaPlayer.create(this, App.getSound(intent.getStringExtra("SOUND")));
         this.mediaPlayer.setLooping(true);
         this.mediaPlayer.start();
 

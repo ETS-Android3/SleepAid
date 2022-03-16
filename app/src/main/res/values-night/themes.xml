@@ -23,6 +23,5 @@
         <item name="actionModeCloseDrawable">@drawable/close_icon</item>
         <item name="actionModeCloseButtonStyle">@style/CloseButtonStyle</item>
         <item name="actionMenuTextColor">@color/white</item>
-        <item name="preferenceTheme">@style/PreferenceTheme</item>
     </style>
 </resources>

@@ -70,6 +70,7 @@ public class AlarmListScreenFragment extends Fragment implements View.OnClickLis
 
     public void onClick(View view) {
         this.model.setSelectedAlarm(null);
+        this.model.setSelectedSound(null);
 
         NavHostFragment.findNavController(this).navigate(R.id.configureAlarmAction);
     }

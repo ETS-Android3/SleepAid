@@ -19,5 +19,16 @@
         <action
             android:id="@+id/exitAlarmConfigurationAction"
             app:popUpTo="@id/alarmListScreenFragment" />
+        <action
+            android:id="@+id/selectAlarmSoundAction"
+            app:destination="@id/alarmSoundsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/alarmSoundsFragment"
+        android:name="com.example.sleepaid.Fragment.Alarms.AlarmSoundsFragment"
+        android:label="AlarmSoundsFragment">
+        <action
+            android:id="@+id/exitAlarmSoundAction"
+            app:popUpTo="@id/alarmConfigurationScreenFragment" />
     </fragment>
 </navigation>

@@ -1,16 +1,19 @@
 package com.example.sleepaid.Fragment.Alarms;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Switch;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,8 +21,6 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
 
 import com.example.sleepaid.App;
 import com.example.sleepaid.Handler.DataHandler;
@@ -29,7 +30,6 @@ import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,7 +37,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 @SuppressLint("NewApi")
-public class AlarmConfigurationScreenFragment extends Fragment implements View.OnClickListener {
+public class AlarmConfigurationScreenFragment extends Fragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
     protected AppDatabase db;
 
     private SharedViewModel model;
@@ -67,6 +67,12 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
         Button saveAlarmConfigurationButton = view.findViewById(R.id.saveAlarmConfigurationButton);
         saveAlarmConfigurationButton.setOnClickListener(this);
 
+        Button selectAlarmSoundButton = view.findViewById(R.id.selectAlarmSoundButton);
+        selectAlarmSoundButton.setOnClickListener(this);
+
+        SwitchCompat vibrateButton = view.findViewById(R.id.vibrateButton);
+        vibrateButton.setOnCheckedChangeListener(this);
+
         this.loadAlarm(model.getAlarmViewType(), model.getSelectedAlarm());
     }
 
@@ -78,7 +84,7 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
                 Alarm alarm = this.createAlarm(currentAlarmType);
 
                 this.db.alarmDao()
-                        .insert(Arrays.asList(alarm))
+                        .insert(Collections.singletonList(alarm))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -99,7 +105,7 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
                 this.updateAlarm(this.model.getSelectedAlarm());
 
                 this.db.alarmDao()
-                        .update(Arrays.asList(this.model.getSelectedAlarm()))
+                        .update(Collections.singletonList(this.model.getSelectedAlarm()))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -117,11 +123,22 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
                                 Throwable::printStackTrace
                         );
             }
-        } else {
+        } else if (view.getId() == R.id.cancelAlarmConfigurationButton) {
             //TODO add "are you sure" dialog here
             this.model.setSelectedAlarm(null);
 
             NavHostFragment.findNavController(this).navigate(R.id.exitAlarmConfigurationAction);
+        } else if (view.getId() == R.id.selectAlarmSoundButton) {
+            NavHostFragment.findNavController(this).navigate(R.id.selectAlarmSoundAction);
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (isChecked) {
+            long[] pattern = {0, 100, 1000};
+            Vibrator vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator.vibrate(pattern, 0);
         }
     }
 
@@ -146,6 +163,9 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
                 }
             }
 
+            TextView alarmSound = getView().findViewById(R.id.soundName);
+            alarmSound.setText(this.model.getSelectedSound());
+
             SwitchCompat vibrateButton = getView().findViewById(R.id.vibrateButton);
             vibrateButton.setChecked(selectedAlarm.getVibrate() == 1);
         } else {
@@ -154,50 +174,46 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
     }
 
     private void presetAlarm(int alarmType, TimePicker alarmTimePicker) {
-        switch (alarmType) {
+        if (alarmType == 2) {
             //"nap"
-            case 2:
-                alarmTimePicker.setHour(12);
-                alarmTimePicker.setMinute(0);
-                break;
-
+            alarmTimePicker.setHour(12);
+            alarmTimePicker.setMinute(0);
+        } else {
             //"morning" or "bedtime"
-            default:
-                String goalName = alarmType == 1 ?
-                        "Wake-up time" :
-                        "Bedtime";
+            String goalName = alarmType == 1 ?
+                    "Wake-up time" :
+                    "Bedtime";
 
-                if (this.model.getGoalMin(goalName) == null) {
-                    db.goalDao()
-                            .loadAllByNames(new String[]{goalName})
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                    goalData -> {
-                                        if (!goalData.isEmpty()) {
-                                            this.model.setGoal(
-                                                    goalName,
-                                                    goalData.get(0).getValueMin(),
-                                                    goalData.get(0).getValueMax(),
-                                                    getResources().getColor(R.color.white),
-                                                    getResources().getColor(R.color.white)
-                                            );
+            if (this.model.getGoalMin(goalName) == null) {
+                db.goalDao()
+                        .loadAllByNames(new String[]{goalName})
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                goalData -> {
+                                    if (!goalData.isEmpty()) {
+                                        this.model.setGoal(
+                                                goalName,
+                                                goalData.get(0).getValueMin(),
+                                                goalData.get(0).getValueMax(),
+                                                getResources().getColor(R.color.white),
+                                                getResources().getColor(R.color.white)
+                                        );
 
-                                            List<Integer> goalBedtimes = DataHandler.getIntsFromString(this.model.getGoalMin(goalName));
+                                        List<Integer> goalBedtimes = DataHandler.getIntsFromString(this.model.getGoalMin(goalName));
 
-                                            alarmTimePicker.setHour(goalBedtimes.get(0));
-                                            alarmTimePicker.setMinute(goalBedtimes.get(1));
-                                        }
-                                    },
-                                    Throwable::printStackTrace
-                            );
-                } else {
-                    List<Integer> goalBedtimes = DataHandler.getIntsFromString(this.model.getGoalMin(goalName));
+                                        alarmTimePicker.setHour(goalBedtimes.get(0));
+                                        alarmTimePicker.setMinute(goalBedtimes.get(1));
+                                    }
+                                },
+                                Throwable::printStackTrace
+                        );
+            } else {
+                List<Integer> goalBedtimes = DataHandler.getIntsFromString(this.model.getGoalMin(goalName));
 
-                    alarmTimePicker.setHour(goalBedtimes.get(0));
-                    alarmTimePicker.setMinute(goalBedtimes.get(1));
-                }
-                break;
+                alarmTimePicker.setHour(goalBedtimes.get(0));
+                alarmTimePicker.setMinute(goalBedtimes.get(1));
+            }
         }
     }
 
@@ -256,9 +272,8 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
         return daysPicked;
     }
 
-    //TODO
     private String getSound() {
-        return "default";
+        return this.model.getSelectedSound();
     }
 
     private int getVibrate() {

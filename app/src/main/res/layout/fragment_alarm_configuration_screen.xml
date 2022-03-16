@@ -125,25 +125,48 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent">
 
-                    <TextView
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Alarm sound"
-                        android:textSize="20sp"
-                        android:textColor="@color/black"
                         android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"/>
+                        android:layout_centerVertical="true">
 
-                    <androidx.fragment.app.FragmentContainerView
-                        android:id="@+id/selectSoundButton"
+                        <TextView
+                            android:id="@+id/soundText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Alarm sound"
+                            android:textSize="20sp"
+                            android:textColor="@color/black"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"/>
+
+                        <TextView
+                            android:id="@+id/soundName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:text="Default"
+                            android:textSize="15sp"
+                            android:layout_marginTop="5dp"
+                            app:layout_constraintTop_toBottomOf="@id/soundText"
+                            app:layout_constraintStart_toStartOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <Button
+                        android:id="@+id/selectAlarmSoundButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/purple_button"
+                        android:text="Select"
+                        android:textSize="15sp"
+                        android:textColor="@color/white"
+                        android:gravity="center"
+                        android:backgroundTint="@color/purple_sleep"
+                        app:cornerRadius="10dp"
+                        android:paddingVertical="10dp"
+                        android:paddingHorizontal="15dp"
                         android:layout_centerVertical="true"
-                        android:layout_alignParentEnd="true"
-                        android:name="androidx.navigation.fragment.NavHostFragment"
-                        app:navGraph="@navigation/alarm_sounds_graph"
-                        android:theme="@style/Theme.SleepAid"/>
+                        android:layout_alignParentEnd="true" />
                 </RelativeLayout>
 
                 <RelativeLayout

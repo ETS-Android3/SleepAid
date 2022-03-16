@@ -37,16 +37,11 @@ public class SharedViewModel extends ViewModel {
     private int alarmViewType;
     private Alarm selectedAlarm;
 
-    private HashMap<String, Integer> alarmSounds;
+    private String selectedSound;
 
     private List<GraphSeriesModel> graphSeries = new ArrayList<>();
     private List<GoalModel> goals = new ArrayList<>();
     private List<AlarmListModel> alarms = new ArrayList<>();
-
-    public SharedViewModel() {
-        this.alarmSounds = new HashMap<>();
-        this.alarmSounds.put("default", R.raw.alarm);
-    }
 
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
@@ -86,6 +81,10 @@ public class SharedViewModel extends ViewModel {
 
     public void setSelectedAlarm(Alarm selectedAlarm) {
         this.selectedAlarm = selectedAlarm;
+    }
+
+    public void setSelectedSound(String selectedSound) {
+        this.selectedSound = selectedSound;
     }
 
     public void setSeries(String dataType,
@@ -214,13 +213,13 @@ public class SharedViewModel extends ViewModel {
         return this.selectedAlarm;
     }
 
-    public int getSound(String soundName) {
-        return this.alarmSounds.get(soundName);
+    public String getSelectedSound() {
+        return this.selectedSound;
     }
 
     private GraphSeriesModel getSeriesModel(String dataType,
-                                           String periodStart,
-                                           String periodEnd) {
+                                            String periodStart,
+                                            String periodEnd) {
         Optional<GraphSeriesModel> graphSeries = this.graphSeries.stream()
                 .filter(g -> g.getDataType().equals(dataType) &&
                         g.getPeriod().equals(periodStart + "-" + periodEnd))

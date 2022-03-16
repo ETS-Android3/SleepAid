@@ -122,7 +122,7 @@ public class InitialSettingsService {
 
             String newWakeupTime = (i == 0) ? time + ":00" : time + ":" + i * 10;
 
-            Alarm morningAlarm = new Alarm(1, null,  newWakeupTime, "1111111", "default", 1, 1);
+            Alarm morningAlarm = new Alarm(1, null,  newWakeupTime, "1111111", "Default", 1, 1);
             alarmList.add(morningAlarm);
         }
 
@@ -138,8 +138,8 @@ public class InitialSettingsService {
                 "0" + bedHour :
                 Integer.toString(bedHour);
 
-        Alarm bedtimeAlarmBefore = new Alarm(3,null, timeBefore + ":30", "1111111", "default", 1, 1);
-        Alarm bedtimeAlarm = new Alarm(3, null,time + ":00", "1111111", "default", 1, 1);
+        Alarm bedtimeAlarmBefore = new Alarm(3,null, timeBefore + ":30", "1111111", "Default", 1, 1);
+        Alarm bedtimeAlarm = new Alarm(3, null,time + ":00", "1111111", "Default", 1, 1);
         alarmList.add(bedtimeAlarmBefore);
         alarmList.add(bedtimeAlarm);
 
@@ -153,10 +153,10 @@ public class InitialSettingsService {
                                 //TODO: figure out how to store this better
 //                                List<Integer> napTimes = StringHandler.getIntsFromString(answerData.get(0));
 //
-//                                Alarm napAlarm1 = new Alarm(2, napTimes.get(0), "1 2 3 4 5 6 7", "default");
+//                                Alarm napAlarm1 = new Alarm(2, napTimes.get(0), "1 2 3 4 5 6 7", "Default");
 //                                alarmList.add(napAlarm1);
 //
-//                                Alarm napAlarm2 = new Alarm(2, napTimes.get(1), "1 2 3 4 5 6 7", "default");
+//                                Alarm napAlarm2 = new Alarm(2, napTimes.get(1), "1 2 3 4 5 6 7", "Default");
 //                                alarmList.add(napAlarm2);
 
                                 createSettings();
