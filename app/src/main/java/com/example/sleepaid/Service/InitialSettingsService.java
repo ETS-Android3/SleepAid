@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.sleepaid.App;
+import com.example.sleepaid.Database.Notification.Notification;
 import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Database.Alarm.Alarm;
 import com.example.sleepaid.Database.AppDatabase;
@@ -26,6 +27,7 @@ public class InitialSettingsService {
     List<Configuration> configurationList;
     List<Goal> goalList;
     List<Alarm> alarmList;
+    List<Notification> notificationList;
 
     public InitialSettingsService(Fragment fragment, AppDatabase db) {
         this.fragment = fragment;
@@ -34,6 +36,7 @@ public class InitialSettingsService {
         this.configurationList = new ArrayList<>();
         this.goalList = new ArrayList<>();
         this.alarmList = new ArrayList<>();
+        this.notificationList = new ArrayList<>();
     }
 
     public void getSettings() {
@@ -45,6 +48,12 @@ public class InitialSettingsService {
     }
 
     private void getConfigurationList() {
+        Configuration notificationSound = new Configuration("notificationSound", "Default");
+        configurationList.add(notificationSound);
+
+        Configuration notificationVibration = new Configuration("notificationVibrate", "1");
+        configurationList.add(notificationVibration);
+
         db.answerDao()
                 .loadValuesByQuestionIds(new int[]{3})
                 .subscribeOn(Schedulers.io())
@@ -129,6 +138,7 @@ public class InitialSettingsService {
         alarmList.add(bedtimeAlarmBefore);
         alarmList.add(bedtimeAlarm);
 
+        //TODO create these based on a question?
         if (configurationList.get(0).getValue() == "Yes.") {
             db.answerDao()
                     .loadValuesByQuestionIds(new int[]{4})
@@ -136,7 +146,6 @@ public class InitialSettingsService {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             answerData -> {
-                                //TODO: figure out how to store this better
 //                                List<Integer> napTimes = StringHandler.getIntsFromString(answerData.get(0));
 //
 //                                Alarm napAlarm1 = new Alarm(2, napTimes.get(0), "1 2 3 4 5 6 7", "Default");
@@ -145,13 +154,13 @@ public class InitialSettingsService {
 //                                Alarm napAlarm2 = new Alarm(2, napTimes.get(1), "1 2 3 4 5 6 7", "Default");
 //                                alarmList.add(napAlarm2);
 
-                                createSettings();
+                                getNotificationList(bedHour);
                             },
                             Throwable::printStackTrace
                     );
         }
         else {
-            createSettings();
+            getNotificationList(bedHour);
         }
     }
 
@@ -164,6 +173,40 @@ public class InitialSettingsService {
                         () -> {
                             for (Alarm a : alarmList) {
                                 a.schedule(App.getContext());
+                            }
+
+                            createNotifications();
+                        },
+                        Throwable::printStackTrace
+                );
+    }
+
+    private void getNotificationList(int bedHour) {
+        int bedHourBefore = (bedHour - 2) < 0 ?
+                24 + (bedHour - 2) :
+                bedHour - 2;
+
+        Notification bedtimeNotification = new Notification(
+                "It's almost bedtime!",
+                "You have 2 hours until you need to go to sleep. How about you put your phone away and take some time to unwind?",
+                bedHourBefore + ":00",
+                1
+        );
+
+        this.notificationList.add(bedtimeNotification);
+
+        createSettings();
+    }
+
+    private void createNotifications() {
+        db.notificationDao()
+                .insert(notificationList)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        () -> {
+                            for (Notification n : notificationList) {
+                                n.schedule(App.getContext());
                             }
 
                             Intent intent = new Intent(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));

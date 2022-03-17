@@ -1,4 +1,4 @@
-package com.example.sleepaid.Service;
+package com.example.sleepaid.Service.Alarm;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
@@ -16,7 +16,7 @@ public class AlarmBroadcastReceiverService extends BroadcastReceiver {
             startAlarmService(context, intent);
 
             if (intent.getBooleanExtra("RECURRING", false)) {
-                startRepeatAlarmService(context, intent);
+                startRepeatAlarmService(intent);
             }
         }
     }
@@ -32,11 +32,9 @@ public class AlarmBroadcastReceiverService extends BroadcastReceiver {
         context.startForegroundService(intentService);
     }
 
-    private void startRepeatAlarmService(Context context, Intent intent) {
-        Intent intentService = new Intent(context, RepeatAlarmService.class);
-        intentService.putExtra("ID", intent.getIntExtra("ID", 0));
-
-        context.startForegroundService(intentService);
+    private void startRepeatAlarmService(Intent intent) {
+        RepeatAlarmService repeatAlarmService = new RepeatAlarmService();
+        repeatAlarmService.scheduleRepeat(intent.getIntExtra("ID", 0));
     }
 
     private void startRescheduleAlarmsService(Context context) {

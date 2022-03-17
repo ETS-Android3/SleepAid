@@ -1,4 +1,4 @@
-package com.example.sleepaid.Service;
+package com.example.sleepaid.Service.Alarm;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
@@ -9,7 +9,6 @@ import com.example.sleepaid.Database.Alarm.Alarm;
 import com.example.sleepaid.Handler.DataHandler;
 
 import java.util.Calendar;
-import java.util.Random;
 
 @SuppressLint("NewApi")
 public class AlarmActionBroadcastReceiverService extends BroadcastReceiver {

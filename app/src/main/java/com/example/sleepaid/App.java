@@ -14,17 +14,26 @@ import java.util.List;
 public class App extends Application {
     private static Context context;
 
-    public static final String CHANNEL_ID = "ALARM_SERVICE_CHANNEL";
+    public static final String ALARM_CHANNEL_ID = "ALARM_CHANNEL";
+    public static final String NOTIFICATION_CHANNEL_ID = "NOTIFICATION_CHANNEL";
 
     private static HashMap<String, Integer> alarmSounds;
+
+    private static int notificationSound;
+    private static boolean notificationVibrate;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         this.context = getApplicationContext();
-        createNotificationChannnel();
+
+        createAlarmChannel();
+        createNotificationChannel();
         createAlarmSounds();
+
+//        this.notificationSound = R.raw.default_notification_sound;
+//        this.notificationVibrate = true;
     }
 
     public static Context getContext() {
@@ -39,11 +48,39 @@ public class App extends Application {
         return alarmSounds;
     }
 
-    private void createNotificationChannnel() {
+    public static int getNotificationSound() {
+        return notificationSound;
+    }
+
+    public static boolean getNotificationVibrate() {
+        return notificationVibrate;
+    }
+
+    public static void setNotificationSound(int notificationSound) {
+        App.notificationSound = notificationSound;
+    }
+
+    public static void setNotificationVibrate(boolean notificationVibrate) {
+        App.notificationVibrate = notificationVibrate;
+    }
+
+    private void createAlarmChannel() {
         NotificationChannel serviceChannel = new NotificationChannel(
-                CHANNEL_ID,
-                "Alarm Service Channel",
+                ALARM_CHANNEL_ID,
+                "Alarm Channel",
                 NotificationManager.IMPORTANCE_DEFAULT
+        );
+        serviceChannel.setSound(null,null);
+
+        NotificationManager manager = getSystemService(NotificationManager.class);
+        manager.createNotificationChannel(serviceChannel);
+    }
+
+    private void createNotificationChannel() {
+        NotificationChannel serviceChannel = new NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                "Notification Channel",
+                NotificationManager.IMPORTANCE_HIGH
         );
 
         NotificationManager manager = getSystemService(NotificationManager.class);

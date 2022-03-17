@@ -34,18 +34,30 @@
             android:exported="true">
         </activity>
 
-        <receiver android:name=".Service.AlarmBroadcastReceiverService"
+        <receiver android:name=".Service.Alarm.AlarmBroadcastReceiverService"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".Service.AlarmActionBroadcastReceiverService"
+        <receiver android:name=".Service.Alarm.AlarmActionBroadcastReceiverService"
             android:exported="false"/>
 
-        <service android:name=".Service.AlarmService" />
-        <service android:name=".Service.RescheduleAlarmsService" />
+        <receiver android:name=".Service.Notification.NotificationBroadcastReceiverService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".Service.Alarm.AlarmService" />
+
+        <service android:name=".Service.Alarm.RescheduleAlarmsService" />
+
+        <service android:name=".Service.Notification.NotificationService" />
+
+        <service android:name=".Service.Notification.RescheduleNotificationsService" />
 
         <meta-data
             android:name="preloaded_fonts"

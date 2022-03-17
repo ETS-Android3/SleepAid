@@ -12,7 +12,7 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-import com.example.sleepaid.Service.AlarmBroadcastReceiverService;
+import com.example.sleepaid.Service.Alarm.AlarmBroadcastReceiverService;
 import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Database.AlarmType.AlarmType;
 
@@ -152,7 +152,7 @@ public class Alarm implements Comparable<Alarm> {
 
         intent.putExtra("ID", this.id);
         intent.putExtra("TYPE", this.type);
-        intent.putExtra("NAME", this.name == null ? "" : this.name);
+        intent.putExtra("NAME", this.name);
         intent.putExtra("TIME", this.time);
         intent.putExtra("SOUND", this.sound);
         intent.putExtra("VIBRATE", this.vibrate);
@@ -204,7 +204,7 @@ public class Alarm implements Comparable<Alarm> {
 
         intent.putExtra("ID", this.id);
         intent.putExtra("TYPE", this.type);
-        intent.putExtra("NAME", this.name == null ? "" : this.name);
+        intent.putExtra("NAME", this.name);
         intent.putExtra("TIME", this.time);
         intent.putExtra("SOUND", this.sound);
         intent.putExtra("VIBRATE", this.vibrate);
@@ -242,6 +242,8 @@ public class Alarm implements Comparable<Alarm> {
                 );
             }
         }
+
+        this.isOn = 1;
     }
 
     public void cancel(Context context) {

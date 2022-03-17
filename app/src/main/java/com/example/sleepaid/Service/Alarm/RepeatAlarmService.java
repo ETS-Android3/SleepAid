@@ -1,4 +1,4 @@
-package com.example.sleepaid.Service;
+package com.example.sleepaid.Service.Alarm;
 
 import android.app.Service;
 import android.content.Intent;
@@ -18,20 +18,12 @@ import java.util.List;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class RepeatAlarmService extends Service {
-    @Override
-    public void onCreate() {
-        super.onCreate();
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        super.onStartCommand(intent, flags, startId);
-
+public class RepeatAlarmService {
+    public void scheduleRepeat(int id) {
         AppDatabase db = AppDatabase.getDatabase(App.getContext());
 
         db.alarmDao()
-                .loadAllByIds(new int[]{intent.getIntExtra("ID", 0)})
+                .loadAllByIds(new int[]{id})
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -42,18 +34,5 @@ public class RepeatAlarmService extends Service {
                         },
                         Throwable::printStackTrace
                 );
-
-        return START_STICKY;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
     }
 }

@@ -1,4 +1,4 @@
-package com.example.sleepaid.Service;
+package com.example.sleepaid.Service.Alarm;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -11,13 +11,9 @@ import android.os.Vibrator;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.sleepaid.App;
-import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
-
-import java.util.HashMap;
 
 public class AlarmService extends Service {
     private MediaPlayer mediaPlayer;
@@ -47,7 +43,7 @@ public class AlarmService extends Service {
 
         PendingIntent dismissPendingIntent = PendingIntent.getBroadcast(this, 0, dismissIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Notification notification = new NotificationCompat.Builder(this, App.CHANNEL_ID)
+        Notification notification = new NotificationCompat.Builder(this, App.ALARM_CHANNEL_ID)
                 .setContentTitle(intent.getStringExtra("NAME"))
                 .setContentText(intent.getStringExtra("TIME"))
                 .setSmallIcon(R.drawable.alarm_icon)

@@ -1,4 +1,4 @@
-package com.example.sleepaid.Service;
+package com.example.sleepaid.Service.Notification;
 
 import android.content.Intent;
 import android.os.IBinder;
@@ -8,12 +8,12 @@ import androidx.lifecycle.LifecycleService;
 import androidx.lifecycle.Observer;
 
 import com.example.sleepaid.App;
-import com.example.sleepaid.Database.Alarm.Alarm;
 import com.example.sleepaid.Database.AppDatabase;
+import com.example.sleepaid.Database.Notification.Notification;
 
 import java.util.List;
 
-public class RescheduleAlarmsService extends LifecycleService {
+public class RescheduleNotificationsService extends LifecycleService {
     @Override
     public void onCreate() {
         super.onCreate();
@@ -25,13 +25,11 @@ public class RescheduleAlarmsService extends LifecycleService {
 
         AppDatabase db = AppDatabase.getDatabase(App.getContext());
 
-        db.alarmDao().getAll().observe(this, new Observer<List<Alarm>>() {
+        db.notificationDao().getAll().observe(this, new Observer<List<Notification>>() {
             @Override
-            public void onChanged(List<Alarm> alarms) {
-                for (Alarm a : alarms) {
-                    if (a.getIsOn() == 1) {
-                        a.schedule(getApplicationContext());
-                    }
+            public void onChanged(List<Notification> notifications) {
+                for (Notification n : notifications) {
+                    n.schedule(getApplicationContext());
                 }
             }
         });
