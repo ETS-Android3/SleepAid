@@ -1,15 +1,6 @@
 package com.example.sleepaid.Fragment.SleepData;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.NavigationUI;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,17 +9,25 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
+
 import com.example.sleepaid.App;
-import com.example.sleepaid.Fragment.MainMenuFragment;
-import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.SleepData.SleepData;
-import com.example.sleepaid.R;
+import com.example.sleepaid.Fragment.MainMenuFragment;
+import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Model.SharedViewModel;
+import com.example.sleepaid.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.jjoe64.graphview.DefaultLabelFormatter;
 
-import java.util.Calendar;
+import java.time.YearMonth;
+import java.time.ZonedDateTime;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -43,10 +42,10 @@ public class SleepDataFragment extends MainMenuFragment {
     Button previousButton;
     Button nextButton;
 
-    protected Calendar today;
+    protected ZonedDateTime today;
 
-    protected Calendar rangeMax;
-    protected Calendar rangeMin;
+    protected ZonedDateTime rangeMax;
+    protected ZonedDateTime rangeMin;
 
     protected String todayDuration;
     protected String todayWakeupTime;
@@ -99,7 +98,7 @@ public class SleepDataFragment extends MainMenuFragment {
             model.setGraphYearLength(12);
         }
 
-        today = Calendar.getInstance();
+        today = ZonedDateTime.now();
 
         getTodaysRange();
 
@@ -107,22 +106,21 @@ public class SleepDataFragment extends MainMenuFragment {
     }
 
     private void getTodaysRange() {
-        rangeMax = Calendar.getInstance();
-        rangeMin = Calendar.getInstance();
+        rangeMax = ZonedDateTime.now();
+        rangeMin = ZonedDateTime.now();
 
         switch (model.getGraphViewType()) {
             case "month":
-                rangeMin.add(Calendar.DAY_OF_MONTH, -rangeMax.get(Calendar.DAY_OF_MONTH) + 1);
+                rangeMin = rangeMin.minusDays(rangeMax.getDayOfMonth()).plusDays(1);
                 break;
 
             case "year":
-                rangeMin.add(Calendar.DAY_OF_YEAR, -rangeMax.get(Calendar.DAY_OF_YEAR) + 1);
+                rangeMin = rangeMin.minusDays(rangeMax.getDayOfYear()).plusDays(1);
                 break;
 
             //"week"
             default:
-                // Days are indexed from 1 starting with Sunday, so add 2 to get to Monday
-                rangeMin.add(Calendar.DAY_OF_WEEK, -rangeMax.get(Calendar.DAY_OF_WEEK) + 2);
+                rangeMin = rangeMin.minusDays(rangeMax.getDayOfWeek().getValue()).plusDays(1);
                 break;
         }
     }
@@ -130,7 +128,7 @@ public class SleepDataFragment extends MainMenuFragment {
     private void getTodaysData() {
         //TODO check if it's there already and if the date in shared view model matches
         db.sleepDataDao()
-                .loadAllByDates(new String[]{DataHandler.getSQLiteDate(today.getTime())})
+                .loadAllByDates(new String[]{DataHandler.getSQLiteDate(today)})
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -180,22 +178,22 @@ public class SleepDataFragment extends MainMenuFragment {
     protected DefaultLabelFormatter getMonthLabelFormatter(int numberOfWeeks) {
         String[] weeks = new String[numberOfWeeks];
 
-        Calendar day = (Calendar) rangeMin.clone();
+        ZonedDateTime day = rangeMin;
 
         for (int i = 0; i < numberOfWeeks; i++) {
-            String weekStart = DataHandler.getDay(day.getTime());
+            String weekStart = DataHandler.getDay(day);
 
             if (i == numberOfWeeks - 1){
-                day.set(Calendar.DAY_OF_MONTH, rangeMin.getActualMaximum(Calendar.DATE));
+                day = day.withDayOfMonth(YearMonth.of(rangeMin.getYear(), rangeMin.getMonth()).lengthOfMonth());
             } else {
-                day.add(Calendar.DAY_OF_MONTH, 6);
+                day = day.plusDays(6);
             }
 
-            String weekEnd = DataHandler.getDay(day.getTime());
+            String weekEnd = DataHandler.getDay(day);
 
             weeks[i] = weekStart + "-" + weekEnd;
 
-            day.add(Calendar.DAY_OF_MONTH, 1);
+            day = day.plusDays(1);
         }
 
         return new DefaultLabelFormatter() {
@@ -235,41 +233,36 @@ public class SleepDataFragment extends MainMenuFragment {
                 direction = -1;
             }
 
-            Calendar endOfRange = (Calendar) rangeMin.clone();
+            ZonedDateTime endOfRange;
 
             switch (model.getGraphViewType()) {
                 case "month":
                     // rangeMin will always be the 1st of the month, so we can just move by 1 month
-                    rangeMin.add(Calendar.MONTH, direction);
+                    rangeMin = rangeMin.plusMonths(direction);
 
-                    endOfRange = (Calendar) rangeMin.clone();
-                    endOfRange.set(Calendar.DAY_OF_MONTH, rangeMin.getActualMaximum(Calendar.DATE));
+                    endOfRange = rangeMin.withDayOfMonth(YearMonth.of(rangeMin.getYear(), rangeMin.getMonth()).lengthOfMonth());
                     break;
 
                 case "year":
                     // rangeMin will always be the 1st of January, so we can just move by 1 year
-                    rangeMin.add(Calendar.YEAR, direction);
+                    rangeMin = rangeMin.plusYears(direction);
 
-                    endOfRange = (Calendar) rangeMin.clone();
-                    endOfRange.set(Calendar.MONTH, 11);
-                    endOfRange.set(Calendar.DAY_OF_MONTH, 31);
+                    endOfRange = rangeMin.withMonth(12).withDayOfMonth(31);
                     break;
 
                 //"week"
                 default:
                     // rangeMin will always be a Monday, so we can just move by 7 days
-                    rangeMin.add(Calendar.DAY_OF_WEEK, 7 * direction);
+                    rangeMin = rangeMin.plusDays(7 * direction);
 
-                    // We need to make sure we don't go past today
-                    endOfRange = (Calendar) rangeMin.clone();
-                    endOfRange.add(Calendar.DAY_OF_WEEK, 6);
+                    endOfRange = rangeMin.plusDays(6);
                     break;
             }
 
             // We need to make sure we don't go past today when clicking next
-            rangeMax = endOfRange.after(today) ? (Calendar) today.clone() : (Calendar) endOfRange.clone();
+            rangeMax = endOfRange.isAfter(today) ? today : endOfRange;
 
-            graphFragment.loadGraph(rangeMin.getTime(), rangeMax.getTime());
+            graphFragment.loadGraph(rangeMin, rangeMax);
         }
     };
 
@@ -279,7 +272,7 @@ public class SleepDataFragment extends MainMenuFragment {
             model.setGraphViewType(item.toString().toLowerCase());
 
             getTodaysRange();
-            graphFragment.loadGraph(rangeMin.getTime(), rangeMax.getTime());
+            graphFragment.loadGraph(rangeMin, rangeMax);
         }
 
         public void onNothingSelected(AdapterView<?> parent) {}

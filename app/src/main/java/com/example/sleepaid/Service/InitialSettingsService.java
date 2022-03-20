@@ -6,12 +6,12 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.sleepaid.App;
-import com.example.sleepaid.Database.Notification.Notification;
-import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Database.Alarm.Alarm;
 import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.Configuration.Configuration;
 import com.example.sleepaid.Database.Goal.Goal;
+import com.example.sleepaid.Database.Notification.Notification;
+import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.R;
 
 import java.util.ArrayList;
@@ -170,9 +170,9 @@ public class InitialSettingsService {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        () -> {
-                            for (Alarm a : alarmList) {
-                                a.schedule(App.getContext());
+                        alarmIds -> {
+                            for (int i = 0; i < alarmIds.size(); i++) {
+                                alarmList.get(i).setId(alarmIds.get(i).intValue());
                             }
 
                             createNotifications();
@@ -204,9 +204,14 @@ public class InitialSettingsService {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        () -> {
-                            for (Notification n : notificationList) {
-                                n.schedule(App.getContext());
+                        notificationIds -> {
+                            for (Alarm a : alarmList) {
+                                a.schedule(App.getContext());
+                            }
+
+                            for (int i = 0; i < notificationIds.size(); i++) {
+                                notificationList.get(i).setId(notificationIds.get(i).intValue());
+                                notificationList.get(i).schedule(App.getContext());
                             }
 
                             Intent intent = new Intent(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));

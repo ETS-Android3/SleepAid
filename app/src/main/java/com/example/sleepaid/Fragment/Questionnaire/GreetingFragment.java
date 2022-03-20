@@ -6,14 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import androidx.fragment.app.Fragment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.sleepaid.R;
 import com.example.sleepaid.Model.SharedViewModel;
+import com.example.sleepaid.R;
 
 public class GreetingFragment extends Fragment implements View.OnClickListener {
     private SharedViewModel model;

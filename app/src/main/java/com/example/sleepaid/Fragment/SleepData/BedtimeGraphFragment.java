@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 import com.example.sleepaid.Component.CircleBox;
 import com.example.sleepaid.R;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 public class BedtimeGraphFragment extends SleepDataGraphFragment {
     @Override
@@ -27,7 +27,7 @@ public class BedtimeGraphFragment extends SleepDataGraphFragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
-    protected void loadGraph(Date min, Date max) {
+    protected void loadGraph(ZonedDateTime min, ZonedDateTime max) {
         super.loadGraph(min, max);
         super.loadGoal("Bedtime");
     }

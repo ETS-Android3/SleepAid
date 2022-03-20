@@ -1,6 +1,5 @@
 package com.example.sleepaid.Fragment.SleepData;
 
-import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -13,20 +12,20 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.sleepaid.App;
-import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.SleepData.SleepData;
+import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Listener.OnSwipeTouchListener;
-import com.example.sleepaid.R;
 import com.example.sleepaid.Model.SharedViewModel;
+import com.example.sleepaid.R;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
 
+import java.time.YearMonth;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,7 +33,7 @@ import java.util.stream.Collectors;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-@SuppressLint("NewApi")
+
 public abstract class SleepDataGraphFragment extends Fragment {
     protected SleepDataFragment sleepDataFragment;
 
@@ -87,14 +86,14 @@ public abstract class SleepDataGraphFragment extends Fragment {
             }
         });
 
-        loadGraph(sleepDataFragment.rangeMin.getTime(), sleepDataFragment.rangeMax.getTime());
+        loadGraph(sleepDataFragment.rangeMin, sleepDataFragment.rangeMax);
         loadTodaysData();
     }
 
-    protected void loadGraph(Date min, Date max) {
+    protected void loadGraph(ZonedDateTime min, ZonedDateTime max) {
         // for February in non-leap years we only have 4 weeks
-        if (sleepDataFragment.rangeMin.get(Calendar.MONTH) == 1 &&
-                sleepDataFragment.rangeMin.get(Calendar.YEAR) % 4 != 0 &&
+        if (sleepDataFragment.rangeMin.getMonthValue() == 2 &&
+                sleepDataFragment.rangeMin.getYear() % 4 != 0 &&
                 model.getGraphViewType().equals("month")) {
             this.maxGraphSize = model.getGraphPeriodLength() - 1;
         } else {
@@ -103,8 +102,8 @@ public abstract class SleepDataGraphFragment extends Fragment {
 
         String period;
 
-        if (DataHandler.getFormattedDate(sleepDataFragment.rangeMax.getTime())
-                .equals(DataHandler.getFormattedDate(sleepDataFragment.today.getTime()))) {
+        if (DataHandler.getFormattedDate(sleepDataFragment.rangeMax)
+                .equals(DataHandler.getFormattedDate(sleepDataFragment.today))) {
             sleepDataFragment.nextButton.setVisibility(View.INVISIBLE);
 
             period = "This " + model.getGraphViewType();
@@ -199,8 +198,8 @@ public abstract class SleepDataGraphFragment extends Fragment {
     }
 
     private void loadFromDatabase(String name) {
-        String periodStart = DataHandler.getSQLiteDate(sleepDataFragment.rangeMin.getTime());
-        String periodEnd = DataHandler.getSQLiteDate(sleepDataFragment.rangeMax.getTime());
+        String periodStart = DataHandler.getSQLiteDate(sleepDataFragment.rangeMin);
+        String periodEnd = DataHandler.getSQLiteDate(sleepDataFragment.rangeMax);
 
         if (model.getLineSeries(name, periodStart, periodEnd) == null) {
             db.sleepDataDao()
@@ -307,13 +306,11 @@ public abstract class SleepDataGraphFragment extends Fragment {
     private List<Double> processWeekData(List<SleepData> sleepData) {
         List<Double> processedSleepData = new ArrayList<>();
 
-        Calendar day = (Calendar) sleepDataFragment.rangeMin.clone();
+        ZonedDateTime day = sleepDataFragment.rangeMin;
+        ZonedDateTime end = day.plusDays(6);
 
-        Calendar end = (Calendar) day.clone();
-        end.add(Calendar.DAY_OF_WEEK, 6);
-
-        while (!day.after(end)) {
-            String date = DataHandler.getSQLiteDate(day.getTime());
+        while (!day.isAfter(end)) {
+            String date = DataHandler.getSQLiteDate(day);
 
             Optional<SleepData> sleepDataForDay = sleepData
                     .stream()
@@ -329,7 +326,7 @@ public abstract class SleepDataGraphFragment extends Fragment {
                 processedSleepData.add(-1.0);
             }
 
-            day.add(Calendar.DAY_OF_WEEK, 1);
+            day = day.plusDays(1);
         }
 
         return processedSleepData;
@@ -338,16 +335,13 @@ public abstract class SleepDataGraphFragment extends Fragment {
     private List<Double> processMonthData(List<SleepData> sleepData) {
         List<Double> processedSleepData = new ArrayList<>();
 
-        Calendar weekStart = (Calendar) sleepDataFragment.rangeMin.clone();
-        Calendar weekEnd = (Calendar) sleepDataFragment.rangeMin.clone();
-        weekEnd.add(Calendar.DAY_OF_MONTH, 6);
+        ZonedDateTime weekStart = sleepDataFragment.rangeMin;
+        ZonedDateTime weekEnd = sleepDataFragment.rangeMin.plusDays(6);
+        ZonedDateTime end = weekStart.withDayOfMonth(YearMonth.of(weekStart.getYear(), weekStart.getMonthValue()).lengthOfMonth());
 
-        Calendar end = (Calendar) weekStart.clone();
-        end.set(Calendar.DAY_OF_MONTH, weekStart.getActualMaximum(Calendar.DATE));
-
-        while (!weekEnd.after(end)) {
-            String startDate = DataHandler.getSQLiteDate(weekStart.getTime());
-            String endDate = DataHandler.getSQLiteDate(weekEnd.getTime());
+        while (!weekEnd.isAfter(end)) {
+            String startDate = DataHandler.getSQLiteDate(weekStart);
+            String endDate = DataHandler.getSQLiteDate(weekEnd);
 
             List<SleepData> sleepDataForWeek = sleepData
                     .stream()
@@ -373,8 +367,8 @@ public abstract class SleepDataGraphFragment extends Fragment {
                 processedSleepData.add(-1.0);
             }
 
-            weekStart.add(Calendar.DAY_OF_WEEK, 7);
-            weekEnd.add(Calendar.DAY_OF_WEEK, 7);
+            weekStart = weekStart.plusDays(7);
+            weekEnd = weekEnd.plusDays(7);
         }
 
         return processedSleepData;

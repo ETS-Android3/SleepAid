@@ -1,11 +1,10 @@
 package com.example.sleepaid.Service.Alarm;
 
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-@SuppressLint("NewApi")
+
 public class AlarmBroadcastReceiverService extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -33,8 +32,8 @@ public class AlarmBroadcastReceiverService extends BroadcastReceiver {
     }
 
     private void startRepeatAlarmService(Intent intent) {
-        RepeatAlarmService repeatAlarmService = new RepeatAlarmService();
-        repeatAlarmService.scheduleRepeat(intent.getIntExtra("ID", 0));
+        RecurringAlarmService recurringAlarmService = new RecurringAlarmService();
+        recurringAlarmService.scheduleRepeat(intent.getIntExtra("ID", 0));
     }
 
     private void startRescheduleAlarmsService(Context context) {

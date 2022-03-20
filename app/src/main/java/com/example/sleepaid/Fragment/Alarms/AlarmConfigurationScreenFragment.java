@@ -1,6 +1,5 @@
 package com.example.sleepaid.Fragment.Alarms;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -26,9 +24,9 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.sleepaid.App;
 import com.example.sleepaid.Component.Modal;
-import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Database.Alarm.Alarm;
 import com.example.sleepaid.Database.AppDatabase;
+import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
 
@@ -39,7 +37,7 @@ import java.util.List;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-@SuppressLint("NewApi")
+
 public class AlarmConfigurationScreenFragment extends Fragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
     protected AppDatabase db;
 
@@ -143,7 +141,8 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
-                            () -> {
+                            alarmId -> {
+                                alarm.setId(alarmId.get(0).intValue());
                                 alarm.schedule(App.getContext());
 
                                 List<Alarm> newAlarmList = new ArrayList<>(this.model.getAlarmList(currentAlarmType));
@@ -167,6 +166,8 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             () -> {
+                                // Cancel current alarm and reschedule it in case the days picked have changed
+                                //this.model.getSelectedAlarm().cancel(App.getContext());
                                 this.model.getSelectedAlarm().schedule(App.getContext());
 
                                 List<Alarm> newAlarmList = new ArrayList<>(this.model.getAlarmList(currentAlarmType));

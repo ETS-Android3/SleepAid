@@ -1,6 +1,5 @@
 package com.example.sleepaid.Fragment.Alarms;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -27,7 +26,7 @@ import java.util.stream.Collectors;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-@SuppressLint("NewApi")
+
 public abstract class AlarmListFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
     private AppDatabase db;
 
@@ -160,18 +159,18 @@ public abstract class AlarmListFragment extends Fragment implements AdapterView.
                 .filter(a -> selectedIds.contains(this.alarmList.indexOf(a)))
                 .collect(Collectors.toList());
 
-        for (Alarm a : alarmsToDelete) {
-            if (a.getIsOn() == 1) {
-                a.cancel(App.getContext());
-            }
-        }
-
         this.db.alarmDao()
                 .delete(alarmsToDelete)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         () -> {
+                            for (Alarm a : alarmsToDelete) {
+                                if (a.getIsOn() == 1) {
+                                    a.cancel(App.getContext());
+                                }
+                            }
+
                             alarmList.removeAll(alarmsToDelete);
                             Collections.sort(alarmList);
                             this.model.setAlarms(model.getAlarmViewType(), alarmList);

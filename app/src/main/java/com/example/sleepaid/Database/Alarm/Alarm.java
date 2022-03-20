@@ -1,6 +1,5 @@
 package com.example.sleepaid.Database.Alarm;
 
-import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -12,14 +11,16 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-import com.example.sleepaid.Service.Alarm.AlarmBroadcastReceiverService;
-import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Database.AlarmType.AlarmType;
+import com.example.sleepaid.Handler.DataHandler;
+import com.example.sleepaid.Service.Alarm.AlarmBroadcastReceiverService;
 
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.List;
 
-@SuppressLint("NewApi")
+
 @Entity(foreignKeys = {
         @ForeignKey(
                 entity = AlarmType.class,
@@ -95,6 +96,10 @@ public class Alarm implements Comparable<Alarm> {
         return this.isOn;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -146,58 +151,31 @@ public class Alarm implements Comparable<Alarm> {
     }
 
     public void schedule(Context context) {
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
-        Intent intent = new Intent(context, AlarmBroadcastReceiverService.class);
-
-        intent.putExtra("ID", this.id);
-        intent.putExtra("TYPE", this.type);
-        intent.putExtra("NAME", this.name);
-        intent.putExtra("TIME", this.time);
-        intent.putExtra("SOUND", this.sound);
-        intent.putExtra("VIBRATE", this.vibrate);
-
         boolean recurring = this.days.contains("1");
-        intent.putExtra("RECURRING", recurring);
 
-        PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-
-        Calendar calendar = Calendar.getInstance();
+        if (recurring && this.days.charAt(ZonedDateTime.now().getDayOfWeek().getValue() - 1) != '1') {
+            this.scheduleRecurring(context);
+            return;
+        }
 
         List<Integer> time = DataHandler.getIntsFromString(this.time);
-        calendar.set(Calendar.HOUR_OF_DAY, time.get(0));
-        calendar.set(Calendar.MINUTE, time.get(1));
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
+        System.out.println(this.time);
+        ZonedDateTime date = ZonedDateTime.now()
+                .withHour(time.get(0))
+                .withMinute(time.get(1))
+                .truncatedTo(ChronoUnit.MINUTES);
 
         // If alarm time has already passed and it's not a recurring alarm, increment day by 1 and schedule it.
-        // If it is recurring, schedule it for the recurring days
-        if (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
+        // If it is recurring, schedule it for the next recurring day
+        if (date.toInstant().toEpochMilli() <= System.currentTimeMillis()) {
             if (!recurring) {
-                calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 1);
-
-                alarmManager.setExactAndAllowWhileIdle(
-                        AlarmManager.RTC_WAKEUP,
-                        calendar.getTimeInMillis(),
-                        alarmPendingIntent
-                );
-
-                this.isOn = 1;
+                date = date.plusDays(1);
             } else {
-                this.scheduleRepeat(context);
+                this.scheduleRecurring(context);
+                return;
             }
-        } else {
-            alarmManager.setExactAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    calendar.getTimeInMillis(),
-                    alarmPendingIntent
-            );
-
-            this.isOn = 1;
         }
-    }
 
-    public void scheduleRepeat(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         Intent intent = new Intent(context, AlarmBroadcastReceiverService.class);
@@ -208,40 +186,65 @@ public class Alarm implements Comparable<Alarm> {
         intent.putExtra("TIME", this.time);
         intent.putExtra("SOUND", this.sound);
         intent.putExtra("VIBRATE", this.vibrate);
-
-        boolean recurring = this.days.contains("1");
         intent.putExtra("RECURRING", recurring);
 
         PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
+        alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                date.toInstant().toEpochMilli(),
+                alarmPendingIntent
+        );
+
+        this.isOn = 1;
+    }
+
+    public void scheduleRecurring(Context context) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(context, AlarmBroadcastReceiverService.class);
+
+        intent.putExtra("ID", this.id);
+        intent.putExtra("TYPE", this.type);
+        intent.putExtra("NAME", this.name);
+        intent.putExtra("TIME", this.time);
+        intent.putExtra("SOUND", this.sound);
+        intent.putExtra("VIBRATE", this.vibrate);
+        intent.putExtra("RECURRING", true);
+
+        PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
         List<Integer> time = DataHandler.getIntsFromString(this.time);
-        calendar.set(Calendar.HOUR_OF_DAY, time.get(0));
-        calendar.set(Calendar.MINUTE, time.get(1));
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
+        ZonedDateTime date = ZonedDateTime.now()
+                .withHour(time.get(0))
+                .withMinute(time.get(1))
+                .truncatedTo(ChronoUnit.MINUTES);
 
-        int today = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1;
+        int today = ZonedDateTime.now().getDayOfWeek().getValue() - 1;
+        int nextDay;
 
-        for (int i = 0; i < 7; i++) {
-            if (this.days.charAt(i) == '1') {
-                Calendar day = (Calendar) calendar.clone();
-                day.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - (today - i));
-
-                // If alarm time has already passed, increment week by 1
-                if (day.getTimeInMillis() <= System.currentTimeMillis()) {
-                    day.set(Calendar.DAY_OF_MONTH, day.get(Calendar.DAY_OF_MONTH) + 7);
-                }
-
-                alarmManager.setExactAndAllowWhileIdle(
-                        AlarmManager.RTC_WAKEUP,
-                        day.getTimeInMillis(),
-                        alarmPendingIntent
-                );
-            }
+        // Try and find a recurring day after today.
+        // If there isn't one, there must be one up to and including today
+        if (this.days.substring(today + 1).contains("1")) {
+            nextDay = today + 1 + this.days.substring(today + 1).indexOf("1");
+        } else {
+            nextDay = this.days.indexOf("1");
         }
+
+        ZonedDateTime day = date.minusDays(today).plusDays(nextDay);
+
+        // If alarm time has already passed, increment week by 1
+        if (day.toInstant().toEpochMilli() <= System.currentTimeMillis()) {
+            day = day.plusDays(7);
+        }
+
+        alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                day.toInstant().toEpochMilli(),
+                alarmPendingIntent
+        );
+
+        System.out.println(day.toInstant().toEpochMilli());
 
         this.isOn = 1;
     }

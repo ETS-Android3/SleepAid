@@ -1,16 +1,12 @@
 package com.example.sleepaid;
 
-import android.annotation.SuppressLint;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-@SuppressLint("NewApi")
 public class App extends Application {
     private static Context context;
 

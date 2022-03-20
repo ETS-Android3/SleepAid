@@ -1,9 +1,14 @@
 package com.example.sleepaid.Fragment.Questionnaire;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RadioGroup;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -14,22 +19,15 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
-import android.util.TypedValue;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.RadioGroup;
-
-import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.App;
-import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Component.Modal;
+import com.example.sleepaid.Component.TextBox;
+import com.example.sleepaid.Database.Answer.Answer;
+import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
-import com.example.sleepaid.R;
 import com.example.sleepaid.Model.SharedViewModel;
-import com.example.sleepaid.Component.TextBox;
+import com.example.sleepaid.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +37,7 @@ import java.util.stream.Collectors;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-@SuppressLint("NewApi")
+
 public class QuestionnaireFragment extends Fragment {
     private Context context;
     private AppDatabase db;

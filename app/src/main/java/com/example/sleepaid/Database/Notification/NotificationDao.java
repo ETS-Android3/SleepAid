@@ -22,7 +22,7 @@ public interface NotificationDao {
     Single<List<Notification>> loadAllByIds(int[] notificationIds);
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    Completable insert(List<Notification> notifications);
+    Single<List<Long>> insert(List<Notification> notifications);
 
     @Update
     Completable update(List<Notification> notifications);

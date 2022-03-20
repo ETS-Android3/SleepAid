@@ -25,7 +25,7 @@ public interface AlarmDao {
     Single<List<Alarm>> loadAllByTypes(int[] types);
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    Completable insert(List<Alarm> alarms);
+    Single<List<Long>> insert(List<Alarm> alarms);
 
     @Update
     Completable update(List<Alarm> alarms);

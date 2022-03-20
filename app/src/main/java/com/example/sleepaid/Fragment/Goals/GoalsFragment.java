@@ -1,24 +1,21 @@
 package com.example.sleepaid.Fragment.Goals;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.example.sleepaid.Adapter.GoalAdapter;
 import com.example.sleepaid.App;
-import com.example.sleepaid.Fragment.MainMenuFragment;
-import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.Goal.Goal;
 import com.example.sleepaid.Database.SleepData.SleepData;
-import com.example.sleepaid.Adapter.GoalAdapter;
+import com.example.sleepaid.Fragment.MainMenuFragment;
+import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.R;
 
 import java.util.ArrayList;
@@ -28,7 +25,7 @@ import java.util.stream.Collectors;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-@SuppressLint("NewApi")
+
 public class GoalsFragment extends MainMenuFragment {
     AppDatabase db;
 

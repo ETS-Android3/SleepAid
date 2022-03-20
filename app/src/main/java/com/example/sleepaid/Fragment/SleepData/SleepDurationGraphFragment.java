@@ -1,18 +1,17 @@
 package com.example.sleepaid.Fragment.SleepData;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.example.sleepaid.Component.CircleBox;
 import com.example.sleepaid.R;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 public class SleepDurationGraphFragment extends SleepDataGraphFragment {
     @Override
@@ -28,7 +27,7 @@ public class SleepDurationGraphFragment extends SleepDataGraphFragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
-    protected void loadGraph(Date min, Date max) {
+    protected void loadGraph(ZonedDateTime min, ZonedDateTime max) {
         super.loadGraph(min, max);
         super.loadGoal("Sleep duration");
     }

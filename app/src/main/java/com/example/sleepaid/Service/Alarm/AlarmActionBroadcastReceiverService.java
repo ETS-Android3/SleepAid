@@ -1,6 +1,5 @@
 package com.example.sleepaid.Service.Alarm;
 
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +9,7 @@ import com.example.sleepaid.Handler.DataHandler;
 
 import java.util.Calendar;
 
-@SuppressLint("NewApi")
+
 public class AlarmActionBroadcastReceiverService extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {

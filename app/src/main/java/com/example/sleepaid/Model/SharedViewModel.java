@@ -1,26 +1,22 @@
 package com.example.sleepaid.Model;
 
-import android.annotation.SuppressLint;
-
 import androidx.lifecycle.ViewModel;
 
-import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Database.Alarm.Alarm;
 import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
-import com.example.sleepaid.R;
+import com.example.sleepaid.Handler.DataHandler;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
-@SuppressLint("NewApi")
+
 public class SharedViewModel extends ViewModel {
     private List<Question> questions;
     private List<Option> options;

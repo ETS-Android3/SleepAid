@@ -1,29 +1,24 @@
 package com.example.sleepaid.Database.Notification;
 
-import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.media.MediaPlayer;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import com.example.sleepaid.App;
-import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Service.Notification.NotificationBroadcastReceiverService;
 
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.List;
 
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
-@SuppressLint("NewApi")
 @Entity
 public class Notification {
     @PrimaryKey(autoGenerate = true)
@@ -69,6 +64,10 @@ public class Notification {
         return this.isDaily;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -97,22 +96,20 @@ public class Notification {
 
         PendingIntent notificationPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Calendar calendar = Calendar.getInstance();
-
         List<Integer> time = DataHandler.getIntsFromString(this.time);
-        calendar.set(Calendar.HOUR_OF_DAY, time.get(0));
-        calendar.set(Calendar.MINUTE, time.get(1));
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
+        ZonedDateTime date = ZonedDateTime.now()
+                .withHour(time.get(0))
+                .withMinute(time.get(1))
+                .truncatedTo(ChronoUnit.MINUTES);
 
-        // If notification time has already passed, increment day by 1 and schedule it
-        if (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
-            calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 1);
+        // If alarm time has already passed increment day by 1 and schedule it
+        if (date.toInstant().toEpochMilli() <= System.currentTimeMillis()) {
+            date = date.plusDays(1);
         }
 
         alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
-                calendar.getTimeInMillis(),
+                date.toInstant().toEpochMilli(),
                 notificationPendingIntent
         );
     }
@@ -130,19 +127,16 @@ public class Notification {
 
         PendingIntent notificationPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-
         List<Integer> time = DataHandler.getIntsFromString(this.time);
-        calendar.set(Calendar.HOUR_OF_DAY, time.get(0));
-        calendar.set(Calendar.MINUTE, time.get(1));
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 1);
+        ZonedDateTime date = ZonedDateTime.now()
+                .withHour(time.get(0))
+                .withMinute(time.get(1))
+                .plusDays(1)
+                .truncatedTo(ChronoUnit.MINUTES);
 
         alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
-                calendar.getTimeInMillis(),
+                date.toInstant().toEpochMilli(),
                 notificationPendingIntent
         );
     }

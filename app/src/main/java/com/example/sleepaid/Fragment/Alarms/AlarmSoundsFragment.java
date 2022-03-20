@@ -1,19 +1,14 @@
 package com.example.sleepaid.Fragment.Alarms;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
-import android.provider.MediaStore;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.RadioGroup;
 
 import androidx.activity.OnBackPressedCallback;
@@ -24,32 +19,15 @@ import androidx.appcompat.widget.AppCompatRadioButton;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
 
-import com.example.sleepaid.Adapter.AlarmAdapter;
 import com.example.sleepaid.App;
 import com.example.sleepaid.Component.Modal;
-import com.example.sleepaid.Database.Alarm.Alarm;
-import com.example.sleepaid.Database.AppDatabase;
-import com.example.sleepaid.Database.Option.Option;
-import com.example.sleepaid.Listener.ListMultiChoiceModeListener;
 import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
 
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
-@SuppressLint("NewApi")
 public class AlarmSoundsFragment extends Fragment implements View.OnClickListener {
     private SharedViewModel model;
 

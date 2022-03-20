@@ -1,9 +1,9 @@
 package com.example.sleepaid.Handler;
 
 import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -46,24 +46,29 @@ public class DataHandler {
         return newHour + ":" + newMinute;
     }
 
-    public static String getFormattedDate(Date date) {
-        return new SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(date);
+    public static String getFormattedDate(ZonedDateTime date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
+        return date.format(formatter);
     }
 
-    public static String getSQLiteDate(Date date) {
-        return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date);
+    public static String getSQLiteDate(ZonedDateTime date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return date.format(formatter);
     }
 
-    public static String getDay(Date date) {
-        return new SimpleDateFormat("dd", Locale.getDefault()).format(date);
+    public static String getDay(ZonedDateTime date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd");
+        return date.format(formatter);
     }
 
-    public static String getMonth(Date date) {
-        return new SimpleDateFormat("MM/yy", Locale.getDefault()).format(date);
+    public static String getMonth(ZonedDateTime date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yy");
+        return date.format(formatter);
     }
 
-    public static String getYear(Date date) {
-        return new SimpleDateFormat("yyyy", Locale.getDefault()).format(date);
+    public static String getYear(ZonedDateTime date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy");
+        return date.format(formatter);
     }
 
     public static double getDoubleFromTime(String time) {
