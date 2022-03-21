@@ -154,13 +154,13 @@ public class InitialSettingsService {
 //                                Alarm napAlarm2 = new Alarm(2, napTimes.get(1), "1 2 3 4 5 6 7", "Default");
 //                                alarmList.add(napAlarm2);
 
-                                getNotificationList(bedHour);
+                                getNotificationList(wakeupHour, bedHour);
                             },
                             Throwable::printStackTrace
                     );
         }
         else {
-            getNotificationList(bedHour);
+            getNotificationList(wakeupHour, bedHour);
         }
     }
 
@@ -181,19 +181,41 @@ public class InitialSettingsService {
                 );
     }
 
-    private void getNotificationList(int bedHour) {
-        int bedHourBefore = (bedHour - 2) < 0 ?
+    private void getNotificationList(int wakeupHour, int bedHour) {
+        int unwindHour = (bedHour - 2) < 0 ?
                 24 + (bedHour - 2) :
                 bedHour - 2;
 
-        Notification bedtimeNotification = new Notification(
+        Notification unwindNotification = new Notification(
                 "It's almost bedtime!",
                 "You have 2 hours until you need to go to sleep. How about you put your phone away and take some time to unwind?",
-                bedHourBefore + ":00",
+                unwindHour + ":00",
                 1
         );
 
-        this.notificationList.add(bedtimeNotification);
+        this.notificationList.add(unwindNotification);
+
+        Notification sleepDiaryWakeupTimeNotification = new Notification(
+                "It's time to fill in your sleep diary!",
+                "Tap here to open your morning sleep diary.",
+                wakeupHour + ":45",
+                1
+        );
+
+        this.notificationList.add(sleepDiaryWakeupTimeNotification);
+
+        int sleepDiaryBedtime = (bedHour - 1) < 0 ?
+                24 + (bedHour - 1) :
+                bedHour - 1;
+
+        Notification sleepDiaryBedtimeNotification = new Notification(
+                "It's time to fill in your sleep diary!",
+                "Tap here to open your bedtime sleep diary.",
+                sleepDiaryBedtime + ":45",
+                1
+        );
+
+        this.notificationList.add(sleepDiaryBedtimeNotification);
 
         createSettings();
     }

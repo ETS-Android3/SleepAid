@@ -1,11 +1,15 @@
 package com.example.sleepaid.Handler;
 
-import java.text.SimpleDateFormat;
+import android.content.Context;
+import android.content.res.AssetFileDescriptor;
+import android.media.AudioAttributes;
+import android.media.MediaPlayer;
+
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -88,5 +92,35 @@ public class DataHandler {
         }
 
         return processedValues;
+    }
+
+    static public void playAlarmSound(MediaPlayer mediaPlayer, Context context, int resourceId, boolean loop) {
+        Executors.newSingleThreadExecutor().execute(() -> {
+                try {
+                    mediaPlayer.setOnCompletionListener(mp -> {
+                        mediaPlayer.reset();
+                        mediaPlayer.release();
+                    });
+                    mediaPlayer.setOnPreparedListener(mp -> mediaPlayer.start());
+
+                    AssetFileDescriptor afd = context.getResources().openRawResourceFd(resourceId);
+                    if (afd == null) return;
+
+                    mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                    afd.close();
+
+                    mediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
+                            .setUsage(AudioAttributes.USAGE_ALARM)
+                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                            .build());
+
+                    mediaPlayer.setLooping(loop);
+                    mediaPlayer.setVolume(1.0f, 1.0f);
+
+                    mediaPlayer.prepare();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+        });
     }
 }

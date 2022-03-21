@@ -2,7 +2,9 @@ package com.example.sleepaid.Fragment.Alarms;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.media.AudioAttributes;
 import android.os.Bundle;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -200,7 +202,13 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (isChecked) {
             Vibrator vibrator = (Vibrator) requireActivity().getSystemService(Context.VIBRATOR_SERVICE);
-            vibrator.vibrate(100);
+            vibrator.vibrate(
+                    VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE),
+                    new AudioAttributes.Builder()
+                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                            .setUsage(AudioAttributes.USAGE_ALARM)
+                            .build()
+            );
         }
     }
 

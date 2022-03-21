@@ -22,6 +22,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.sleepaid.App;
 import com.example.sleepaid.Component.Modal;
+import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
 
@@ -78,7 +79,7 @@ public class AlarmSoundsFragment extends Fragment implements View.OnClickListene
     }
 
     private void exitAlarmSound() {
-        if (this.mediaPlayer != null) {
+        if (this.mediaPlayer != null && this.mediaPlayer.isPlaying()) {
             this.mediaPlayer.stop();
         }
 
@@ -165,7 +166,7 @@ public class AlarmSoundsFragment extends Fragment implements View.OnClickListene
     }
 
     public void onClick(View view) {
-        if (this.mediaPlayer != null) {
+        if (this.mediaPlayer != null && mediaPlayer.isPlaying()) {
             this.mediaPlayer.stop();
         }
 
@@ -178,13 +179,12 @@ public class AlarmSoundsFragment extends Fragment implements View.OnClickListene
 
     private View.OnClickListener playSound = new View.OnClickListener() {
         public void onClick(View view) {
-            if (mediaPlayer != null) {
+            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
                 mediaPlayer.stop();
             }
 
-            mediaPlayer = MediaPlayer.create(App.getContext(), view.getId());
-            mediaPlayer.setLooping(false);
-            mediaPlayer.start();
+            mediaPlayer = new MediaPlayer();
+            DataHandler.playAlarmSound(mediaPlayer, App.getContext(), view.getId(), false);
         }
     };
 }

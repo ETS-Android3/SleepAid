@@ -17,7 +17,6 @@ import com.example.sleepaid.Service.Alarm.AlarmBroadcastReceiverService;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Calendar;
 import java.util.List;
 
 
@@ -159,7 +158,6 @@ public class Alarm implements Comparable<Alarm> {
         }
 
         List<Integer> time = DataHandler.getIntsFromString(this.time);
-        System.out.println(this.time);
         ZonedDateTime date = ZonedDateTime.now()
                 .withHour(time.get(0))
                 .withMinute(time.get(1))
@@ -187,6 +185,7 @@ public class Alarm implements Comparable<Alarm> {
         intent.putExtra("SOUND", this.sound);
         intent.putExtra("VIBRATE", this.vibrate);
         intent.putExtra("RECURRING", recurring);
+        //intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
 
         PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -211,6 +210,7 @@ public class Alarm implements Comparable<Alarm> {
         intent.putExtra("SOUND", this.sound);
         intent.putExtra("VIBRATE", this.vibrate);
         intent.putExtra("RECURRING", true);
+        //intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
 
         PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -243,8 +243,6 @@ public class Alarm implements Comparable<Alarm> {
                 day.toInstant().toEpochMilli(),
                 alarmPendingIntent
         );
-
-        System.out.println(day.toInstant().toEpochMilli());
 
         this.isOn = 1;
     }

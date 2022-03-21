@@ -5,14 +5,17 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.os.IBinder;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.example.sleepaid.App;
+import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.R;
 
 public class AlarmService extends Service {
@@ -23,6 +26,7 @@ public class AlarmService extends Service {
     public void onCreate() {
         super.onCreate();
 
+        this.mediaPlayer = new MediaPlayer();
         this.vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
     }
 
@@ -52,13 +56,16 @@ public class AlarmService extends Service {
                 .addAction(R.drawable.delete_icon, "Dismiss", dismissPendingIntent)
                 .build();
 
-        this.mediaPlayer = MediaPlayer.create(this, App.getSound(intent.getStringExtra("SOUND")));
-        this.mediaPlayer.setLooping(true);
-        this.mediaPlayer.start();
+        DataHandler.playAlarmSound(this.mediaPlayer, this, App.getSound(intent.getStringExtra("SOUND")), true);
 
         if (intent.getIntExtra("VIBRATE", 1) == 1) {
-            long[] pattern = {0, 100, 1000};
-            this.vibrator.vibrate(pattern, 0);
+            long[] pattern = {0, 750};
+            this.vibrator.vibrate(
+                    VibrationEffect.createWaveform(pattern, 0),
+                    new AudioAttributes.Builder()
+                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                            .setUsage(AudioAttributes.USAGE_ALARM)
+                            .build());
         }
 
         startForeground(1, notification);
@@ -70,8 +77,11 @@ public class AlarmService extends Service {
     public void onDestroy() {
         super.onDestroy();
 
-        mediaPlayer.stop();
-        vibrator.cancel();
+        if (this.mediaPlayer.isPlaying()) {
+            this.mediaPlayer.stop();
+        }
+
+        this.vibrator.cancel();
     }
 
     @Nullable
