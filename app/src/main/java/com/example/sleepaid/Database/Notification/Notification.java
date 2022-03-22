@@ -32,15 +32,19 @@ public class Notification {
     public String time;
     @NonNull
     public int isDaily;
+    @NonNull
+    public int destination;
 
     public Notification(String name,
                         String content,
                         String time,
-                        int isDaily) {
+                        int isDaily,
+                        int destination) {
         this.name = name;
         this.content = content;
         this.time = time;
         this.isDaily = isDaily;
+        this.destination = destination;
     }
 
     public int getId() {
@@ -59,10 +63,6 @@ public class Notification {
         return this.time;
     }
 
-    public int getIsDaily() {
-        return this.isDaily;
-    }
-
     public void setId(int id) {
         this.id = id;
     }
@@ -79,10 +79,6 @@ public class Notification {
         this.time = time;
     }
 
-    public void setIsDaily(int isDaily) {
-        this.isDaily = isDaily;
-    }
-
     public void schedule(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
@@ -92,6 +88,9 @@ public class Notification {
         intent.putExtra("NAME", this.name);
         intent.putExtra("CONTENT", this.content);
         intent.putExtra("DAILY", this.isDaily == 1);
+        if (this.destination != 0) {
+            intent.putExtra("DESTINATION", this.destination);
+        }
 
         PendingIntent notificationPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -123,6 +122,9 @@ public class Notification {
         intent.putExtra("CONTENT", this.content);
         intent.putExtra("TIME", this.time);
         intent.putExtra("DAILY", this.isDaily == 1);
+        if (this.destination != 0) {
+            intent.putExtra("DESTINATION", this.destination);
+        }
 
         PendingIntent notificationPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 

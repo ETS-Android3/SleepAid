@@ -6,7 +6,7 @@
     <fragment
         android:id="@+id/morningSleepDiaryFragment"
         android:name="com.example.sleepaid.Fragment.SleepDiary.MorningSleepDiaryFragment"
-        android:label="MorningSleepDiaryFragment" />
+        android:label="MorningSleepDiaryFragment"/>
     <fragment
         android:id="@+id/bedtimeSleepDiaryFragment"
         android:name="com.example.sleepaid.Fragment.SleepDiary.BedtimeSleepDiaryFragment"

@@ -190,16 +190,19 @@ public class InitialSettingsService {
                 "It's almost bedtime!",
                 "You have 2 hours until you need to go to sleep. How about you put your phone away and take some time to unwind?",
                 unwindHour + ":00",
-                1
+                1,
+                0
         );
 
         this.notificationList.add(unwindNotification);
 
         Notification sleepDiaryWakeupTimeNotification = new Notification(
-                "It's time to fill in your sleep diary!",
-                "Tap here to open your morning sleep diary.",
-                wakeupHour + ":45",
-                1
+                "It's time to fill in your morning sleep diary!",
+                "Tap here to open it.",
+                //wakeupHour + ":45",
+                "21:00",
+                1,
+                R.id.morningSleepDiaryFragment
         );
 
         this.notificationList.add(sleepDiaryWakeupTimeNotification);
@@ -209,10 +212,12 @@ public class InitialSettingsService {
                 bedHour - 1;
 
         Notification sleepDiaryBedtimeNotification = new Notification(
-                "It's time to fill in your sleep diary!",
-                "Tap here to open your bedtime sleep diary.",
-                sleepDiaryBedtime + ":45",
-                1
+                "It's time to fill in your bedtime sleep diary!",
+                "Tap here to open it.",
+                //sleepDiaryBedtime + ":45",
+                "21:05",
+                1,
+                R.id.bedtimeSleepDiaryFragment
         );
 
         this.notificationList.add(sleepDiaryBedtimeNotification);

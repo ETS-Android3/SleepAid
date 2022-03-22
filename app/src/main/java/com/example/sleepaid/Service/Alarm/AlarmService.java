@@ -33,19 +33,19 @@ public class AlarmService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Intent notificationIntent = new Intent(this, AlarmActionBroadcastReceiverService.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, intent.getIntExtra("ID", 0), notificationIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent snoozeIntent = new Intent(this, AlarmActionBroadcastReceiverService.class);
         snoozeIntent.setAction("SNOOZE");
         snoozeIntent.putExtra("SOUND", intent.getStringExtra("SOUND"));
         snoozeIntent.putExtra("VIBRATE", intent.getIntExtra("VIBRATE", 1));
 
-        PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(this, 0, snoozeIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(this, intent.getIntExtra("ID", 0), snoozeIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent dismissIntent = new Intent(this, AlarmActionBroadcastReceiverService.class);
         dismissIntent.setAction("DISMISS");
 
-        PendingIntent dismissPendingIntent = PendingIntent.getBroadcast(this, 0, dismissIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent dismissPendingIntent = PendingIntent.getBroadcast(this, intent.getIntExtra("ID", 0), dismissIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification notification = new NotificationCompat.Builder(this, App.ALARM_CHANNEL_ID)
                 .setContentTitle(intent.getStringExtra("NAME"))
