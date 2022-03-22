@@ -106,7 +106,7 @@ public class QuestionnaireFragment extends Fragment {
 
     private void loadAllQuestions() {
         db.questionDao()
-                .getAll()
+                .loadAllByQuestionnaireIds(new int[]{6})
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

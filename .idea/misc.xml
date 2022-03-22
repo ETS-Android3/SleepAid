@@ -49,7 +49,9 @@
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/fragment_sleep_data_graph.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/fragment_sleep_diart.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/fragment_sleep_diary.xml" value="0.1311965811965812" />
-        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/fragment_sleep_diary_questions.xml" value="0.1311965811965812" />
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/fragment_sleep_diary_bedtime_questions.xml" value="0.22" />
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/fragment_sleep_diary_morning_questions.xml" value="0.14666666666666667" />
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/fragment_sleep_diary_questions.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/fragment_sleep_duration_graph.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/fragment_wakeup_time_graph.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/goal_row.xml" value="0.1311965811965812" />

@@ -3,11 +3,14 @@ package com.example.sleepaid.Fragment.SleepData;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -34,7 +37,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 
-public abstract class SleepDataGraphFragment extends Fragment {
+public class SleepDataGraphFragment extends Fragment {
     protected SleepDataFragment sleepDataFragment;
 
     private AppDatabase db;
@@ -47,6 +50,14 @@ public abstract class SleepDataGraphFragment extends Fragment {
 
     private int[] translation;
 
+    @Override
+    public View onCreateView(LayoutInflater inflater,
+                             ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_sleep_data_graph, container, false);
+    }
+
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
         sleepDataFragment = (SleepDataFragment) getParentFragment().getParentFragment();
@@ -58,12 +69,12 @@ public abstract class SleepDataGraphFragment extends Fragment {
 
         graph = view.findViewById(R.id.sleepDataGraph);
 
-        graph.getGridLabelRenderer().setGridColor(getResources().getColor(R.color.white));
+        graph.getGridLabelRenderer().setGridColor(ContextCompat.getColor(App.getContext(), R.color.white));
         graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.NONE);
-        graph.getViewport().setBorderColor(getResources().getColor(R.color.white));
+        graph.getViewport().setBorderColor(ContextCompat.getColor(App.getContext(), R.color.white));
 
         graph.getGridLabelRenderer().setVerticalLabelsVisible(false);
-        graph.getGridLabelRenderer().setHorizontalLabelsColor(getResources().getColor(R.color.white));
+        graph.getGridLabelRenderer().setHorizontalLabelsColor(ContextCompat.getColor(App.getContext(), R.color.white));
 
         graph.getViewport().setXAxisBoundsManual(true);
         graph.getViewport().setYAxisBoundsManual(true);
@@ -167,8 +178,8 @@ public abstract class SleepDataGraphFragment extends Fragment {
                                             goalName,
                                             goalData.get(0).getValueMin(),
                                             goalData.get(0).getValueMax(),
-                                            getResources().getColor(R.color.white),
-                                            getResources().getColor(R.color.white)
+                                            ContextCompat.getColor(App.getContext(), R.color.white),
+                                            ContextCompat.getColor(App.getContext(), R.color.white)
                                     );
 
                                     graph.addSeries(model.getGoalMaxLine(goalName));
@@ -220,16 +231,16 @@ public abstract class SleepDataGraphFragment extends Fragment {
 
                                 switch (name) {
                                     case "Wake-up time":
-                                        graphColor = getResources().getColor(R.color.lightest_purple_sleep_transparent);
+                                        graphColor = ContextCompat.getColor(App.getContext(), R.color.lightest_purple_sleep_transparent);
                                         break;
 
                                     case "Bedtime":
-                                        graphColor = getResources().getColor(R.color.darkest_purple_sleep_transparent);
+                                        graphColor = ContextCompat.getColor(App.getContext(), R.color.darkest_purple_sleep_transparent);
                                         break;
 
                                     //"Sleep duration"
                                     default:
-                                        graphColor = getResources().getColor(R.color.purple_sleep_transparent);
+                                        graphColor = ContextCompat.getColor(App.getContext(), R.color.purple_sleep_transparent);
                                         break;
                                 }
 
@@ -239,8 +250,8 @@ public abstract class SleepDataGraphFragment extends Fragment {
                                         periodStart,
                                         periodEnd,
                                         graphColor,
-                                        getResources().getColor(R.color.white),
-                                        getResources().getColor(R.color.white)
+                                        ContextCompat.getColor(App.getContext(), R.color.white),
+                                        ContextCompat.getColor(App.getContext(), R.color.white)
                                 );
 
                                 graph.getViewport().setMaxY(model.getMaxY(name, periodStart, periodEnd));

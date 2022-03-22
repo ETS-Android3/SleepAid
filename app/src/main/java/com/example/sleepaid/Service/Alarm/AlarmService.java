@@ -59,7 +59,7 @@ public class AlarmService extends Service {
         DataHandler.playAlarmSound(this.mediaPlayer, this, App.getSound(intent.getStringExtra("SOUND")), true);
 
         if (intent.getIntExtra("VIBRATE", 1) == 1) {
-            long[] pattern = {0, 750};
+            long[] pattern = {0, 750, 1000};
             this.vibrator.vibrate(
                     VibrationEffect.createWaveform(pattern, 0),
                     new AudioAttributes.Builder()
@@ -70,7 +70,7 @@ public class AlarmService extends Service {
 
         startForeground(1, notification);
 
-        return START_STICKY;
+        return START_REDELIVER_INTENT;
     }
 
     @Override

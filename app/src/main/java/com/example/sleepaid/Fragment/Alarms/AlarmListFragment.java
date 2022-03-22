@@ -7,6 +7,7 @@ import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
@@ -27,7 +28,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 
-public abstract class AlarmListFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+public class AlarmListFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
     private AppDatabase db;
 
     private SharedViewModel model;
@@ -89,9 +90,9 @@ public abstract class AlarmListFragment extends Fragment implements AdapterView.
                     alarmList.stream().map(Alarm::getTime).collect(Collectors.toList()),
                     alarmList.stream().map(Alarm::getDays).collect(Collectors.toList()),
                     alarmList.stream().map(Alarm::getIsOn).collect(Collectors.toList()),
-                    getResources().getColor(R.color.lavender_sleep_transparent),
-                    getResources().getColor(R.color.purple_sleep),
-                    getResources().getColor(R.color.black_transparent)
+                    ContextCompat.getColor(App.getContext(), R.color.lavender_sleep_transparent),
+                    ContextCompat.getColor(App.getContext(), R.color.purple_sleep),
+                    ContextCompat.getColor(App.getContext(), R.color.black_transparent)
             );
 
             list.setAdapter(alarmAdapter);

@@ -20,6 +20,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
@@ -276,8 +277,8 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
                                                 goalName,
                                                 goalData.get(0).getValueMin(),
                                                 goalData.get(0).getValueMax(),
-                                                getResources().getColor(R.color.white),
-                                                getResources().getColor(R.color.white)
+                                                ContextCompat.getColor(App.getContext(), R.color.white),
+                                                ContextCompat.getColor(App.getContext(), R.color.white)
                                         );
 
                                         List<Integer> goals = DataHandler.getIntsFromString(this.model.getGoalMin(goalName));

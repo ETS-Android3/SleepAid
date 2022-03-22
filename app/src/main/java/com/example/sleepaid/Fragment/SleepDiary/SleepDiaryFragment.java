@@ -1,6 +1,5 @@
 package com.example.sleepaid.Fragment.SleepDiary;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +11,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.sleepaid.Activity.MainMenuScreen;
 import com.example.sleepaid.Fragment.MainMenuFragment;
 import com.example.sleepaid.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -35,7 +33,7 @@ public class SleepDiaryFragment extends MainMenuFragment {
 
         NavigationUI.setupWithNavController(bottomMenu, navController);
 
-        if (!requireArguments().isEmpty() && requireArguments().getInt("DESTINATION") != R.id.morningSleepDiaryFragment) {
+        if (getArguments() != null && getArguments().getInt("DESTINATION") != R.id.morningSleepDiaryFragment) {
             navController.navigate(requireArguments().getInt("DESTINATION"));
         }
     }

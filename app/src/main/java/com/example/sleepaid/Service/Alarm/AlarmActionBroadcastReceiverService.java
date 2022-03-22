@@ -7,7 +7,8 @@ import android.content.Intent;
 import com.example.sleepaid.Database.Alarm.Alarm;
 import com.example.sleepaid.Handler.DataHandler;
 
-import java.util.Calendar;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
 
 public class AlarmActionBroadcastReceiverService extends BroadcastReceiver {
@@ -22,19 +23,20 @@ public class AlarmActionBroadcastReceiverService extends BroadcastReceiver {
     }
 
     private void snoozeAlarm(Context context, Intent intent) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.add(Calendar.MINUTE, 5);
+        ZonedDateTime date = ZonedDateTime.now()
+                .plusMinutes(5)
+                .truncatedTo(ChronoUnit.MINUTES);
 
         Alarm alarm = new Alarm(
                 intent.getIntExtra("TYPE", 1),
                 "Snooze",
-                DataHandler.getFormattedTime(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE)),
+                DataHandler.getFormattedTime(date.getHour(), date.getMinute()),
                 "0000000",
                 intent.getStringExtra("SOUND"),
                 intent.getIntExtra("VIBRATE", 1),
                 1
         );
+        alarm.setId((int) date.toInstant().toEpochMilli());
 
         alarm.schedule(context);
 
