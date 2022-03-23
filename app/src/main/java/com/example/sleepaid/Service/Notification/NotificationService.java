@@ -39,7 +39,7 @@ public class NotificationService extends Service {
                     .setAutoCancel(true)
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                     //TODO change this icon
-                    .setSmallIcon(R.drawable.alarm_icon)
+                    .setSmallIcon(R.drawable.sleep_aid)
                     .build();
         } else {
             notification = new NotificationCompat.Builder(this, App.NOTIFICATION_CHANNEL_ID)
@@ -48,7 +48,7 @@ public class NotificationService extends Service {
                     .setPriority(NotificationCompat.PRIORITY_MAX)
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                     //TODO change this icon
-                    .setSmallIcon(R.drawable.alarm_icon)
+                    .setSmallIcon(R.drawable.sleep_aid)
                     .build();
         }
 

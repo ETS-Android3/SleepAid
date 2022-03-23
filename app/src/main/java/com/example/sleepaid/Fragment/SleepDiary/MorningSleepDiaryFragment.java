@@ -30,6 +30,30 @@ public class MorningSleepDiaryFragment extends SleepDiaryQuestionsFragment {
                               @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        this.questionIds = new int[]{
+                R.id.question1,
+                R.id.question2,
+                R.id.question3,
+                R.id.question4,
+                R.id.question5,
+                R.id.question6,
+                R.id.question7,
+                R.id.question8,
+                R.id.question9
+        };
+
+        this.optionIds = new int[][]{
+                {R.id.answer1},
+                {R.id.answer2},
+                {R.id.answer3},
+                {R.id.answer4},
+                {R.id.answer5},
+                {R.id.answer6},
+                {R.id.answer7},
+                {R.id.answer8},
+                {R.id.answer9}
+        };
+
         super.loadQuestionnaire(4);
     }
 }

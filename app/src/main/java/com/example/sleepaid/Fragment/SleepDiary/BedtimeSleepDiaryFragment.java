@@ -30,6 +30,24 @@ public class BedtimeSleepDiaryFragment extends SleepDiaryQuestionsFragment {
                               @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        this.questionIds = new int[]{
+                R.id.question1,
+                R.id.question2,
+                R.id.question3,
+                R.id.question4,
+                R.id.question5,
+                R.id.question6
+        };
+
+        this.optionIds = new int[][]{
+                {R.id.answer1},
+                {R.id.answer2},
+                {R.id.answer3},
+                {R.id.answer4Text, R.id.answer4EndTime, R.id.answer4StartTime},
+                {R.id.answer5Text},
+                {R.id.answer6}
+        };
+
         super.loadQuestionnaire(5);
     }
 }
