@@ -185,13 +185,16 @@ public class Alarm implements Comparable<Alarm> {
         intent.putExtra("SOUND", this.sound);
         intent.putExtra("VIBRATE", this.vibrate);
         intent.putExtra("RECURRING", recurring);
-        //intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
 
         PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
-        alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                date.toInstant().toEpochMilli(),
+//        alarmManager.setExactAndAllowWhileIdle(
+//                AlarmManager.RTC_WAKEUP,
+//                date.toInstant().toEpochMilli(),
+//                alarmPendingIntent
+//        );
+        alarmManager.setAlarmClock(
+                new AlarmManager.AlarmClockInfo(date.toInstant().toEpochMilli(), alarmPendingIntent),
                 alarmPendingIntent
         );
 
@@ -210,7 +213,6 @@ public class Alarm implements Comparable<Alarm> {
         intent.putExtra("SOUND", this.sound);
         intent.putExtra("VIBRATE", this.vibrate);
         intent.putExtra("RECURRING", true);
-        //intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
 
         PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -231,16 +233,20 @@ public class Alarm implements Comparable<Alarm> {
             nextDay = this.days.indexOf("1");
         }
 
-        ZonedDateTime day = date.minusDays(today).plusDays(nextDay);
+        date = date.minusDays(today).plusDays(nextDay);
 
         // If alarm time has already passed, increment week by 1
-        if (day.toInstant().toEpochMilli() <= System.currentTimeMillis()) {
-            day = day.plusDays(7);
+        if (date.toInstant().toEpochMilli() <= System.currentTimeMillis()) {
+            date = date.plusDays(7);
         }
 
-        alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                day.toInstant().toEpochMilli(),
+//        alarmManager.setExactAndAllowWhileIdle(
+//                AlarmManager.RTC_WAKEUP,
+//                date.toInstant().toEpochMilli(),
+//                alarmPendingIntent
+//        );
+        alarmManager.setAlarmClock(
+                new AlarmManager.AlarmClockInfo(date.toInstant().toEpochMilli(), alarmPendingIntent),
                 alarmPendingIntent
         );
 

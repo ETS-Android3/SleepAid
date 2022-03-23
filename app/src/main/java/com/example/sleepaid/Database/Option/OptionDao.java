@@ -14,11 +14,8 @@ public interface OptionDao {
     @Query("SELECT * FROM Option ORDER BY questionId, optionId")
     Single<List<Option>> getAll();
 
-    @Query("SELECT * FROM Option WHERE optionId IN (:optionIds) ORDER BY optionId")
-    Single<List<Option>> loadAllByIds(int[] optionIds);
-
-    @Query("SELECT * FROM Option WHERE questionId IN (:questionIds) ORDER BY optionId")
-    Single<List<Option>> loadAllByQuestionIds(int[] questionIds);
+    @Query("SELECT * FROM Option INNER JOIN Question ON Option.questionId = Question.questionId WHERE Question.questionnaireId IN (:questionnaireIds) ORDER BY optionId")
+    Single<List<Option>> loadAllByQuestionnaireIds(int[] questionnaireIds);
 
     @Insert
     Completable insert(List<Option> options);

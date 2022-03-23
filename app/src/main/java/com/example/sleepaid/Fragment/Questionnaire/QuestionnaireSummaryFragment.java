@@ -95,7 +95,7 @@ public class QuestionnaireSummaryFragment extends Fragment {
         );
         layoutParams.setMargins(0, 0, 0, sizeInDp / 2);
 
-        for (Question q : model.getQuestions()) {
+        for (Question q : model.getQuestions(6)) {
             TextBox textBox = new TextBox(context);
 
             textBox.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
@@ -107,13 +107,13 @@ public class QuestionnaireSummaryFragment extends Fragment {
             String questionText = questionId + ". " + q.getQuestion();
             String answerText;
 
-            Optional<Answer> currentAnswer = model.getAnswers()
+            Optional<Answer> currentAnswer = model.getAnswers(6)
                     .stream()
                     .filter(a -> a.getQuestionId() == questionId)
                     .findAny();
 
             if (currentAnswer.isPresent()) {
-                Optional<Option> option = model.getOptions()
+                Optional<Option> option = model.getOptions(6)
                         .stream()
                         .filter(o -> o.getId() == currentAnswer.get().getOptionId())
                         .findAny();
@@ -136,7 +136,7 @@ public class QuestionnaireSummaryFragment extends Fragment {
 
     public void storeAnswers(View view) {
         db.answerDao()
-                .insert(model.getAnswers())
+                .insert(model.getAnswers(6))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

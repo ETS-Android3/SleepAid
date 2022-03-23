@@ -6,6 +6,7 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
+import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.Database.Question.Question;
 
 @Entity(foreignKeys = {
@@ -16,7 +17,7 @@ import com.example.sleepaid.Database.Question.Question;
                 onDelete = ForeignKey.CASCADE
         )
 })
-public class Option {
+public class Option implements Comparable<Option> {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "optionId")
     public int id;
@@ -35,5 +36,10 @@ public class Option {
 
     public int getQuestionId() {
         return this.questionId;
+    }
+
+    @Override
+    public int compareTo(Option newOption) {
+        return this.questionId - newOption.getQuestionId();
     }
 }

@@ -1,21 +1,25 @@
 package com.example.sleepaid.Fragment.SleepDiary;
 
+import android.content.Context;
 import android.os.Bundle;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.sleepaid.App;
+import com.example.sleepaid.Database.Answer.Answer;
+import com.example.sleepaid.Database.Option.Option;
+import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class BedtimeSleepDiaryFragment extends SleepDiaryQuestionsFragment {
     @Override
@@ -28,26 +32,62 @@ public class BedtimeSleepDiaryFragment extends SleepDiaryQuestionsFragment {
 
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+        this.questionnaireId = 5;
+
+        this.model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
         this.questionIds = new int[]{
-                R.id.question1,
-                R.id.question2,
-                R.id.question3,
-                R.id.question4,
-                R.id.question5,
-                R.id.question6
+                R.id.bedtimeQuestion1,
+                R.id.bedtimeQuestion2,
+                R.id.bedtimeQuestion3,
+                R.id.bedtimeQuestion4,
+                R.id.bedtimeQuestion5,
+                R.id.bedtimeQuestion6
         };
 
         this.optionIds = new int[][]{
-                {R.id.answer1},
-                {R.id.answer2},
-                {R.id.answer3},
-                {R.id.answer4Text, R.id.answer4EndTime, R.id.answer4StartTime},
-                {R.id.answer5Text},
-                {R.id.answer6}
+                {R.id.bedtimeAnswer1},
+                {R.id.bedtimeAnswer2},
+                {R.id.bedtimeAnswer3},
+                {R.id.bedtimeAnswer4Text, R.id.bedtimeAnswer4EndTime, R.id.bedtimeAnswer4StartTime},
+                {R.id.bedtimeAnswer5Text},
+                {R.id.bedtimeAnswer6}
         };
 
-        super.loadQuestionnaire(5);
+        if (model.getOptions(this.questionnaireId) != null) {
+            Context context = App.getContext();
+            int layout = android.R.layout.simple_dropdown_item_1line;
+
+            List<Option> suggestions = model.getOptions(this.questionnaireId)
+                    .stream()
+                    .collect(Collectors.toList());
+
+            List<Integer> questionIds = model.getOptions(this.questionnaireId)
+                    .stream()
+                    .map(o -> o .getQuestionId())
+                    .collect(Collectors.toList());
+
+            Collections.sort(suggestions);
+            Collections.sort(questionIds);
+
+            this.optionSuggestions = new ArrayAdapter[6][];
+
+            for (int i = 0; i < questionIds.size(); i++) {
+                int finalI = i;
+
+                List<String> suggestionsForQuestion = suggestions.stream()
+                        .filter(s -> s.getQuestionId() == finalI)
+                        .map(s -> s.getValue())
+                        .collect(Collectors.toList());
+
+                Collections.sort(suggestionsForQuestion);
+
+                this.optionSuggestions[i] = new ArrayAdapter[] {
+                        new ArrayAdapter(context, layout, suggestionsForQuestion)
+                };
+            }
+        }
+
+        super.onViewCreated(view, savedInstanceState);
     }
 }

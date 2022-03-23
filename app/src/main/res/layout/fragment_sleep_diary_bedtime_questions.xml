@@ -1,87 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/questions"
+    android:id="@+id/bedtimeQuestions"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:theme="@style/Theme.SleepDiary"
     android:layout_marginHorizontal="7.5dp">
 
     <TextView
-        android:id="@+id/question1"
+        android:id="@+id/bedtimeQuestion1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <EditText
-        android:id="@+id/answer1"
+    <AutoCompleteTextView
+        android:id="@+id/bedtimeAnswer1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:inputType="time"
         android:hint="e.g. 09:00"
         android:maxLength="5"
-        app:layout_constraintTop_toBottomOf="@id/question1"
+        app:layout_constraintTop_toBottomOf="@id/bedtimeQuestion1"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/question2"
+        android:id="@+id/bedtimeQuestion2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@id/answer1"
+        app:layout_constraintTop_toBottomOf="@id/bedtimeAnswer1"
         app:layout_constraintStart_toStartOf="parent"/>
 
-    <EditText
-        android:id="@+id/answer2"
+    <AutoCompleteTextView
+        android:id="@+id/bedtimeAnswer2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="time"
         android:hint="e.g. 12:30"
         android:maxLength="5"
         android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@id/question2"
+        app:layout_constraintTop_toBottomOf="@id/bedtimeQuestion2"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/question3"
+        android:id="@+id/bedtimeQuestion3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@id/answer2"
+        app:layout_constraintTop_toBottomOf="@id/bedtimeAnswer2"
         app:layout_constraintStart_toStartOf="parent"/>
 
-    <EditText
-        android:id="@+id/answer3"
+    <AutoCompleteTextView
+        android:id="@+id/bedtimeAnswer3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:inputType="time"
         android:hint="e.g. 18:00"
         android:maxLength="5"
-        app:layout_constraintTop_toBottomOf="@id/question3"
+        app:layout_constraintTop_toBottomOf="@id/bedtimeQuestion3"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/question4"
+        android:id="@+id/bedtimeQuestion4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@id/answer3"
+        app:layout_constraintTop_toBottomOf="@id/bedtimeAnswer3"
         app:layout_constraintStart_toStartOf="parent"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/answer4"
+        android:id="@+id/bedtimeAnswer4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@id/question4"
+        app:layout_constraintTop_toBottomOf="@id/bedtimeQuestion4"
         app:layout_constraintStart_toStartOf="parent">
 
-        <EditText
-            android:id="@+id/answer4Text"
+        <AutoCompleteTextView
+            android:id="@+id/bedtimeAnswer4Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="textShortMessage"
@@ -90,8 +90,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
 
-        <EditText
-            android:id="@+id/answer4StartTime"
+        <AutoCompleteTextView
+            android:id="@+id/bedtimeAnswer4StartTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="5dp"
@@ -100,11 +100,11 @@
             android:maxLength="5"
             app:flow_horizontalBias="0.5"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toEndOf="@id/answer4Text"
-            app:layout_constraintEnd_toStartOf="@id/answer4EndTime"/>
+            app:layout_constraintStart_toEndOf="@id/bedtimeAnswer4Text"
+            app:layout_constraintEnd_toStartOf="@id/bedtimeAnswer4EndTime"/>
 
-        <EditText
-            android:id="@+id/answer4EndTime"
+        <AutoCompleteTextView
+            android:id="@+id/bedtimeAnswer4EndTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="time"
@@ -112,10 +112,10 @@
             android:maxLength="5"
             android:layout_marginEnd="5dp"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/addAnswer4" />
+            app:layout_constraintEnd_toStartOf="@id/addbedtimeAnswer4" />
 
         <Button
-            android:id="@+id/addAnswer4"
+            android:id="@+id/addbedtimeAnswer4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:tint="@color/white"
@@ -125,23 +125,23 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
-        android:id="@+id/question5"
+        android:id="@+id/bedtimeQuestion5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@id/answer4"
+        app:layout_constraintTop_toBottomOf="@id/bedtimeAnswer4"
         app:layout_constraintStart_toStartOf="parent"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/answer5"
+        android:id="@+id/bedtimeAnswer5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@id/question5"
+        app:layout_constraintTop_toBottomOf="@id/bedtimeQuestion5"
         app:layout_constraintStart_toStartOf="parent">
 
-        <EditText
-            android:id="@+id/answer5Text"
+        <AutoCompleteTextView
+            android:id="@+id/bedtimeAnswer5Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="number"
@@ -151,22 +151,22 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
-        android:id="@+id/question6"
+        android:id="@+id/bedtimeQuestion6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@id/answer5"
+        app:layout_constraintTop_toBottomOf="@id/bedtimeAnswer5"
         app:layout_constraintStart_toStartOf="parent"/>
 
-    <EditText
-        android:id="@+id/answer6"
+    <AutoCompleteTextView
+        android:id="@+id/bedtimeAnswer6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginVertical="20dp"
         android:inputType="time"
         android:hint="e.g. 00:30"
         android:maxLength="5"
-        app:layout_constraintTop_toBottomOf="@id/question6"
+        app:layout_constraintTop_toBottomOf="@id/bedtimeQuestion6"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

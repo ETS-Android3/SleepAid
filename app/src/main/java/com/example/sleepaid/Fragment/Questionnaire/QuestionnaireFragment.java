@@ -45,6 +45,8 @@ public class QuestionnaireFragment extends Fragment {
 
     private List<Answer> currentAnswers;
 
+    private int[] questionnaireIds = new int[]{6};
+
     private int sizeInDp;
 
     @Override
@@ -88,7 +90,7 @@ public class QuestionnaireFragment extends Fragment {
                 getResources().getDisplayMetrics()
         );
 
-        currentAnswers = model.getAnswers() == null ? new ArrayList<>() : model.getAnswers();
+        currentAnswers = model.getAnswers(6) == null ? new ArrayList<>() : model.getAnswers(6);
 
         Button backButton = getView().findViewById(R.id.backButton);
         backButton.setOnClickListener(this::loadPreviousScreen);
@@ -96,7 +98,7 @@ public class QuestionnaireFragment extends Fragment {
         Button nextButton = getView().findViewById(R.id.nextButton);
         nextButton.setOnClickListener(this::loadNextScreen);
 
-        if(model.getQuestions() == null) {
+        if(model.getQuestions(6) == null) {
             loadAllQuestions();
         }
         else {
@@ -106,12 +108,21 @@ public class QuestionnaireFragment extends Fragment {
 
     private void loadAllQuestions() {
         db.questionDao()
-                .loadAllByQuestionnaireIds(new int[]{6})
+                .loadAllByQuestionnaireIds(this.questionnaireIds)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         questionData -> {
-                            model.setQuestions(questionData);
+                            for (int i : this.questionnaireIds) {
+                                model.setQuestionnaire(i);
+
+                                List<Question> questionsForQuestionnaire = questionData.stream()
+                                        .filter(q -> q.getQuestionnaireId() == i)
+                                        .collect(Collectors.toList());
+
+                                model.setQuestions(i, questionsForQuestionnaire);
+                            }
+
                             loadAllOptions();
                         },
                         Throwable::printStackTrace
@@ -120,12 +131,23 @@ public class QuestionnaireFragment extends Fragment {
 
     private void loadAllOptions() {
         db.optionDao()
-                .getAll()
+                .loadAllByQuestionnaireIds(this.questionnaireIds)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         optionData -> {
-                            model.setOptions(optionData);
+                            for (int i : this.questionnaireIds) {
+                                List<Integer> questionIds = model.getQuestions(i).stream()
+                                        .map(q -> q.getId())
+                                        .collect(Collectors.toList());
+
+                                List<Option> optionsForQuestionnaire = optionData.stream()
+                                        .filter(o -> questionIds.contains(o.getQuestionId()))
+                                        .collect(Collectors.toList());
+
+                                model.setOptions(i, optionsForQuestionnaire);
+                            }
+
                             loadScreen(model.getCurrentQuestionId());
                         },
                         Throwable::printStackTrace
@@ -188,8 +210,8 @@ public class QuestionnaireFragment extends Fragment {
         if (questionId == 0) {
             exitQuestionnaire();
         }
-        else if (questionId == model.getQuestions().size() + 1) {
-            model.setAnswers(currentAnswers);
+        else if (questionId == model.getQuestions(6).size() + 1) {
+            model.setAnswers(6, currentAnswers);
 
             NavHostFragment.findNavController(this).navigate(R.id.showSummaryAction);
         }
@@ -235,7 +257,7 @@ public class QuestionnaireFragment extends Fragment {
         TextBox questionBox = getView().findViewById(R.id.question);
         TextBox informationBox = getView().findViewById(R.id.information);
 
-        Optional<Question> question = model.getQuestions()
+        Optional<Question> question = model.getQuestions(6)
                 .stream()
                 .filter(q -> q.getId() == questionId)
                 .findAny();
@@ -254,7 +276,7 @@ public class QuestionnaireFragment extends Fragment {
         radioGroup.clearCheck();
         radioGroup.removeAllViews();
 
-        List<Option> possibleOptions = model.getOptions()
+        List<Option> possibleOptions = model.getOptions(6)
                 .stream()
                 .filter(o -> o.getQuestionId() == questionId)
                 .collect(Collectors.toList());
@@ -305,7 +327,7 @@ public class QuestionnaireFragment extends Fragment {
                 .filter(a -> a.getQuestionId() == (questionId - 1))
                 .findAny();
 
-        Optional<Option> firstOption = model.getOptions()
+        Optional<Option> firstOption = model.getOptions(6)
                 .stream()
                 .filter(o -> o.getQuestionId() == questionId)
                 .findFirst();

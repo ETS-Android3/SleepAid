@@ -1,20 +1,13 @@
 package com.example.sleepaid.Fragment.SleepDiary;
 
 import android.os.Bundle;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 
-import com.example.sleepaid.App;
 import com.example.sleepaid.R;
 
 public class MorningSleepDiaryFragment extends SleepDiaryQuestionsFragment {
@@ -28,32 +21,32 @@ public class MorningSleepDiaryFragment extends SleepDiaryQuestionsFragment {
 
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+        this.questionnaireId = 4;
 
         this.questionIds = new int[]{
-                R.id.question1,
-                R.id.question2,
-                R.id.question3,
-                R.id.question4,
-                R.id.question5,
-                R.id.question6,
-                R.id.question7,
-                R.id.question8,
-                R.id.question9
+                R.id.morningQuestion1,
+                R.id.morningQuestion2,
+                R.id.morningQuestion3,
+                R.id.morningQuestion4,
+                R.id.morningQuestion5,
+                R.id.morningQuestion6,
+                R.id.morningQuestion7,
+                R.id.morningQuestion8,
+                R.id.morningQuestion9
         };
 
         this.optionIds = new int[][]{
-                {R.id.answer1},
-                {R.id.answer2},
-                {R.id.answer3},
-                {R.id.answer4},
-                {R.id.answer5},
-                {R.id.answer6},
-                {R.id.answer7},
-                {R.id.answer8},
-                {R.id.answer9}
+                {R.id.morningAnswer1},
+                {R.id.morningAnswer2},
+                {R.id.morningAnswer3},
+                {R.id.morningAnswer4},
+                {R.id.morningAnswer5},
+                {R.id.morningAnswer6},
+                {R.id.morningAnswer7},
+                {R.id.morningAnswer8},
+                {R.id.morningAnswer9}
         };
 
-        super.loadQuestionnaire(4);
+        super.onViewCreated(view, savedInstanceState);
     }
 }

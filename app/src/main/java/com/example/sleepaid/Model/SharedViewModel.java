@@ -18,9 +18,7 @@ import java.util.Optional;
 
 
 public class SharedViewModel extends ViewModel {
-    private List<Question> questions;
-    private List<Option> options;
-    private List<Answer> answers;
+    private List<QuestionnaireModel> questionnaires = new ArrayList<>();
 
     private int currentQuestionId;
 
@@ -38,16 +36,45 @@ public class SharedViewModel extends ViewModel {
     private List<GoalModel> goals = new ArrayList<>();
     private List<AlarmListModel> alarms = new ArrayList<>();
 
-    public void setQuestions(List<Question> questions) {
-        this.questions = questions;
+    public void setQuestionnaire(int questionnaireId) {
+        QuestionnaireModel questionnaire = this.getQuestionnaireModel(questionnaireId);
+
+        if (questionnaire == null) {
+            this.questionnaires.add(new QuestionnaireModel(questionnaireId));
+        }
     }
 
-    public void setOptions(List<Option> options) {
-        this.options = options;
+    public void setQuestions(int questionnaireId, List<Question> questions) {
+        QuestionnaireModel questionnaire = this.getQuestionnaireModel(questionnaireId);
+
+        if (questionnaire != null) {
+            questionnaire.setQuestions(questions);
+        } else {
+            this.questionnaires.add(new QuestionnaireModel(questionnaireId));
+            this.questionnaires.get(this.questionnaires.size() - 1).setQuestions(questions);
+        }
     }
 
-    public void setAnswers(List<Answer> answers) {
-        this.answers = answers;
+    public void setOptions(int questionnaireId, List<Option> options) {
+        QuestionnaireModel questionnaire = this.getQuestionnaireModel(questionnaireId);
+
+        if (questionnaire != null) {
+            questionnaire.setOptions(options);
+        } else {
+            this.questionnaires.add(new QuestionnaireModel(questionnaireId));
+            this.questionnaires.get(this.questionnaires.size() - 1).setOptions(options);
+        }
+    }
+
+    public void setAnswers(int questionnaireId, List<Answer> answers) {
+        QuestionnaireModel questionnaire = this.getQuestionnaireModel(questionnaireId);
+
+        if (questionnaire != null) {
+            questionnaire.setAnswers(answers);
+        } else {
+            this.questionnaires.add(new QuestionnaireModel(questionnaireId));
+            this.questionnaires.get(this.questionnaires.size() - 1).setAnswers(answers);
+        }
     }
 
     public void setCurrentQuestionId(int currentQuestionId) {
@@ -140,8 +167,7 @@ public class SharedViewModel extends ViewModel {
         }
     }
 
-    public void setAlarms(int alarmType,
-                           List<Alarm> alarmList) {
+    public void setAlarms(int alarmType, List<Alarm> alarmList) {
         AlarmListModel alarm = this.getAlarmListModel(alarmType);
 
         if (alarm != null) {
@@ -154,16 +180,52 @@ public class SharedViewModel extends ViewModel {
         }
     }
 
-    public List<Question> getQuestions() {
-        return this.questions;
+    public QuestionnaireModel getQuestionnaireModel(int questionnaireId) {
+        Optional<QuestionnaireModel> questionnaire = this.questionnaires.stream()
+                .filter(q -> q.getQuestionnaireId() == questionnaireId)
+                .findFirst();
+
+        if (questionnaire.isPresent()) {
+            return questionnaire.get();
+        }
+
+        return null;
     }
 
-    public List<Option> getOptions() {
-        return this.options;
+    public List<Question> getQuestions(int questionnaireId) {
+        Optional<QuestionnaireModel> questionnaire = this.questionnaires.stream()
+                .filter(q -> q.getQuestionnaireId() == questionnaireId)
+                .findFirst();
+
+        if (questionnaire.isPresent()) {
+            return questionnaire.get().getQuestions();
+        }
+
+        return null;
     }
 
-    public List<Answer> getAnswers() {
-        return this.answers;
+    public List<Option> getOptions(int questionnaireId) {
+        Optional<QuestionnaireModel> questionnaire = this.questionnaires.stream()
+                .filter(q -> q.getQuestionnaireId() == questionnaireId)
+                .findFirst();
+
+        if (questionnaire.isPresent()) {
+            return questionnaire.get().getOptions();
+        }
+
+        return null;
+    }
+
+    public List<Answer> getAnswers(int questionnaireId) {
+        Optional<QuestionnaireModel> questionnaire = this.questionnaires.stream()
+                .filter(q -> q.getQuestionnaireId() == questionnaireId)
+                .findFirst();
+
+        if (questionnaire.isPresent()) {
+            return questionnaire.get().getAnswers();
+        }
+
+        return null;
     }
 
     public int getCurrentQuestionId() {
@@ -172,14 +234,6 @@ public class SharedViewModel extends ViewModel {
 
     public String getGraphViewType() {
         return this.graphViewType;
-    }
-
-    public int getGraphWeekLength() {
-        return this.graphWeekLength;
-    }
-
-    public int getGraphMonthLength() {
-        return this.graphMonthLength;
     }
 
     public int getGraphYearLength() {

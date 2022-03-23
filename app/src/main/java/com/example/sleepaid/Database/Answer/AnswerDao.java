@@ -15,14 +15,11 @@ public interface AnswerDao {
     @Query("SELECT * FROM Answer ORDER BY questionId, optionId")
     Single<List<Answer>> getAll();
 
-    @Query("SELECT * FROM Answer WHERE answerId IN (:answerIds) ORDER BY answerId")
-    Single<List<Answer>> loadAllByIds(int[] answerIds);
-
-    @Query("SELECT * FROM Answer WHERE optionId IN (:optionIds) ORDER BY optionId")
-    Single<List<Answer>> loadAllByOptionIds(int[] optionIds);
-
     @Query("SELECT value FROM Option INNER JOIN Answer ON Option.optionId = Answer.optionId WHERE Answer.questionId IN (:questionIds) ORDER BY Answer.questionId")
     Single<List<String>> loadValuesByQuestionIds(int[] questionIds);
+
+    @Query("SELECT * FROM Answer INNER JOIN Question ON Question.questionId = Answer.questionId WHERE Question.questionnaireId IN (:questionnaireIds) ORDER BY answerId")
+    Single<List<String>> loadAllByQuestionnaireIds(int[] questionnaireIds);
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     Completable insert(List<Answer> answers);

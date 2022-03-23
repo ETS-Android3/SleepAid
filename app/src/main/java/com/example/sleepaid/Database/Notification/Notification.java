@@ -105,9 +105,13 @@ public class Notification {
             date = date.plusDays(1);
         }
 
-        alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                date.toInstant().toEpochMilli(),
+//        alarmManager.setExactAndAllowWhileIdle(
+//                AlarmManager.RTC_WAKEUP,
+//                date.toInstant().toEpochMilli(),
+//                notificationPendingIntent
+//        );
+        alarmManager.setAlarmClock(
+                new AlarmManager.AlarmClockInfo(date.toInstant().toEpochMilli(), notificationPendingIntent),
                 notificationPendingIntent
         );
     }
@@ -135,9 +139,13 @@ public class Notification {
                 .plusDays(1)
                 .truncatedTo(ChronoUnit.MINUTES);
 
-        alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                date.toInstant().toEpochMilli(),
+//        alarmManager.setExactAndAllowWhileIdle(
+//                AlarmManager.RTC_WAKEUP,
+//                date.toInstant().toEpochMilli(),
+//                notificationPendingIntent
+//        );
+        alarmManager.setAlarmClock(
+                new AlarmManager.AlarmClockInfo(date.toInstant().toEpochMilli(), notificationPendingIntent),
                 notificationPendingIntent
         );
     }
