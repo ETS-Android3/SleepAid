@@ -52,6 +52,7 @@ public class AlarmService extends Service {
                 .setContentText(intent.getStringExtra("TIME"))
                 .setSmallIcon(R.drawable.alarm_icon)
                 .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
                 .addAction(R.drawable.delete_icon, "Snooze", snoozePendingIntent)
                 .addAction(R.drawable.delete_icon, "Dismiss", dismissPendingIntent)
                 .build();
@@ -68,7 +69,7 @@ public class AlarmService extends Service {
                             .build());
         }
 
-        startForeground(1, notification);
+        startForeground(0, notification);
 
         return START_REDELIVER_INTENT;
     }

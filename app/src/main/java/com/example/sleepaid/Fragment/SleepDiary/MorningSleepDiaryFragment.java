@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.sleepaid.App;
+import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.R;
 
 public class MorningSleepDiaryFragment extends SleepDiaryQuestionsFragment {
@@ -23,7 +25,7 @@ public class MorningSleepDiaryFragment extends SleepDiaryQuestionsFragment {
                               @Nullable Bundle savedInstanceState) {
         this.questionnaireId = 4;
 
-        this.questionIds = new int[]{
+        this.questionComponentIds = new int[]{
                 R.id.morningQuestion1,
                 R.id.morningQuestion2,
                 R.id.morningQuestion3,
@@ -35,7 +37,7 @@ public class MorningSleepDiaryFragment extends SleepDiaryQuestionsFragment {
                 R.id.morningQuestion9
         };
 
-        this.optionIds = new int[][]{
+        this.optionComponentIds = new int[][]{
                 {R.id.morningAnswer1},
                 {R.id.morningAnswer2},
                 {R.id.morningAnswer3},

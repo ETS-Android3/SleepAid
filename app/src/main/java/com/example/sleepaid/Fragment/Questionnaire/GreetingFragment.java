@@ -29,15 +29,15 @@ public class GreetingFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
-        model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+        this.model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
         Button startButton = view.findViewById(R.id.startButton);
         startButton.setOnClickListener(this);
     }
 
     public void onClick(View view) {
-        model.setAnswers(6, null);
-        model.setCurrentQuestionId(1);
+        this.model.setAnswers(6, null);
+        this.model.setCurrentQuestionId(1);
 
         NavHostFragment.findNavController(this).navigate(R.id.startQuestionnaireAction);
     }

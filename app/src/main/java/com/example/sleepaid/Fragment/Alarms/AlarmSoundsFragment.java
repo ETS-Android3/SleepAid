@@ -22,14 +22,18 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.sleepaid.App;
 import com.example.sleepaid.Component.Modal;
+import com.example.sleepaid.Handler.ComponentHandler;
 import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
 public class AlarmSoundsFragment extends Fragment implements View.OnClickListener {
+    private View view;
+
     private SharedViewModel model;
 
     private RadioGroup radioGroup;
@@ -43,7 +47,7 @@ public class AlarmSoundsFragment extends Fragment implements View.OnClickListene
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                AppCompatRadioButton selectedSoundOption = getView().findViewById(radioGroup.getCheckedRadioButtonId());
+                AppCompatRadioButton selectedSoundOption = view.findViewById(radioGroup.getCheckedRadioButtonId());
                 String selectedSound = (String) selectedSoundOption.getText();
 
                 if (!model.getSelectedConfiguration().getSound().equals(selectedSound)) {
@@ -67,12 +71,14 @@ public class AlarmSoundsFragment extends Fragment implements View.OnClickListene
 
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
+        this.view = view;
+
         this.model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
-        Button cancelAlarmSoundButton = view.findViewById(R.id.cancelAlarmSoundButton);
+        Button cancelAlarmSoundButton = this.view.findViewById(R.id.cancelAlarmSoundButton);
         cancelAlarmSoundButton.setOnClickListener(this);
 
-        Button saveAlarmSoundButton = view.findViewById(R.id.saveAlarmSoundButton);
+        Button saveAlarmSoundButton = this.view.findViewById(R.id.saveAlarmSoundButton);
         saveAlarmSoundButton.setOnClickListener(this);
 
         this.loadSounds();
@@ -110,7 +116,7 @@ public class AlarmSoundsFragment extends Fragment implements View.OnClickListene
     }
 
     private void saveAlarmSound() {
-        AppCompatRadioButton selectedSound = getView().findViewById(this.radioGroup.getCheckedRadioButtonId());
+        AppCompatRadioButton selectedSound = this.view.findViewById(this.radioGroup.getCheckedRadioButtonId());
         this.model.getSelectedConfiguration().setSound((String) selectedSound.getText());
 
         NavHostFragment.findNavController(this).navigate(R.id.exitAlarmSoundAction);
@@ -119,50 +125,19 @@ public class AlarmSoundsFragment extends Fragment implements View.OnClickListene
     private void loadSounds() {
         String currentAlarmSound = this.model.getSelectedConfiguration().getSound();
 
-        int sizeInDp = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                25,
-                getResources().getDisplayMetrics()
-        );
-
-        Context contextThemeWrapper = new ContextThemeWrapper(App.getContext(), R.style.RadioButton_Transparent);
-
-        this.radioGroup = getView().findViewById(R.id.alarmSoundsRadioGroup);
-        this.radioGroup.clearCheck();
-        this.radioGroup.removeAllViews();
+        this.radioGroup = this.view.findViewById(R.id.alarmSoundsRadioGroup);
 
         HashMap<String, Integer> alarmSounds = App.getSounds();
 
-        for (String s : alarmSounds.keySet()) {
-            AppCompatRadioButton optionBox = new AppCompatRadioButton(contextThemeWrapper, null, R.style.RadioButton_White);
-
-            optionBox.setId(alarmSounds.get(s));
-            optionBox.setText(s);
-            optionBox.setTextSize((int) (sizeInDp / 3.5));
-            optionBox.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-
-            RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(
-                    RadioGroup.LayoutParams.MATCH_PARENT,
-                    RadioGroup.LayoutParams.WRAP_CONTENT
-            );
-            layoutParams.setMargins(0, 0, 0, sizeInDp);
-            optionBox.setLayoutParams(layoutParams);
-
-            optionBox.setPadding(
-                    sizeInDp / 2,
-                    sizeInDp / 2,
-                    sizeInDp / 2,
-                    sizeInDp / 2
-            );
-
-            optionBox.setOnClickListener(playSound);
-
-            if (s.equals(currentAlarmSound)) {
-                optionBox.setChecked(true);
-            }
-
-            this.radioGroup.addView(optionBox);
-        }
+        ComponentHandler.setupRadioGroup(
+                this.radioGroup,
+                R.style.RadioButton_Transparent,
+                DataHandler.getSizeInDp(25, getResources().getDisplayMetrics()),
+                new ArrayList<>(alarmSounds.values()),
+                new ArrayList<>(alarmSounds.keySet()),
+                currentAlarmSound,
+                playSound
+        );
     }
 
     public void onClick(View view) {

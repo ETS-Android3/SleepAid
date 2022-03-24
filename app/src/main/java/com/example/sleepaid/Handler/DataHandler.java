@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -122,5 +124,13 @@ public class DataHandler {
                     e.printStackTrace();
                 }
         });
+    }
+
+    public static int getSizeInDp(int value, DisplayMetrics displayMetrics) {
+        return (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                value,
+                displayMetrics
+        );
     }
 }

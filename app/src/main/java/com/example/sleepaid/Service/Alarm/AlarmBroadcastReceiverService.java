@@ -24,6 +24,7 @@ public class AlarmBroadcastReceiverService extends BroadcastReceiver {
     private void startAlarmService(Context context, Intent intent) {
         Intent intentService = new Intent(context, AlarmService.class);
 
+        intentService.putExtra("ID", intent.getIntExtra("ID", 0));
         intentService.putExtra("NAME", intent.getStringExtra("NAME"));
         intentService.putExtra("TIME", intent.getStringExtra("TIME"));
         intentService.putExtra("SOUND", intent.getStringExtra("SOUND"));

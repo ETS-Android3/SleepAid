@@ -22,6 +22,8 @@ public class NotificationBroadcastReceiverService extends BroadcastReceiver {
 
     private void startNotificationService(Context context, Intent intent) {
         Intent intentService = new Intent(context, NotificationService.class);
+
+        intentService.putExtra("ID", intent.getIntExtra("ID", 0));
         intentService.putExtra("NAME", intent.getStringExtra("NAME"));
         intentService.putExtra("CONTENT", intent.getStringExtra("CONTENT"));
         intentService.putExtra("DESTINATION", intent.getIntExtra("DESTINATION", 0));

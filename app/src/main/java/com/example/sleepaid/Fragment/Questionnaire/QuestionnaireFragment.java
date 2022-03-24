@@ -26,6 +26,8 @@ import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
+import com.example.sleepaid.Handler.ComponentHandler;
+import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
 
@@ -39,6 +41,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 
 public class QuestionnaireFragment extends Fragment {
+    private View view;
     private Context context;
     private AppDatabase db;
     private SharedViewModel model;
@@ -79,48 +82,44 @@ public class QuestionnaireFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
+        this.view = view;
+        this.context = App.getContext();
+        this.db = AppDatabase.getDatabase(context);
+        this.model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
-        context = App.getContext();
-        db = AppDatabase.getDatabase(context);
-        model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+        this.sizeInDp = DataHandler.getSizeInDp(25, getResources().getDisplayMetrics());
 
-        sizeInDp = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                25,
-                getResources().getDisplayMetrics()
-        );
+        this.currentAnswers = this.model.getAnswers(6) == null ? new ArrayList<>() : this.model.getAnswers(6);
 
-        currentAnswers = model.getAnswers(6) == null ? new ArrayList<>() : model.getAnswers(6);
-
-        Button backButton = getView().findViewById(R.id.backButton);
+        Button backButton = this.view.findViewById(R.id.backButton);
         backButton.setOnClickListener(this::loadPreviousScreen);
 
-        Button nextButton = getView().findViewById(R.id.nextButton);
+        Button nextButton = this.view.findViewById(R.id.nextButton);
         nextButton.setOnClickListener(this::loadNextScreen);
 
-        if(model.getQuestions(6) == null) {
+        if(this.model.getQuestions(6) == null) {
             loadAllQuestions();
         }
         else {
-            loadScreen(model.getCurrentQuestionId());
+            loadScreen(this.model.getCurrentQuestionId());
         }
     }
 
     private void loadAllQuestions() {
-        db.questionDao()
+        this.db.questionDao()
                 .loadAllByQuestionnaireIds(this.questionnaireIds)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         questionData -> {
                             for (int i : this.questionnaireIds) {
-                                model.setQuestionnaire(i);
+                                this.model.setQuestionnaire(i);
 
                                 List<Question> questionsForQuestionnaire = questionData.stream()
                                         .filter(q -> q.getQuestionnaireId() == i)
                                         .collect(Collectors.toList());
 
-                                model.setQuestions(i, questionsForQuestionnaire);
+                                this.model.setQuestions(i, questionsForQuestionnaire);
                             }
 
                             loadAllOptions();
@@ -130,14 +129,14 @@ public class QuestionnaireFragment extends Fragment {
     }
 
     private void loadAllOptions() {
-        db.optionDao()
+        this.db.optionDao()
                 .loadAllByQuestionnaireIds(this.questionnaireIds)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         optionData -> {
                             for (int i : this.questionnaireIds) {
-                                List<Integer> questionIds = model.getQuestions(i).stream()
+                                List<Integer> questionIds = this.model.getQuestions(i).stream()
                                         .map(q -> q.getId())
                                         .collect(Collectors.toList());
 
@@ -145,21 +144,21 @@ public class QuestionnaireFragment extends Fragment {
                                         .filter(o -> questionIds.contains(o.getQuestionId()))
                                         .collect(Collectors.toList());
 
-                                model.setOptions(i, optionsForQuestionnaire);
+                                this.model.setOptions(i, optionsForQuestionnaire);
                             }
 
-                            loadScreen(model.getCurrentQuestionId());
+                            loadScreen(this.model.getCurrentQuestionId());
                         },
                         Throwable::printStackTrace
                 );
     }
 
     public void loadPreviousScreen(View view) {
-        loadScreen(model.getCurrentQuestionId() - 1);
+        loadScreen(this.model.getCurrentQuestionId() - 1);
     }
 
     public void loadNextScreen(View view) {
-        RadioGroup radioGroup = getView().findViewById(R.id.radioGroup);
+        RadioGroup radioGroup = this.view.findViewById(R.id.radioGroup);
         int checkedId = radioGroup.getCheckedRadioButtonId();
 
         if (checkedId == -1) {
@@ -177,48 +176,48 @@ public class QuestionnaireFragment extends Fragment {
             );
         }
         else {
-            loadScreen(model.getCurrentQuestionId() + 1);
+            loadScreen(this.model.getCurrentQuestionId() + 1);
         }
     }
 
     private void loadScreen(int questionId) {
-        RadioGroup radioGroup = getView().findViewById(R.id.radioGroup);
+        RadioGroup radioGroup = this.view.findViewById(R.id.radioGroup);
         int checkedId = radioGroup.getCheckedRadioButtonId();
 
         if (checkedId != -1) {
             int existingAnswerId = -1;
 
-            if (!currentAnswers.isEmpty()) {
-                Optional<Answer> answer = currentAnswers
+            if (!this.currentAnswers.isEmpty()) {
+                Optional<Answer> answer = this.currentAnswers
                         .stream()
-                        .filter(a -> a.getQuestionId() == model.getCurrentQuestionId())
+                        .filter(a -> a.getQuestionId() == this.model.getCurrentQuestionId())
                         .findAny();
 
                 if (answer.isPresent()) {
-                    existingAnswerId = currentAnswers.indexOf(answer.get());
+                    existingAnswerId = this.currentAnswers.indexOf(answer.get());
                 }
             }
 
             if (existingAnswerId > -1) {
-                currentAnswers.set(existingAnswerId, new Answer(checkedId, model.getCurrentQuestionId()));
+                this.currentAnswers.set(existingAnswerId, new Answer(checkedId, this.model.getCurrentQuestionId()));
             }
             else {
-                currentAnswers.add(new Answer(checkedId, model.getCurrentQuestionId()));
+                this.currentAnswers.add(new Answer(checkedId, this.model.getCurrentQuestionId()));
             }
         }
 
         if (questionId == 0) {
             exitQuestionnaire();
         }
-        else if (questionId == model.getQuestions(6).size() + 1) {
-            model.setAnswers(6, currentAnswers);
+        else if (questionId == this.model.getQuestions(6).size() + 1) {
+            this.model.setAnswers(6, this.currentAnswers);
 
             NavHostFragment.findNavController(this).navigate(R.id.showSummaryAction);
         }
         else {
-            getView().findViewById(R.id.scrollView).scrollTo(0, 0);
+            this.view.findViewById(R.id.scrollView).scrollTo(0, 0);
 
-            model.setCurrentQuestionId(questionId);
+            this.model.setCurrentQuestionId(questionId);
 
             loadQuestion(questionId);
             loadOptionsForQuestion(questionId);
@@ -254,10 +253,10 @@ public class QuestionnaireFragment extends Fragment {
     }
 
     private void loadQuestion(int questionId) {
-        TextBox questionBox = getView().findViewById(R.id.question);
-        TextBox informationBox = getView().findViewById(R.id.information);
+        TextBox questionBox = this.view.findViewById(R.id.question);
+        TextBox informationBox = this.view.findViewById(R.id.information);
 
-        Optional<Question> question = model.getQuestions(6)
+        Optional<Question> question = this.model.getQuestions(6)
                 .stream()
                 .filter(q -> q.getId() == questionId)
                 .findAny();
@@ -265,83 +264,74 @@ public class QuestionnaireFragment extends Fragment {
         if (question.isPresent()) {
             questionBox.setText(question.get().getQuestion());
             informationBox.setText(question.get().getInformation());
-            informationBox.setTextSize((int) (sizeInDp / 3.5));
+            informationBox.setTextSize((int) (this.sizeInDp / 3.5));
         }
     }
 
     private void loadOptionsForQuestion(int questionId) {
-        Context contextThemeWrapper = new ContextThemeWrapper(context, R.style.RadioButton_White);
+        RadioGroup radioGroup = this.view.findViewById(R.id.radioGroup);
 
-        RadioGroup radioGroup = getView().findViewById(R.id.radioGroup);
-        radioGroup.clearCheck();
-        radioGroup.removeAllViews();
-
-        List<Option> possibleOptions = model.getOptions(6)
+        List<Option> possibleOptions = this.model.getOptions(6)
                 .stream()
                 .filter(o -> o.getQuestionId() == questionId)
                 .collect(Collectors.toList());
 
-        for (Option o : possibleOptions) {
-            AppCompatRadioButton optionBox = new AppCompatRadioButton(contextThemeWrapper, null, R.style.RadioButton_White);
+        List<Integer> possibleOptionsIds = possibleOptions
+                .stream()
+                .map(o -> o.getId())
+                .collect(Collectors.toList());
 
-            optionBox.setId(o.getId());
-            optionBox.setText(o.getValue());
-            optionBox.setTextSize((int) (sizeInDp / 3.5));
-            optionBox.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+        List<String> possibleOptionsTexts = possibleOptions
+                .stream()
+                .map(o -> o.getValue())
+                .collect(Collectors.toList());
 
-            RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(
-                    RadioGroup.LayoutParams.MATCH_PARENT,
-                    RadioGroup.LayoutParams.WRAP_CONTENT
-            );
-            layoutParams.setMargins(0, 0, 0, sizeInDp);
-            optionBox.setLayoutParams(layoutParams);
-
-            optionBox.setPadding(
-                    sizeInDp / 2,
-                    sizeInDp / 2,
-                    sizeInDp / 2,
-                    sizeInDp / 2
-            );
-
-            radioGroup.addView(optionBox);
-        }
+        ComponentHandler.setupRadioGroup(
+                radioGroup,
+                R.style.RadioButton_White,
+                this.sizeInDp,
+                possibleOptionsIds,
+                possibleOptionsTexts,
+                null,
+                null
+        );
     }
 
     private void loadPreviousAnswerForQuestion(int questionId) {
-        if (!currentAnswers.isEmpty()) {
-            Optional<Answer> answer = currentAnswers
+        if (!this.currentAnswers.isEmpty()) {
+            Optional<Answer> answer = this.currentAnswers
                     .stream()
                     .filter(a -> a.getQuestionId() == questionId)
                     .findAny();
 
             if (answer.isPresent()) {
-                AppCompatRadioButton option = getView().findViewById(answer.get().getOptionId());
+                AppCompatRadioButton option = this.view.findViewById(answer.get().getOptionId());
                 option.setChecked(true);
             }
         }
     }
 
     private void presetWakeUpTime(int questionId) {
-        Optional<Answer> previousAnswer = currentAnswers
+        Optional<Answer> previousAnswer = this.currentAnswers
                 .stream()
                 .filter(a -> a.getQuestionId() == (questionId - 1))
                 .findAny();
 
-        Optional<Option> firstOption = model.getOptions(6)
+        Optional<Option> firstOption = this.model.getOptions(6)
                 .stream()
                 .filter(o -> o.getQuestionId() == questionId)
                 .findFirst();
 
         if (previousAnswer.isPresent() && firstOption.isPresent()) {
-            AppCompatRadioButton option = getView().findViewById(previousAnswer.get().getOptionId() + firstOption.get().getId() - 1);
+            AppCompatRadioButton option = this.view.findViewById(previousAnswer.get().getOptionId() + firstOption.get().getId() - 1);
 
-            TextBox information = getView().findViewById(R.id.information);
+            TextBox information = this.view.findViewById(R.id.information);
             String currentText = information.getText().toString();
             String newText = getString(R.string.wakeup_time) + option.getText().toString().toLowerCase();
 
             information.setText(currentText + "\n " + newText);
 
-            Optional<Answer> currentAnswer = currentAnswers
+            Optional<Answer> currentAnswer = this.currentAnswers
                     .stream()
                     .filter(a -> a.getQuestionId() == questionId)
                     .findAny();

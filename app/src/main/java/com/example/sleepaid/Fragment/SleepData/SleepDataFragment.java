@@ -69,15 +69,15 @@ public class SleepDataFragment extends MainMenuFragment {
 
         NavigationUI.setupWithNavController(bottomMenu, navController);
 
-        model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+        this.model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
-        db = AppDatabase.getDatabase(App.getContext());
+        this.db = AppDatabase.getDatabase(App.getContext());
 
-        previousButton = view.findViewById(R.id.previousButton);
-        previousButton.setOnClickListener(loadPeriod);
+        this.previousButton = view.findViewById(R.id.previousButton);
+        this.previousButton.setOnClickListener(this.loadPeriod);
 
-        nextButton = view.findViewById(R.id.nextButton);
-        nextButton.setOnClickListener(loadPeriod);
+        this.nextButton = view.findViewById(R.id.nextButton);
+        this.nextButton.setOnClickListener(this.loadPeriod);
 
         ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(
                 App.getContext(),
@@ -90,15 +90,15 @@ public class SleepDataFragment extends MainMenuFragment {
         calendarDropdown.setAdapter(arrayAdapter);
         calendarDropdown.setOnItemSelectedListener(changeGraphViewType);
 
-        if (model.getGraphViewType() == null) {
-            model.setGraphViewType("week");
+        if (this.model.getGraphViewType() == null) {
+            this.model.setGraphViewType("week");
 
-            model.setGraphWeekLength(7);
-            model.setGraphMonthLength(5);
-            model.setGraphYearLength(12);
+            this.model.setGraphWeekLength(7);
+            this.model.setGraphMonthLength(5);
+            this.model.setGraphYearLength(12);
         }
 
-        today = ZonedDateTime.now();
+        this.today = ZonedDateTime.now();
 
         getTodaysRange();
 

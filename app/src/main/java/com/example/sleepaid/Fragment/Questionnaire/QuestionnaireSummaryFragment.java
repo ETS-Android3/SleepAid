@@ -33,6 +33,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 
 public class QuestionnaireSummaryFragment extends Fragment {
+    private View view;
     private Context context;
     private AppDatabase db;
     private SharedViewModel model;
@@ -66,28 +67,28 @@ public class QuestionnaireSummaryFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
+        this.view = view;
+        this.context = App.getContext();
+        this.db = AppDatabase.getDatabase(this.context);
+        this.model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
-        context = App.getContext();
-        db = AppDatabase.getDatabase(context);
-        model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
-
-        sizeInDp = (int) TypedValue.applyDimension(
+        this.sizeInDp = (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
                 25,
                 getResources().getDisplayMetrics()
         );
 
-        Button backButton = getView().findViewById(R.id.backButton);
+        Button backButton = this.view.findViewById(R.id.backButton);
         backButton.setOnClickListener(this::loadPreviousScreen);
 
-        Button finishButton = getView().findViewById(R.id.finishButton);
+        Button finishButton = this.view.findViewById(R.id.finishButton);
         finishButton.setOnClickListener(this::storeAnswers);
 
         loadAllAnswers();
     }
 
     private void loadAllAnswers() {
-        LinearLayout layout = getView().findViewById(R.id.answers);
+        LinearLayout layout = this.view.findViewById(R.id.answers);
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -95,11 +96,11 @@ public class QuestionnaireSummaryFragment extends Fragment {
         );
         layoutParams.setMargins(0, 0, 0, sizeInDp / 2);
 
-        for (Question q : model.getQuestions(6)) {
-            TextBox textBox = new TextBox(context);
+        for (Question q : this.model.getQuestions(6)) {
+            TextBox textBox = new TextBox(this.context);
 
             textBox.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-            textBox.setTextSize((int) (sizeInDp / 3.5));
+            textBox.setTextSize((int) (this.sizeInDp / 3.5));
             textBox.setLayoutParams(layoutParams);
 
             int questionId = q.getId();
@@ -107,13 +108,13 @@ public class QuestionnaireSummaryFragment extends Fragment {
             String questionText = questionId + ". " + q.getQuestion();
             String answerText;
 
-            Optional<Answer> currentAnswer = model.getAnswers(6)
+            Optional<Answer> currentAnswer = this.model.getAnswers(6)
                     .stream()
                     .filter(a -> a.getQuestionId() == questionId)
                     .findAny();
 
             if (currentAnswer.isPresent()) {
-                Optional<Option> option = model.getOptions(6)
+                Optional<Option> option = this.model.getOptions(6)
                         .stream()
                         .filter(o -> o.getId() == currentAnswer.get().getOptionId())
                         .findAny();
@@ -135,12 +136,12 @@ public class QuestionnaireSummaryFragment extends Fragment {
     }
 
     public void storeAnswers(View view) {
-        db.answerDao()
-                .insert(model.getAnswers(6))
+        this.db.answerDao()
+                .insert(this.model.getAnswers(6))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        () -> new InitialSettingsService(this, db).getSettings(),
+                        () -> new InitialSettingsService(this, this.db).getSettings(),
                         Throwable::printStackTrace
                 );
     }

@@ -64,7 +64,7 @@ public class App extends Application {
         NotificationChannel serviceChannel = new NotificationChannel(
                 ALARM_CHANNEL_ID,
                 "Alarm Channel",
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_HIGH
         );
         serviceChannel.setSound(null,null);
 

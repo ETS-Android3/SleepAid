@@ -1,7 +1,11 @@
 package com.example.sleepaid.Activity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.provider.Settings;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -16,15 +20,6 @@ import com.google.android.material.navigation.NavigationView;
 
 @SuppressLint("RestrictedApi")
 public class MainMenuScreen extends AppCompatActivity {
-//    private ActivityResultLauncher<String> requestPermissionLauncher =
-//            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-//                if (isGranted) {
-//                    Toast.makeText(MainMenuScreen.this, "System Alert Window Permission Granted", Toast.LENGTH_SHORT) .show();
-//                } else {
-//                    Toast.makeText(MainMenuScreen.this, "System Alert Window Permission Denied", Toast.LENGTH_SHORT) .show();
-//                }
-//            });
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,10 +47,5 @@ public class MainMenuScreen extends AppCompatActivity {
 
         NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
-
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SYSTEM_ALERT_WINDOW) == PackageManager.PERMISSION_DENIED) {
-//            // Requesting the permission
-//            requestPermissionLauncher.launch(Manifest.permission.SYSTEM_ALERT_WINDOW);
-//        }
     }
 }

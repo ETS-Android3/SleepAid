@@ -29,6 +29,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 
 public class AlarmListFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+    private View view;
+
     private AppDatabase db;
 
     private SharedViewModel model;
@@ -39,13 +41,15 @@ public class AlarmListFragment extends Fragment implements AdapterView.OnItemCli
 
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
+        this.view = view;
+
         this.db = AppDatabase.getDatabase(App.getContext());
 
         this.model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
         this.alarmListScreenFragment = (AlarmListScreenFragment) getParentFragment().getParentFragment();
 
-        ListView list = getView().findViewById(R.id.alarmList);
+        ListView list = this.view.findViewById(R.id.alarmList);
         list.setOnItemClickListener(this);
         list.setOnItemLongClickListener(this);
 
@@ -77,7 +81,7 @@ public class AlarmListFragment extends Fragment implements AdapterView.OnItemCli
     }
 
     private void fillListView(List<Alarm> alarmList) {
-        ListView list = getView().findViewById(R.id.alarmList);
+        ListView list = this.view.findViewById(R.id.alarmList);
 
         if (alarmList.size() != 0) {
             list.setVisibility(View.VISIBLE);

@@ -42,6 +42,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 
 public class AlarmConfigurationScreenFragment extends Fragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+    private View view;
+
     protected AppDatabase db;
 
     private SharedViewModel model;
@@ -82,22 +84,24 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
 
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
+        this.view = view;
+
         this.db = AppDatabase.getDatabase(App.getContext());
 
         this.model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
         this.days = new int[]{R.id.monday, R.id.tuesday, R.id.wednesday, R.id.thursday, R.id.friday, R.id.saturday, R.id.sunday};
 
-        Button cancelAlarmConfigurationButton = view.findViewById(R.id.cancelAlarmConfigurationButton);
+        Button cancelAlarmConfigurationButton = this.view.findViewById(R.id.cancelAlarmConfigurationButton);
         cancelAlarmConfigurationButton.setOnClickListener(this);
 
-        Button saveAlarmConfigurationButton = view.findViewById(R.id.saveAlarmConfigurationButton);
+        Button saveAlarmConfigurationButton = this.view.findViewById(R.id.saveAlarmConfigurationButton);
         saveAlarmConfigurationButton.setOnClickListener(this);
 
-        Button selectAlarmSoundButton = view.findViewById(R.id.selectAlarmSoundButton);
+        Button selectAlarmSoundButton = this.view.findViewById(R.id.selectAlarmSoundButton);
         selectAlarmSoundButton.setOnClickListener(this);
 
-        SwitchCompat vibrateButton = view.findViewById(R.id.vibrateButton);
+        SwitchCompat vibrateButton = this.view.findViewById(R.id.vibrateButton);
         vibrateButton.setOnCheckedChangeListener(this);
 
         this.loadAlarm(model.getAlarmViewType(), model.getSelectedConfiguration());
@@ -214,7 +218,7 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
     }
 
     private void loadAlarm(int alarmType, Alarm selectedAlarm) {
-        TimePicker alarmTimePicker = getView().findViewById(R.id.alarmTimePicker);
+        TimePicker alarmTimePicker = this.view.findViewById(R.id.alarmTimePicker);
         alarmTimePicker.setIs24HourView(true);
 
         if (selectedAlarm != null) {
@@ -223,21 +227,21 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
             alarmTimePicker.setHour(alarmTimes.get(0));
             alarmTimePicker.setMinute(alarmTimes.get(1));
 
-            EditText alarmName = getView().findViewById(R.id.alarmName);
+            EditText alarmName = this.view.findViewById(R.id.alarmName);
             alarmName.setText(selectedAlarm.getName());
 
             for (int i = 0; i < 7; i++) {
-                CheckBox day = getView().findViewById(this.days[i]);
+                CheckBox day = this.view.findViewById(this.days[i]);
 
                 if (selectedAlarm.getDays().charAt(i) == '0') {
                     day.setChecked(false);
                 }
             }
 
-            TextView alarmSound = getView().findViewById(R.id.soundName);
+            TextView alarmSound = this.view.findViewById(R.id.soundName);
             alarmSound.setText(selectedAlarm.getSound());
 
-            SwitchCompat vibrateButton = getView().findViewById(R.id.vibrateButton);
+            SwitchCompat vibrateButton = this.view.findViewById(R.id.vibrateButton);
             vibrateButton.setChecked(selectedAlarm.getVibrate() == 1);
         } else {
             this.presetAlarm(alarmType, alarmTimePicker);
@@ -340,13 +344,13 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
     }
 
     private String getName() {
-        EditText name = getView().findViewById(R.id.alarmName);
+        EditText name = this.view.findViewById(R.id.alarmName);
 
         return name.getText().toString();
     }
 
     private String getTime() {
-        TimePicker alarmTimePicker = getView().findViewById(R.id.alarmTimePicker);
+        TimePicker alarmTimePicker = this.view.findViewById(R.id.alarmTimePicker);
 
         return DataHandler.getFormattedTime(alarmTimePicker.getHour(), alarmTimePicker.getMinute());
     }
@@ -355,7 +359,7 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
         String daysPicked = "";
 
         for (int d : this.days) {
-            CheckBox checkbox = getView().findViewById(d);
+            CheckBox checkbox = this.view.findViewById(d);
 
             daysPicked = checkbox.isChecked() ?
                     daysPicked + "1" :
@@ -370,7 +374,7 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
     }
 
     private int getVibrate() {
-        SwitchCompat vibrateButton = getView().findViewById(R.id.vibrateButton);
+        SwitchCompat vibrateButton = this.view.findViewById(R.id.vibrateButton);
 
         return vibrateButton.isChecked() ? 1 : 0;
     }

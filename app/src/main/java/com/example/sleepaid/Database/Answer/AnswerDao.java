@@ -19,7 +19,7 @@ public interface AnswerDao {
     Single<List<String>> loadValuesByQuestionIds(int[] questionIds);
 
     @Query("SELECT * FROM Answer INNER JOIN Question ON Question.questionId = Answer.questionId WHERE Question.questionnaireId IN (:questionnaireIds) ORDER BY answerId")
-    Single<List<String>> loadAllByQuestionnaireIds(int[] questionnaireIds);
+    Single<List<Answer>> loadAllByQuestionnaireIds(int[] questionnaireIds);
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     Completable insert(List<Answer> answers);

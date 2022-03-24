@@ -29,12 +29,12 @@ public class SleepDiaryFragment extends MainMenuFragment {
         NavHostFragment navHostFragment = (NavHostFragment) getChildFragmentManager().findFragmentById(R.id.diary);
 
         NavController navController = navHostFragment.getNavController();
-        BottomNavigationView bottomMenu = getView().findViewById(R.id.bottomMenu);
+        BottomNavigationView bottomMenu = view.findViewById(R.id.bottomMenu);
 
         NavigationUI.setupWithNavController(bottomMenu, navController);
 
         if (getArguments() != null && getArguments().getInt("DESTINATION") != R.id.morningSleepDiaryFragment) {
-            navController.navigate(requireArguments().getInt("DESTINATION"));
+            navController.navigate(getArguments().getInt("DESTINATION"));
         }
     }
 }
