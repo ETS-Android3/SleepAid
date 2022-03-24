@@ -69,7 +69,9 @@ public class AlarmService extends Service {
                             .build());
         }
 
-        startForeground(0, notification);
+        // TODO make alarm ids and notification ids different?
+        // TODO will this clear existing notification with same id?
+        startForeground(4, notification);
 
         return START_REDELIVER_INTENT;
     }

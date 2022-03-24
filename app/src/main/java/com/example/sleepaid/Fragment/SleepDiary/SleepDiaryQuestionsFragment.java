@@ -47,6 +47,8 @@ public class SleepDiaryQuestionsFragment extends Fragment {
     protected List<Integer> questionIds;
     protected List<Option> options;
 
+    //TODO figure out some storage system here
+    //TODO use Answer table? Or a new table for sleep diary?
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
         this.view = view;

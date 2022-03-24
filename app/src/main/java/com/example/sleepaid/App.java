@@ -86,7 +86,7 @@ public class App extends Application {
     private void createAlarmSounds() {
         this.alarmSounds = new HashMap<>();
 
-        this.alarmSounds.put("Glory", R.raw.glory_ringtone);
         this.alarmSounds.put("Default", R.raw.default_ringtone);
+        this.alarmSounds.put("Glory", R.raw.glory_ringtone);
     }
 }

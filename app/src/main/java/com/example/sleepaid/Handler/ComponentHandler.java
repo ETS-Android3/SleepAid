@@ -48,7 +48,11 @@ public class ComponentHandler {
                     RadioGroup.LayoutParams.MATCH_PARENT,
                     RadioGroup.LayoutParams.WRAP_CONTENT
             );
-            layoutParams.setMargins(0, 0, 0, sizeInDp);
+
+            if (i < ids.size() - 1) {
+                layoutParams.setMargins(0, 0, 0, sizeInDp);
+            }
+
             optionBox.setLayoutParams(layoutParams);
 
             optionBox.setPadding(
