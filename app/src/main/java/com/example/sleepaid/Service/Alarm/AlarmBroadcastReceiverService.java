@@ -8,7 +8,6 @@ import android.content.Intent;
 public class AlarmBroadcastReceiverService extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        System.out.println("Received");
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
             startRescheduleAlarmsService(context);
         }
