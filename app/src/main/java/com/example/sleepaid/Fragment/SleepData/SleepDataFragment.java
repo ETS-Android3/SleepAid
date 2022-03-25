@@ -28,6 +28,7 @@ import com.jjoe64.graphview.DefaultLabelFormatter;
 
 import java.time.YearMonth;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -59,7 +60,6 @@ public class SleepDataFragment extends MainMenuFragment {
         return inflater.inflate(R.layout.fragment_sleep_data, container, false);
     }
 
-    //TODO make back button exit app
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
         NavHostFragment navHostFragment = (NavHostFragment) getChildFragmentManager().findFragmentById(R.id.graph);
@@ -102,7 +102,7 @@ public class SleepDataFragment extends MainMenuFragment {
 
         getTodaysRange();
 
-        getTodaysData();
+        getTodayData();
     }
 
     private void getTodaysRange() {
@@ -125,38 +125,73 @@ public class SleepDataFragment extends MainMenuFragment {
         }
     }
 
-    private void getTodaysData() {
-        //TODO check if it's there already and if the date in shared view model matches
-        db.sleepDataDao()
-                .loadAllByDates(new String[]{DataHandler.getSQLiteDate(today)})
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        sleepData -> {
-                            todayDuration = "-";
-                            todayWakeupTime = "-";
-                            todayBedtime = "-";
+    private void getTodayData() {
+        String todayString = DataHandler.getSQLiteDate(today);
+        List<SleepData> modelSleepData = model.getTodaySleepData();
 
-                            for (SleepData s : sleepData) {
-                                switch (s.getField()) {
-                                    case "Wake-up time":
-                                        todayWakeupTime = s.getValue();
-                                        break;
+        boolean doesSleepDataExist = modelSleepData.size() == 3;
+        boolean isSleepDataForToday = true;
 
-                                    case "Bedtime":
-                                        todayBedtime = s.getValue();
-                                        break;
+        for (SleepData s : modelSleepData) {
+            if (!s.getDate().equals(todayString)) {
+                isSleepDataForToday = false;
+            }
+        }
 
-                                    //"Sleep duration"
-                                    default:
-                                        todayDuration = s.getValue();
+        if (!doesSleepDataExist || !isSleepDataForToday) {
+            db.sleepDataDao()
+                    .loadAllByDates(new String[]{todayString})
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            sleepData -> {
+                                todayDuration = "-";
+                                todayWakeupTime = "-";
+                                todayBedtime = "-";
+
+                                for (SleepData s : sleepData) {
+                                    switch (s.getField()) {
+                                        case "Wake-up time":
+                                            todayWakeupTime = s.getValue();
+                                            break;
+
+                                        case "Bedtime":
+                                            todayBedtime = s.getValue();
+                                            break;
+
+                                        //"Sleep duration"
+                                        default:
+                                            todayDuration = s.getValue();
+                                    }
                                 }
-                            }
 
-                            graphFragment.loadTodaysData();
-                        },
-                        Throwable::printStackTrace
-                );
+                                graphFragment.loadTodayData();
+                            },
+                            Throwable::printStackTrace
+                    );
+        } else {
+            todayDuration = "-";
+            todayWakeupTime = "-";
+            todayBedtime = "-";
+
+            for (SleepData s : modelSleepData) {
+                switch (s.getField()) {
+                    case "Wake-up time":
+                        todayWakeupTime = s.getValue();
+                        break;
+
+                    case "Bedtime":
+                        todayBedtime = s.getValue();
+                        break;
+
+                    //"Sleep duration"
+                    default:
+                        todayDuration = s.getValue();
+                }
+            }
+
+            graphFragment.loadTodayData();
+        }
     }
 
     protected DefaultLabelFormatter getWeekLabelFormatter() {

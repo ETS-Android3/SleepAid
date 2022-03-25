@@ -6,6 +6,7 @@ import com.example.sleepaid.Database.Alarm.Alarm;
 import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
+import com.example.sleepaid.Database.SleepData.SleepData;
 import com.example.sleepaid.Handler.DataHandler;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -31,6 +32,8 @@ public class SharedViewModel extends ViewModel {
     private int alarmViewType;
     private Alarm selectedAlarm;
     private Alarm selectedConfiguration;
+
+    private List<SleepData> todaySleepData = new ArrayList<>();
 
     private List<GraphSeriesModel> graphSeries = new ArrayList<>();
     private List<GoalModel> goals = new ArrayList<>();
@@ -107,6 +110,18 @@ public class SharedViewModel extends ViewModel {
 
     public void setSelectedConfiguration(Alarm selectedConfiguration) {
         this.selectedConfiguration = selectedConfiguration;
+    }
+
+    public void setTodaySleepData(List<SleepData> sleepData) {
+        for (SleepData s : sleepData) {
+            SleepData currentSleepData = this.getTodaySleepData(s.getField());
+
+            if (currentSleepData != null) {
+                this.todaySleepData.set(this.todaySleepData.indexOf(currentSleepData), s);
+            } else {
+                this.todaySleepData.add(s);
+            }
+        }
     }
 
     public void setSeries(String dataType,
@@ -264,6 +279,22 @@ public class SharedViewModel extends ViewModel {
 
     public Alarm getSelectedConfiguration() {
         return this.selectedConfiguration;
+    }
+
+    public SleepData getTodaySleepData(String field) {
+        Optional<SleepData> sleepData = this.todaySleepData.stream()
+                .filter(s -> s.getField().equals(field))
+                .findFirst();
+
+        if (sleepData.isPresent()) {
+            return sleepData.get();
+        }
+
+        return null;
+    }
+
+    public List<SleepData> getTodaySleepData() {
+        return this.todaySleepData;
     }
 
     private GraphSeriesModel getSeriesModel(String dataType,

@@ -11,7 +11,7 @@ public class WakeupTimeGraphFragment extends SleepDataGraphFragment {
         super.loadGoal("Wake-up time");
     }
 
-    protected void loadTodaysData() {
+    protected void loadTodayData() {
 //        TextBox durationBox = sleepDataFragment.getView().findViewById(R.id.leftBox);
 //        durationBox.setText(sleepDataFragment.todayDuration);
 

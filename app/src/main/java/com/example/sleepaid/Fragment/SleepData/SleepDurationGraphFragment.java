@@ -11,7 +11,7 @@ public class SleepDurationGraphFragment extends SleepDataGraphFragment {
         super.loadGoal("Sleep duration");
     }
 
-    protected void loadTodaysData() {
+    protected void loadTodayData() {
         CircleBox durationBox = sleepDataFragment.getView().findViewById(R.id.middleBox);
         durationBox.setText(sleepDataFragment.todayDuration);
 

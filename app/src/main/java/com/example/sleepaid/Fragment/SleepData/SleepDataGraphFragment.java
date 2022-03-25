@@ -98,7 +98,7 @@ public class SleepDataGraphFragment extends Fragment {
         });
 
         loadGraph(sleepDataFragment.rangeMin, sleepDataFragment.rangeMax);
-        loadTodaysData();
+        loadTodayData();
     }
 
     protected void loadGraph(ZonedDateTime min, ZonedDateTime max) {
@@ -423,5 +423,5 @@ public class SleepDataGraphFragment extends Fragment {
         return processedSleepData;
     }
 
-    protected void loadTodaysData() {}
+    protected void loadTodayData() {}
 }

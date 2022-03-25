@@ -11,7 +11,7 @@ public class BedtimeGraphFragment extends SleepDataGraphFragment {
         super.loadGoal("Bedtime");
     }
 
-    protected void loadTodaysData() {
+    protected void loadTodayData() {
 //        TextBox durationBox = sleepDataFragment.getView().findViewById(R.id.rightBox);
 //        durationBox.setText(sleepDataFragment.todayDuration);
 //
