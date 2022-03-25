@@ -10,12 +10,11 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/bottomMenu">
+        app:layout_constraintBottom_toTopOf="@id/sleepDiaryBottomMenu">
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/diary"
                 android:name="androidx.navigation.fragment.NavHostFragment"
-                app:navGraph="@navigation/sleep_diary_graph"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_margin="10dp"
@@ -24,7 +23,7 @@
     </ScrollView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-    android:id="@+id/bottomMenu"
+    android:id="@+id/sleepDiaryBottomMenu"
     app:menu="@menu/sleep_diary_menu"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"

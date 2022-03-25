@@ -4,18 +4,14 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
-import androidx.navigation.NavDeepLinkBuilder;
 
 import com.example.sleepaid.Activity.MainMenuScreen;
 import com.example.sleepaid.App;
 import com.example.sleepaid.R;
-import com.example.sleepaid.Service.Alarm.AlarmActionBroadcastReceiverService;
 
 public class NotificationService extends Service {
     @Override
@@ -32,10 +28,6 @@ public class NotificationService extends Service {
 
         if (intent.hasExtra("DESTINATION")) {
             int destination = intent.getIntExtra("DESTINATION", 0);
-
-            Bundle args = new Bundle();
-            args.putInt("DESTINATION", destination);
-
             int parentDestination;
 
             switch (destination) {
@@ -49,12 +41,11 @@ public class NotificationService extends Service {
                     break;
             }
 
-            PendingIntent pendingIntent = new NavDeepLinkBuilder(App.getContext())
-                    .setComponentName(MainMenuScreen.class)
-                    .setGraph(R.navigation.main_menu_screen_graph)
-                    .setDestination(parentDestination)
-                    .setArguments(args)
-                    .createPendingIntent();
+            Intent resultIntent = new Intent(this, MainMenuScreen.class);
+            resultIntent.putExtra("PARENT_DESTINATION", parentDestination);
+            resultIntent.putExtra("DESTINATION", destination);
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, notificationId, resultIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
             notificationBuilder.setContentIntent(pendingIntent).setOngoing(true);
         } else {

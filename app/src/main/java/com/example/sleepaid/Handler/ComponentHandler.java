@@ -1,10 +1,6 @@
 package com.example.sleepaid.Handler;
 
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
-import android.media.AudioAttributes;
-import android.media.MediaPlayer;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.RadioGroup;
 
@@ -12,16 +8,8 @@ import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.AppCompatRadioButton;
 
 import com.example.sleepaid.App;
-import com.example.sleepaid.R;
 
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ComponentHandler {
     public static void setupRadioGroup(RadioGroup radioGroup,

@@ -65,7 +65,7 @@ public class SleepDataFragment extends MainMenuFragment {
         NavHostFragment navHostFragment = (NavHostFragment) getChildFragmentManager().findFragmentById(R.id.graph);
 
         NavController navController = navHostFragment.getNavController();
-        BottomNavigationView bottomMenu = view.findViewById(R.id.bottomMenu);
+        BottomNavigationView bottomMenu = view.findViewById(R.id.sleepDataBottomMenu);
 
         NavigationUI.setupWithNavController(bottomMenu, navController);
 

@@ -14,7 +14,7 @@
         android:layout_height="0dp"
         android:layout_margin="10dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/bottomMenu" />
+        app:layout_constraintBottom_toTopOf="@id/alarmBottomMenu" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addAlarmButton"
@@ -28,10 +28,10 @@
         app:maxImageSize="50dp"
         android:src="@drawable/add_icon"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/bottomMenu" />
+        app:layout_constraintBottom_toTopOf="@id/alarmBottomMenu" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomMenu"
+        android:id="@+id/alarmBottomMenu"
         app:menu="@menu/alarm_menu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

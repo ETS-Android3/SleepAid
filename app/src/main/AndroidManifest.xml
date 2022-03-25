@@ -15,7 +15,7 @@
         android:icon="@drawable/sleep_aid"
         android:allowBackup="false"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/sleep_aid"
+        android:roundIcon="@drawable/sleep_aid_circle"
         android:supportsRtl="true"
         android:theme="@style/Theme.SleepAid">
         <activity

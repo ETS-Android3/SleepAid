@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.navigation.NavController;
+import androidx.navigation.NavGraph;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
@@ -29,12 +30,18 @@ public class SleepDiaryFragment extends MainMenuFragment {
         NavHostFragment navHostFragment = (NavHostFragment) getChildFragmentManager().findFragmentById(R.id.diary);
 
         NavController navController = navHostFragment.getNavController();
-        BottomNavigationView bottomMenu = view.findViewById(R.id.bottomMenu);
+        BottomNavigationView bottomMenu = view.findViewById(R.id.sleepDiaryBottomMenu);
+
+        NavGraph navGraph = navController.getNavInflater().inflate(R.navigation.sleep_diary_graph);
+
+        if (getArguments() != null && getArguments().containsKey("DESTINATION")) {
+            navGraph.setStartDestination(getArguments().getInt("DESTINATION"));
+        } else {
+            navGraph.setStartDestination(R.id.morningSleepDiaryFragment);
+        }
+
+        navController.setGraph(navGraph);
 
         NavigationUI.setupWithNavController(bottomMenu, navController);
-
-        if (getArguments() != null && getArguments().getInt("DESTINATION") != R.id.morningSleepDiaryFragment) {
-            navController.navigate(getArguments().getInt("DESTINATION"));
-        }
     }
 }

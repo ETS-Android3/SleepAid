@@ -5,10 +5,8 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-import com.example.sleepaid.Database.Alarm.Alarm;
 import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
-import com.example.sleepaid.Handler.DataHandler;
 
 @Entity(foreignKeys = {
         @ForeignKey(

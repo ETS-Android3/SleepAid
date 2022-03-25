@@ -1,30 +1,14 @@
 package com.example.sleepaid.Fragment.SleepDiary;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.lifecycle.ViewModelProvider;
 
-import com.example.sleepaid.App;
-import com.example.sleepaid.Database.AppDatabase;
-import com.example.sleepaid.Database.Option.Option;
-import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class BedtimeSleepDiaryFragment extends SleepDiaryQuestionsFragment {
     @Override

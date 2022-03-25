@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/sleep_diary_graph"
-    app:startDestination="@id/morningSleepDiaryFragment">
+    android:id="@+id/sleep_diary_graph">
     <fragment
         android:id="@+id/morningSleepDiaryFragment"
         android:name="com.example.sleepaid.Fragment.SleepDiary.MorningSleepDiaryFragment"

@@ -171,6 +171,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
 
                     this.setupAutoCompleteSuggestions(autoCompleteTextView, i, j);
 
+                    //TODO this doesn't work for the exercise box for some reason
                     if(autoCompleteTextView.getInputType() != InputType.TYPE_CLASS_NUMBER && autoCompleteTextView.getInputType() != InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE) {
                         this.setupTimeInput(autoCompleteTextView);
                     }

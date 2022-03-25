@@ -48,7 +48,7 @@ public class AlarmListScreenFragment extends MainMenuFragment implements View.On
         NavHostFragment navHostFragment = (NavHostFragment) getChildFragmentManager().findFragmentById(R.id.alarmList);
 
         NavController navController = navHostFragment.getNavController();
-        BottomNavigationView bottomMenu = view.findViewById(R.id.bottomMenu);
+        BottomNavigationView bottomMenu = view.findViewById(R.id.alarmBottomMenu);
 
         NavigationUI.setupWithNavController(bottomMenu, navController);
 

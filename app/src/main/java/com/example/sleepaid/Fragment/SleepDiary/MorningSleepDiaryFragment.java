@@ -8,8 +8,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.sleepaid.App;
-import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.R;
 
 public class MorningSleepDiaryFragment extends SleepDiaryQuestionsFragment {

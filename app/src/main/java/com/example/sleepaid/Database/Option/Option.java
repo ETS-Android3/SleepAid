@@ -6,7 +6,6 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.Database.Question.Question;
 
 @Entity(foreignKeys = {

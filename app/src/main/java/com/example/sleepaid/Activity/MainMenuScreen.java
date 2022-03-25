@@ -1,16 +1,13 @@
 package com.example.sleepaid.Activity;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.PowerManager;
-import android.provider.Settings;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
+import androidx.navigation.NavGraph;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -44,6 +41,24 @@ public class MainMenuScreen extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        NavGraph navGraph = navController.getNavInflater().inflate(R.navigation.main_menu_screen_graph);
+        Bundle args = new Bundle();
+
+        if (getIntent() != null && getIntent().hasExtra("PARENT_DESTINATION")) {
+            navGraph.setStartDestination(getIntent().getIntExtra("PARENT_DESTINATION", R.id.sleepDataFragment));
+
+            if(getIntent().hasExtra("DESTINATION")) {
+                args.putInt("DESTINATION", getIntent().getIntExtra("DESTINATION", 0));
+            } else {
+                args = null;
+            }
+        } else {
+            navGraph.setStartDestination(R.id.sleepDataFragment);
+            args = null;
+        }
+
+        navController.setGraph(navGraph, args);
 
         NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
