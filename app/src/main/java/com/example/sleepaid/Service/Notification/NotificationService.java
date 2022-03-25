@@ -23,7 +23,7 @@ public class NotificationService extends Service {
                 .setContentText(intent.getStringExtra("CONTENT"))
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setSmallIcon(R.drawable.sleep_aid)
+                .setSmallIcon(R.drawable.sleep_aid_circle)
                 .setAutoCancel(true);
 
         if (intent.hasExtra("DESTINATION")) {

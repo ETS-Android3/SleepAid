@@ -42,6 +42,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
     private AppDatabase db;
 
     protected int[] questionComponentIds;
+    protected int[] informationComponentIds;
     protected int[][] optionComponentIds;
     protected ArrayAdapter<String>[][] optionSuggestions;
     protected List<Integer> questionIds;
@@ -79,8 +80,12 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                                     TextView question = this.view.findViewById(this.questionComponentIds[i]);
                                     question.setText(questions.get(i).getQuestion());
 
-//                                    TextView information = this.view.findViewById(this.informationComponentIds[i]);
-//                                    information.setText(questions.get(i).getInformation());
+                                    TextView information = this.view.findViewById(this.informationComponentIds[i]);
+                                    if (!questions.get(i).getInformation().isEmpty()) {
+                                        information.setText(questions.get(i).getInformation());
+                                    } else {
+                                        information.setVisibility(View.GONE);
+                                    }
                                 }
 
                                 this.loadOptions();
@@ -99,8 +104,12 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                 TextView question = this.view.findViewById(this.questionComponentIds[i]);
                 question.setText(questions.get(i).getQuestion());
 
-//                TextView information = this.view.findViewById(this.informationComponentIds[i]);
-//                information.setText(questions.get(i).getInformation());
+                TextView information = this.view.findViewById(this.informationComponentIds[i]);
+                if (!questions.get(i).getInformation().isEmpty()) {
+                    information.setText(questions.get(i).getInformation());
+                } else {
+                    information.setVisibility(View.GONE);
+                }
             }
 
             this.loadOptions();
@@ -171,8 +180,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
 
                     this.setupAutoCompleteSuggestions(autoCompleteTextView, i, j);
 
-                    //TODO this doesn't work for the exercise box for some reason
-                    if(autoCompleteTextView.getInputType() != InputType.TYPE_CLASS_NUMBER && autoCompleteTextView.getInputType() != InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE) {
+                    if(autoCompleteTextView.getInputType() == (InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_TIME)) {
                         this.setupTimeInput(autoCompleteTextView);
                     }
                 } else if (answer instanceof RadioGroup) {
@@ -230,7 +238,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
         ComponentHandler.setupRadioGroup(
                 radioGroup,
                 R.style.RadioButton_White,
-                DataHandler.getSizeInDp(25, getResources().getDisplayMetrics()),
+                DataHandler.getSizeInDp(22, getResources().getDisplayMetrics()),
                 possibleOptionsIds,
                 possibleOptionsTexts,
                 null,
