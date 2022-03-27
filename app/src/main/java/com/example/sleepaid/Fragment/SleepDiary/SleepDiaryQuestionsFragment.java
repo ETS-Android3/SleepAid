@@ -9,8 +9,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,13 +24,18 @@ import com.example.sleepaid.App;
 import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
+import com.example.sleepaid.Database.SleepDiaryAnswer.SleepDiaryAnswer;
 import com.example.sleepaid.Handler.ComponentHandler;
 import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
+import com.example.sleepaid.Service.InitialSettingsService;
 
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -43,13 +51,14 @@ public class SleepDiaryQuestionsFragment extends Fragment {
 
     protected int[] questionComponentIds;
     protected int[] informationComponentIds;
-    protected int[][] optionComponentIds;
-    protected ArrayAdapter<String>[][] optionSuggestions;
-    protected List<Integer> questionIds;
-    protected List<Option> options;
+    protected int[][] answerComponentIds;
 
-    //TODO figure out some storage system here
-    //TODO use Answer table? Or a new table for sleep diary?
+    protected List<Integer> questionIds;
+    protected int[][] sections;
+    protected List<Option> options;
+    protected ArrayAdapter<String>[][] answerSuggestions;
+    protected String[][] emptyErrors;
+
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
         this.view = view;
@@ -59,22 +68,28 @@ public class SleepDiaryQuestionsFragment extends Fragment {
 
         getParentFragment().getParentFragment().getView().findViewById(R.id.scrollView).scrollTo(0, 0);
 
+        Button saveButton = view.findViewById(R.id.saveSleepDiaryAnswersButton);
+        saveButton.setOnClickListener(saveAnswers);
+
+        this.model.setSleepDiaryHasOptions(this.questionnaireId, this.questionnaireId == 4 ? true : false);
         this.loadQuestions();
     }
 
     private void loadQuestions() {
-        if (this.model.getQuestions(this.questionnaireId) == null) {
+        if (this.model.getSleepDiaryQuestions(this.questionnaireId) == null) {
             this.db.questionDao()
                     .loadAllByQuestionnaireIds(new int[]{this.questionnaireId})
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             questions -> {
-                                this.model.setQuestions(this.questionnaireId, questions);
+                                this.model.setSleepDiaryQuestions(this.questionnaireId, questions);
+
                                 this.questionIds = questions
                                         .stream()
                                         .map(q -> q.getId())
                                         .collect(Collectors.toList());
+                                Collections.sort(this.questionIds);
 
                                 for (int i = 0; i < questions.size(); i++) {
                                     TextView question = this.view.findViewById(this.questionComponentIds[i]);
@@ -93,7 +108,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                             Throwable::printStackTrace
                     );
         } else {
-            List<Question> questions = this.model.getQuestions(this.questionnaireId);
+            List<Question> questions = this.model.getSleepDiaryQuestions(this.questionnaireId);
 
             this.questionIds = questions
                     .stream()
@@ -117,63 +132,79 @@ public class SleepDiaryQuestionsFragment extends Fragment {
     }
 
     private void loadOptions() {
-        if (model.getOptions(this.questionnaireId) == null) {
+        if (model.hasOptions(this.questionnaireId) && model.getSleepDiaryOptions(this.questionnaireId) == null) {
             this.db.optionDao()
                     .loadAllByQuestionnaireIds(new int[]{this.questionnaireId})
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             options -> {
-                                this.model.setOptions(this.questionnaireId, options);
+                                this.model.setSleepDiaryOptions(this.questionnaireId, options);
                                 this.options = options;
+
+                                this.loadSuggestions();
+                            },
+                            Throwable::printStackTrace
+                    );
+        } else {
+            this.options = model.getSleepDiaryOptions(this.questionnaireId);
+
+            this.loadSuggestions();
+        }
+    }
+
+    private void loadSuggestions() {
+        if (model.getSleepDiaryAnswers(this.questionnaireId) == null) {
+            this.db.sleepDiaryAnswerDao()
+                    .loadAllByQuestionIds(this.questionIds.stream().mapToInt(Integer::intValue).toArray())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            answers -> {
+                                this.model.setSleepDiaryAnswers(this.questionnaireId, answers);
+                                this.setupSuggestions(answers);
 
                                 this.setupComponents();
                             },
                             Throwable::printStackTrace
                     );
         } else {
-            this.options = model.getOptions(this.questionnaireId);
+            this.setupSuggestions(this.model.getSleepDiaryAnswers(this.questionnaireId));
 
             this.setupComponents();
+        }
+    }
 
-            Context context = App.getContext();
-            int layout = android.R.layout.simple_dropdown_item_1line;
+    private void setupSuggestions(List<SleepDiaryAnswer> answers) {
+        Context context = App.getContext();
+        int layout = R.layout.auto_complete_text_view_dropdown;
 
-            List<Option> suggestions = this.options
-                    .stream()
-                    .collect(Collectors.toList());
+        for (int i = 0; i < this.questionIds.size(); i++) {
+            int questionId = this.questionIds.get(i);
 
-            List<Integer> questionIds = this.options
-                    .stream()
-                    .map(o -> o .getQuestionId())
-                    .collect(Collectors.toList());
+            for (int j = 0; j < this.sections[i].length; j++) {
+                int section = this.sections[i][j];
 
-            Collections.sort(suggestions);
-            Collections.sort(questionIds);
+                List<String> suggestionsForQuestionAndSection = answers.stream()
+                        .filter(s -> s.getQuestionId() == questionId &&
+                                s.getSection() == section)
+                        .map(a -> a.getValue())
+                        .collect(Collectors.toList());
 
-//            this.optionSuggestions = new ArrayAdapter[6][];
-//
-//            for (int i = 0; i < questionIds.size(); i++) {
-//                int finalI = i;
-//
-//                List<String> suggestionsForQuestion = suggestions.stream()
-//                        .filter(s -> s.getQuestionId() == finalI)
-//                        .map(s -> s.getValue())
-//                        .collect(Collectors.toList());
-//
-//                Collections.sort(suggestionsForQuestion);
-//
-//                this.optionSuggestions[i] = new ArrayAdapter[] {
-//                        new ArrayAdapter(context, layout, suggestionsForQuestion)
-//                };
-//            }
+                if (suggestionsForQuestionAndSection != null) {
+                    Collections.sort(suggestionsForQuestionAndSection);
+
+                    this.answerSuggestions[i][j] = new ArrayAdapter(context, layout, suggestionsForQuestionAndSection);
+                }
+            }
         }
     }
 
     private void setupComponents() {
-        for (int i = 0; i < this.optionComponentIds.length; i++) {
-            for (int j = 0; j < this.optionComponentIds[i].length; j++) {
-                View answer = this.view.findViewById(optionComponentIds[i][j]);
+        //TODO make it more obvious edit texts have been clicked
+        for (int i = 0; i < this.answerComponentIds.length; i++) {
+            for (int j = 0; j < this.answerComponentIds[i].length; j++) {
+                View answer = this.view.findViewById(answerComponentIds[i][j]);
 
                 if (answer instanceof AutoCompleteTextView) {
                     AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) answer;
@@ -191,17 +222,17 @@ public class SleepDiaryQuestionsFragment extends Fragment {
     }
 
     private void setupAutoCompleteSuggestions(AutoCompleteTextView autoCompleteTextView, int i, int j) {
-        if (this.optionSuggestions != null) {
-            autoCompleteTextView.setAdapter(this.optionSuggestions[i][j]);
-        }
+        if (this.answerSuggestions[i][j] != null) {
+            autoCompleteTextView.setAdapter(this.answerSuggestions[i][j]);
 
-        autoCompleteTextView.setOnTouchListener(new View.OnTouchListener(){
-            @Override
-            public boolean onTouch(View v, MotionEvent event){
-                autoCompleteTextView.showDropDown();
-                return false;
-            }
-        });
+            autoCompleteTextView.setOnTouchListener(new View.OnTouchListener(){
+                @Override
+                public boolean onTouch(View v, MotionEvent event){
+                    autoCompleteTextView.showDropDown();
+                    return false;
+                }
+            });
+        }
     }
 
     private void setupTimeInput(AutoCompleteTextView autoCompleteTextView) {
@@ -244,5 +275,121 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                 null,
                 null
         );
+    }
+
+    private View.OnClickListener saveAnswers = new View.OnClickListener() {
+        public void onClick(View view) {
+            //TODO check if it's already been submitted
+            List<SleepDiaryAnswer> previousAnswers = model.getSleepDiaryAnswers(questionnaireId);
+            Optional<SleepDiaryAnswer> answerForToday = previousAnswers.stream()
+                    .filter(a -> a.getDate().equals(DataHandler.getSQLiteDate(ZonedDateTime.now())))
+                    .findAny();
+
+            if (answerForToday.isPresent()) {
+                //TODO add error saying answer's already been submitted
+                Toast.makeText(getActivity(), "You've already submitted your diary today.", Toast.LENGTH_LONG).show();
+            } else {
+                //TODO validation for each answer
+                if (validateAnswers()) {
+                    List<SleepDiaryAnswer> answers = getAnswers();
+
+                    db.sleepDiaryAnswerDao()
+                            .insert(answers)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(
+                                    () -> {
+                                        Toast.makeText(getActivity(), "Diary saved successfully!", Toast.LENGTH_LONG).show();
+                                        model.setSleepDiaryAnswers(questionnaireId, answers);
+                                        clearAnswers();
+                                    },
+                                    Throwable::printStackTrace
+                            );
+                }
+            }
+        }
+    };
+
+    private boolean validateAnswers() {
+        boolean hasErrors = false;
+        //TODO style the errors better
+
+        for (int i = 0; i < this.sections.length; i++) {
+            for (int j = 0; j < this.sections[i].length; j++) {
+                View answerComponent = this.view.findViewById(this.answerComponentIds[i][j]);
+
+                if (answerComponent instanceof AutoCompleteTextView) {
+                    AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) answerComponent;
+                    AutoCompleteTextView autoCompleteTextViewParent = (AutoCompleteTextView) this.view.findViewById(this.answerComponentIds[i][0]);
+
+                    boolean isEmptyAndHasError = autoCompleteTextView.getText().toString().trim().isEmpty()
+                            && this.emptyErrors[i][j] != null;
+
+                    boolean isEmptyAndHasErrorAndParentIsNotNoneOrEmpty = autoCompleteTextView.getText().toString().trim().isEmpty()
+                            && this.emptyErrors[i][j] != null
+                            && !autoCompleteTextViewParent.getText().toString().trim().toLowerCase().equals("none")
+                            && !autoCompleteTextViewParent.getText().toString().trim().isEmpty();
+
+                    if((j == 0 && isEmptyAndHasError)
+                            || (this.sections[i].length > 1 && j != 0 && isEmptyAndHasErrorAndParentIsNotNoneOrEmpty)) {
+                        autoCompleteTextView.setError(this.emptyErrors[i][j]);
+
+                        hasErrors = true;
+                    } else {
+                        //TODO check time inputs are correct, numbers are not ridiculous
+                    }
+                } else if (answerComponent instanceof RadioGroup) {
+                    RadioGroup radioGroup = (RadioGroup) answerComponent;
+
+                    int lastOptionId = radioGroup.getChildCount() - 1;
+                    ((RadioButton) radioGroup.getChildAt(lastOptionId)).setError("Please select an option.");
+
+                    hasErrors = true;
+                }
+            }
+        }
+
+        return !hasErrors;
+    }
+
+    private List<SleepDiaryAnswer> getAnswers() {
+        List<SleepDiaryAnswer> answers = new ArrayList<>();
+
+        for (int i = 0; i < this.sections.length; i++) {
+            for (int j = 0; j < this.sections[i].length; j++) {
+                View answerComponent = this.view.findViewById(this.answerComponentIds[i][j]);
+                String answer = "";
+
+                if (answerComponent instanceof AutoCompleteTextView) {
+                    answer = ((AutoCompleteTextView) answerComponent).getText().toString();
+                } else if (answerComponent instanceof RadioGroup) {
+                    int answerId = ((RadioGroup) answerComponent).getCheckedRadioButtonId();
+                    answer = ((RadioButton) this.view.findViewById(answerId)).getText().toString();
+                }
+
+                answers.add(new SleepDiaryAnswer(
+                        answer,
+                        this.questionIds.get(i),
+                        this.sections[i][j],
+                        DataHandler.getSQLiteDate(ZonedDateTime.now())
+                ));
+            }
+        }
+
+        return answers;
+    }
+
+    private void clearAnswers() {
+        for (int i = 0; i < this.answerComponentIds.length; i++) {
+            for (int j = 0; j < this.answerComponentIds[i].length; j++) {
+                View answerComponent = this.view.findViewById(this.answerComponentIds[i][j]);
+
+                if (answerComponent instanceof AutoCompleteTextView) {
+                    ((AutoCompleteTextView) answerComponent).getText().clear();
+                } else if (answerComponent instanceof RadioGroup) {
+                    ((RadioGroup) answerComponent).clearCheck();
+                }
+            }
+        }
     }
 }

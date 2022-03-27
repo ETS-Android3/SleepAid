@@ -87,7 +87,7 @@ public class QuestionnaireFragment extends Fragment {
 
         this.sizeInDp = DataHandler.getSizeInDp(25, getResources().getDisplayMetrics());
 
-        this.currentAnswers = this.model.getAnswers(6) == null ? new ArrayList<>() : this.model.getAnswers(6);
+        this.currentAnswers = this.model.getQuestionnaireAnswers(6) == null ? new ArrayList<>() : this.model.getQuestionnaireAnswers(6);
 
         Button backButton = this.view.findViewById(R.id.backButton);
         backButton.setOnClickListener(this::loadPreviousScreen);
@@ -95,7 +95,7 @@ public class QuestionnaireFragment extends Fragment {
         Button nextButton = this.view.findViewById(R.id.nextButton);
         nextButton.setOnClickListener(this::loadNextScreen);
 
-        if(this.model.getQuestions(6) == null) {
+        if(this.model.getQuestionnaireQuestions(6) == null) {
             loadAllQuestions();
         }
         else {
@@ -111,13 +111,11 @@ public class QuestionnaireFragment extends Fragment {
                 .subscribe(
                         questionData -> {
                             for (int i : this.questionnaireIds) {
-                                this.model.setQuestionnaire(i);
-
                                 List<Question> questionsForQuestionnaire = questionData.stream()
                                         .filter(q -> q.getQuestionnaireId() == i)
                                         .collect(Collectors.toList());
 
-                                this.model.setQuestions(i, questionsForQuestionnaire);
+                                this.model.setQuestionnaireQuestions(i, questionsForQuestionnaire);
                             }
 
                             loadAllOptions();
@@ -134,7 +132,7 @@ public class QuestionnaireFragment extends Fragment {
                 .subscribe(
                         optionData -> {
                             for (int i : this.questionnaireIds) {
-                                List<Integer> questionIds = this.model.getQuestions(i).stream()
+                                List<Integer> questionIds = this.model.getQuestionnaireQuestions(i).stream()
                                         .map(q -> q.getId())
                                         .collect(Collectors.toList());
 
@@ -142,7 +140,7 @@ public class QuestionnaireFragment extends Fragment {
                                         .filter(o -> questionIds.contains(o.getQuestionId()))
                                         .collect(Collectors.toList());
 
-                                this.model.setOptions(i, optionsForQuestionnaire);
+                                this.model.setQuestionnaireOptions(i, optionsForQuestionnaire);
                             }
 
                             loadScreen(this.model.getCurrentQuestionId());
@@ -207,8 +205,8 @@ public class QuestionnaireFragment extends Fragment {
         if (questionId == 0) {
             exitQuestionnaire();
         }
-        else if (questionId == this.model.getQuestions(6).size() + 1) {
-            this.model.setAnswers(6, this.currentAnswers);
+        else if (questionId == this.model.getQuestionnaireQuestions(6).size() + 1) {
+            this.model.setQuestionnaireAnswers(6, this.currentAnswers);
 
             NavHostFragment.findNavController(this).navigate(R.id.showSummaryAction);
         }
@@ -254,7 +252,7 @@ public class QuestionnaireFragment extends Fragment {
         TextBox questionBox = this.view.findViewById(R.id.question);
         TextBox informationBox = this.view.findViewById(R.id.information);
 
-        Optional<Question> question = this.model.getQuestions(6)
+        Optional<Question> question = this.model.getQuestionnaireQuestions(6)
                 .stream()
                 .filter(q -> q.getId() == questionId)
                 .findAny();
@@ -269,7 +267,7 @@ public class QuestionnaireFragment extends Fragment {
     private void loadOptionsForQuestion(int questionId) {
         RadioGroup radioGroup = this.view.findViewById(R.id.radioGroup);
 
-        List<Option> possibleOptions = this.model.getOptions(6)
+        List<Option> possibleOptions = this.model.getQuestionnaireOptions(6)
                 .stream()
                 .filter(o -> o.getQuestionId() == questionId)
                 .collect(Collectors.toList());
@@ -315,7 +313,7 @@ public class QuestionnaireFragment extends Fragment {
                 .filter(a -> a.getQuestionId() == (questionId - 1))
                 .findAny();
 
-        Optional<Option> firstOption = this.model.getOptions(6)
+        Optional<Option> firstOption = this.model.getQuestionnaireOptions(6)
                 .stream()
                 .filter(o -> o.getQuestionId() == questionId)
                 .findFirst();

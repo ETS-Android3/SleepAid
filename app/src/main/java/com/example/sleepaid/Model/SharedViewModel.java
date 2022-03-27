@@ -7,6 +7,7 @@ import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
 import com.example.sleepaid.Database.SleepData.SleepData;
+import com.example.sleepaid.Database.SleepDiaryAnswer.SleepDiaryAnswer;
 import com.example.sleepaid.Handler.DataHandler;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -20,6 +21,7 @@ import java.util.Optional;
 
 public class SharedViewModel extends ViewModel {
     private List<QuestionnaireModel> questionnaires = new ArrayList<>();
+    private List<SleepDiaryModel> sleepDiaries = new ArrayList<>();
 
     private int currentQuestionId;
 
@@ -39,15 +41,7 @@ public class SharedViewModel extends ViewModel {
     private List<GoalModel> goals = new ArrayList<>();
     private List<AlarmListModel> alarms = new ArrayList<>();
 
-    public void setQuestionnaire(int questionnaireId) {
-        QuestionnaireModel questionnaire = this.getQuestionnaireModel(questionnaireId);
-
-        if (questionnaire == null) {
-            this.questionnaires.add(new QuestionnaireModel(questionnaireId));
-        }
-    }
-
-    public void setQuestions(int questionnaireId, List<Question> questions) {
+    public void setQuestionnaireQuestions(int questionnaireId, List<Question> questions) {
         QuestionnaireModel questionnaire = this.getQuestionnaireModel(questionnaireId);
 
         if (questionnaire != null) {
@@ -58,7 +52,7 @@ public class SharedViewModel extends ViewModel {
         }
     }
 
-    public void setOptions(int questionnaireId, List<Option> options) {
+    public void setQuestionnaireOptions(int questionnaireId, List<Option> options) {
         QuestionnaireModel questionnaire = this.getQuestionnaireModel(questionnaireId);
 
         if (questionnaire != null) {
@@ -69,7 +63,7 @@ public class SharedViewModel extends ViewModel {
         }
     }
 
-    public void setAnswers(int questionnaireId, List<Answer> answers) {
+    public void setQuestionnaireAnswers(int questionnaireId, List<Answer> answers) {
         QuestionnaireModel questionnaire = this.getQuestionnaireModel(questionnaireId);
 
         if (questionnaire != null) {
@@ -77,6 +71,50 @@ public class SharedViewModel extends ViewModel {
         } else {
             this.questionnaires.add(new QuestionnaireModel(questionnaireId));
             this.questionnaires.get(this.questionnaires.size() - 1).setAnswers(answers);
+        }
+    }
+
+    public void setSleepDiaryQuestions(int questionnaireId, List<Question> questions) {
+        SleepDiaryModel sleepDiary = this.getSleepDiaryModel(questionnaireId);
+
+        if (sleepDiary != null) {
+            sleepDiary.setQuestions(questions);
+        } else {
+            this.sleepDiaries.add(new SleepDiaryModel(questionnaireId));
+            this.sleepDiaries.get(this.sleepDiaries.size() - 1).setQuestions(questions);
+        }
+    }
+
+    public void setSleepDiaryHasOptions(int questionnaireId, boolean hasOptions) {
+        SleepDiaryModel sleepDiary = this.getSleepDiaryModel(questionnaireId);
+
+        if (sleepDiary != null) {
+            sleepDiary.setHasOptions(hasOptions);
+        } else {
+            this.sleepDiaries.add(new SleepDiaryModel(questionnaireId));
+            this.sleepDiaries.get(this.sleepDiaries.size() - 1).setHasOptions(hasOptions);
+        }
+    }
+
+    public void setSleepDiaryOptions(int questionnaireId, List<Option> options) {
+        SleepDiaryModel sleepDiary = this.getSleepDiaryModel(questionnaireId);
+
+        if (sleepDiary != null) {
+            sleepDiary.setOptions(options);
+        } else {
+            this.sleepDiaries.add(new SleepDiaryModel(questionnaireId));
+            this.sleepDiaries.get(this.sleepDiaries.size() - 1).setOptions(options);
+        }
+    }
+
+    public void setSleepDiaryAnswers(int questionnaireId, List<SleepDiaryAnswer> answers) {
+        SleepDiaryModel sleepDiary = this.getSleepDiaryModel(questionnaireId);
+
+        if (sleepDiary != null) {
+            sleepDiary.setAnswers(answers);
+        } else {
+            this.sleepDiaries.add(new SleepDiaryModel(questionnaireId));
+            this.sleepDiaries.get(this.sleepDiaries.size() - 1).setAnswers(answers);
         }
     }
 
@@ -207,7 +245,7 @@ public class SharedViewModel extends ViewModel {
         return null;
     }
 
-    public List<Question> getQuestions(int questionnaireId) {
+    public List<Question> getQuestionnaireQuestions(int questionnaireId) {
         Optional<QuestionnaireModel> questionnaire = this.questionnaires.stream()
                 .filter(q -> q.getQuestionnaireId() == questionnaireId)
                 .findFirst();
@@ -219,7 +257,7 @@ public class SharedViewModel extends ViewModel {
         return null;
     }
 
-    public List<Option> getOptions(int questionnaireId) {
+    public List<Option> getQuestionnaireOptions(int questionnaireId) {
         Optional<QuestionnaireModel> questionnaire = this.questionnaires.stream()
                 .filter(q -> q.getQuestionnaireId() == questionnaireId)
                 .findFirst();
@@ -231,13 +269,73 @@ public class SharedViewModel extends ViewModel {
         return null;
     }
 
-    public List<Answer> getAnswers(int questionnaireId) {
+    public List<Answer> getQuestionnaireAnswers(int questionnaireId) {
         Optional<QuestionnaireModel> questionnaire = this.questionnaires.stream()
                 .filter(q -> q.getQuestionnaireId() == questionnaireId)
                 .findFirst();
 
         if (questionnaire.isPresent()) {
             return questionnaire.get().getAnswers();
+        }
+
+        return null;
+    }
+
+    public SleepDiaryModel getSleepDiaryModel(int questionnaireId) {
+        Optional<SleepDiaryModel> sleepDiary = this.sleepDiaries.stream()
+                .filter(s -> s.getQuestionnaireId() == questionnaireId)
+                .findFirst();
+
+        if (sleepDiary.isPresent()) {
+            return sleepDiary.get();
+        }
+
+        return null;
+    }
+
+    public List<Question> getSleepDiaryQuestions(int questionnaireId) {
+        Optional<SleepDiaryModel> sleepDiary = this.sleepDiaries.stream()
+                .filter(s -> s.getQuestionnaireId() == questionnaireId)
+                .findFirst();
+
+        if (sleepDiary.isPresent()) {
+            return sleepDiary.get().getQuestions();
+        }
+
+        return null;
+    }
+
+    public boolean hasOptions(int questionnaireId) {
+        Optional<SleepDiaryModel> sleepDiary = this.sleepDiaries.stream()
+                .filter(s -> s.getQuestionnaireId() == questionnaireId)
+                .findFirst();
+
+        if (sleepDiary.isPresent()) {
+            return sleepDiary.get().hasOptions();
+        }
+
+        return false;
+    }
+
+    public List<Option> getSleepDiaryOptions(int questionnaireId) {
+        Optional<SleepDiaryModel> sleepDiary = this.sleepDiaries.stream()
+                .filter(s -> s.getQuestionnaireId() == questionnaireId)
+                .findFirst();
+
+        if (sleepDiary.isPresent()) {
+            return sleepDiary.get().getOptions();
+        }
+
+        return null;
+    }
+
+    public List<SleepDiaryAnswer> getSleepDiaryAnswers(int questionnaireId) {
+        Optional<SleepDiaryModel> sleepDiary = this.sleepDiaries.stream()
+                .filter(s -> s.getQuestionnaireId() == questionnaireId)
+                .findFirst();
+
+        if (sleepDiary.isPresent()) {
+            return sleepDiary.get().getAnswers();
         }
 
         return null;

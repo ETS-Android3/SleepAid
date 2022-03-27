@@ -8,11 +8,48 @@
     android:layout_marginHorizontal="7.5dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bedtimeTitleSection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/bedtimeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sleep_diary_bedtime_title"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/bedtimeInstructions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/sleep_diary_bedtime_instructions"
+            style="@style/TextView.Information"
+            app:layout_constraintTop_toBottomOf="@id/bedtimeTitle"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/bedtimeDisclaimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/sleep_diary_bedtime_disclaimer"
+            style="@style/TextView.Information"
+            app:layout_constraintTop_toBottomOf="@id/bedtimeInstructions"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bedtimeSection1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="15dp"
+        app:layout_constraintTop_toBottomOf="@id/bedtimeTitleSection"
         app:layout_constraintStart_toStartOf="parent">
 
         <TextView
@@ -31,6 +68,7 @@
             app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+<!--    TODO can you make these times and allow "none"?-->
     <AutoCompleteTextView
         android:id="@+id/bedtimeAnswer1"
         android:layout_width="wrap_content"
@@ -146,7 +184,7 @@
 
         <AutoCompleteTextView
             android:id="@+id/bedtimeAnswer4Text"
-            android:layout_width="107dp"
+            android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:inputType="textShortMessage"
             android:maxLength="100"
@@ -259,11 +297,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:layout_marginBottom="30dp"
         android:inputType="time"
         android:hint="e.g. 00:30"
         android:maxLength="5"
         app:layout_constraintTop_toBottomOf="@id/bedtimeSection6"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/saveSleepDiaryAnswersButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="30dp"
+        android:paddingHorizontal="12.5dp"
+        android:paddingVertical="7.5dp"
+        android:text="Save"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/bedtimeAnswer6"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

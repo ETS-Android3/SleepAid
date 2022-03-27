@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,13 +42,40 @@ public class BedtimeSleepDiaryFragment extends SleepDiaryQuestionsFragment {
                 R.id.bedtimeInformation6
         };
 
-        this.optionComponentIds = new int[][]{
+        this.answerComponentIds = new int[][]{
                 {R.id.bedtimeAnswer1},
                 {R.id.bedtimeAnswer2},
                 {R.id.bedtimeAnswer3},
-                {R.id.bedtimeAnswer4Text, R.id.bedtimeAnswer4EndTime, R.id.bedtimeAnswer4StartTime},
+                {R.id.bedtimeAnswer4Text, R.id.bedtimeAnswer4StartTime, R.id.bedtimeAnswer4EndTime},
                 {R.id.bedtimeAnswer5Text},
                 {R.id.bedtimeAnswer6}
+        };
+
+        this.sections = new int[][] {
+                {1},
+                {1},
+                {1},
+                {1, 2, 3},
+                {1},
+                {1}
+        };
+
+        this.answerSuggestions = new ArrayAdapter[][]{
+                {null},
+                {null},
+                {null},
+                {null, null, null},
+                {null, null, null},
+                {null}
+        };
+
+        this.emptyErrors = new String[][]{
+                {"Please enter a time or \"0\" if you had none."},
+                {"Please enter a time or \"0\" if you had none."},
+                {"Please enter a time or \"0\" if you had none."},
+                {"Please enter an answer or \"none\" if you did none.", "Please enter a time.", "Please enter a time."},
+                {"Please enter a number.", "Please enter a time.", "Please enter a time."},
+                {"Please enter a duration."}
         };
 
         super.onViewCreated(view, savedInstanceState);
