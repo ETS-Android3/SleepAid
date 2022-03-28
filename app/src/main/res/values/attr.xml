@@ -14,4 +14,9 @@
         <attr name="inputType" format="string" />
         <attr name="maxLength" format="integer" />
     </declare-styleable>
+
+    <declare-styleable name="ErrorMessage">
+        <attr name="errorText" format="string" />
+        <attr name="errorTextSize" format="integer" />
+    </declare-styleable>
 </resources>

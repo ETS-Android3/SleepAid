@@ -24,12 +24,6 @@
         <item name="actionMenuTextColor">@color/white</item>
     </style>
 
-    <style name="Theme.SleepDiary" parent="Theme.SleepAid">
-        <item name="android:textViewStyle">@style/TextView</item>
-        <item name="autoCompleteTextViewStyle">@style/AutoCompleteTextView</item>
-        <item name="materialButtonStyle">@style/Button.White</item>
-    </style>
-
     <style name="Button.White" parent="Theme.SleepAid">
         <item name="android:backgroundTint">@color/white</item>
         <item name="android:textColor">@color/black</item>
@@ -114,5 +108,9 @@
     <style name="TextView.Information" parent="Widget.MaterialComponents.TextView">
         <item name="android:textColor">@color/off_white</item>
         <item name="android:textSize">17sp</item>
+    </style>
+
+    <style name="ErrorMessage" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">15sp</item>
     </style>
 </resources>

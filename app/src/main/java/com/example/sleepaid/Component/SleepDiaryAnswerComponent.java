@@ -11,13 +11,16 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.FrameLayout;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.example.sleepaid.R;
 import com.google.android.material.textfield.TextInputLayout;
 
 @SuppressLint("ResourceType")
-public class SleepDiaryAnswerComponent extends FrameLayout {
+public class SleepDiaryAnswerComponent extends ConstraintLayout {
     TextInputLayout answerContainer;
     AutoCompleteTextView answerText;
+    ErrorMessage errorMessage;
 
     public SleepDiaryAnswerComponent(Context context) {
         super(context);
@@ -70,6 +73,7 @@ public class SleepDiaryAnswerComponent extends FrameLayout {
     private void initComponents() {
         answerContainer = findViewById(R.id.answerContainer);
         answerText = findViewById(R.id.answerText);
+        errorMessage = findViewById(R.id.errorMessage);
     }
 
     public void setText(CharSequence text) {
@@ -81,10 +85,11 @@ public class SleepDiaryAnswerComponent extends FrameLayout {
     }
 
     public void setError(CharSequence error) {
-        answerContainer.setError(error);
-
         if (error == null) {
-            answerContainer.setErrorEnabled(false);
+            errorMessage.setVisibility(GONE);
+        } else {
+            errorMessage.setVisibility(VISIBLE);
+            errorMessage.setText(error);
         }
     }
 
@@ -120,6 +125,10 @@ public class SleepDiaryAnswerComponent extends FrameLayout {
         answerText.setSelection(index);
     }
 
+    public void setEnabled(boolean enabled) {
+        answerText.setEnabled(enabled);
+    }
+
     public void addTextChangedListener(TextWatcher textWatcher) {
         answerText.addTextChangedListener(textWatcher);
     }
@@ -138,5 +147,9 @@ public class SleepDiaryAnswerComponent extends FrameLayout {
 
     public int length() {
         return answerText.length();
+    }
+
+    public void clear() {
+        answerText.getText().clear();
     }
 }

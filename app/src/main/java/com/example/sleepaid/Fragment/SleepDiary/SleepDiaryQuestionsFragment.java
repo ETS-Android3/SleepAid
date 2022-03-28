@@ -7,7 +7,6 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -21,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.sleepaid.App;
 import com.example.sleepaid.Component.SleepDiaryAnswerComponent;
 import com.example.sleepaid.Component.SleepDiaryQuestionComponent;
+import com.example.sleepaid.Component.SleepDiaryRadioGroupAnswerComponent;
 import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
@@ -183,6 +183,12 @@ public class SleepDiaryQuestionsFragment extends Fragment {
     }
 
     private void setupComponents() {
+        boolean answerForTodayExists = this.getAnswerForToday() != null;
+
+        if (answerForTodayExists) {
+            this.view.findViewById(R.id.alreadySubmittedMessage).setVisibility(View.VISIBLE);
+        }
+
         //TODO make it more obvious edit texts have been clicked
         for (int i = 0; i < this.answerComponentIds.length; i++) {
             for (int j = 0; j < this.answerComponentIds[i].length; j++) {
@@ -191,13 +197,25 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                 if (answer instanceof SleepDiaryAnswerComponent) {
                     SleepDiaryAnswerComponent sleepDiaryAnswer = (SleepDiaryAnswerComponent) answer;
 
-                    this.setupAutoCompleteSuggestions(sleepDiaryAnswer, i, j);
+                    if (answerForTodayExists) {
+                        sleepDiaryAnswer.setEnabled(false);
+                    } else {
+                        this.setupAutoCompleteSuggestions(sleepDiaryAnswer, i, j);
 
-                    if(sleepDiaryAnswer.getInputType() == (InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_TIME)) {
-                        this.setupTimeInput(sleepDiaryAnswer);
+                        if (sleepDiaryAnswer.getInputType() == (InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_TIME)) {
+                            this.setupTimeInput(sleepDiaryAnswer);
+                        }
                     }
-                } else if (answer instanceof RadioGroup) {
-                    this.setupRadioGroup((RadioGroup) answer, this.questionIds.get(i));
+                } else if (answer instanceof SleepDiaryRadioGroupAnswerComponent) {
+                    RadioGroup radioGroup = ((SleepDiaryRadioGroupAnswerComponent) answer).getRadioGroup();
+
+                    this.setupRadioGroup(radioGroup, this.questionIds.get(i));
+
+                    if (answerForTodayExists) {
+                        for (int r = 0; r < radioGroup.getChildCount(); r++) {
+                            radioGroup.getChildAt(r).setEnabled(false);
+                        }
+                    }
                 }
             }
         }
@@ -230,6 +248,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
         });
     }
 
+    //TODO remove error on click?
     private void setupRadioGroup(RadioGroup radioGroup, int questionId) {
         List<Option> possibleOptions = this.options
                 .stream()
@@ -259,14 +278,9 @@ public class SleepDiaryQuestionsFragment extends Fragment {
 
     private View.OnClickListener saveAnswers = new View.OnClickListener() {
         public void onClick(View view) {
-            List<SleepDiaryAnswer> previousAnswers = model.getSleepDiaryAnswers(questionnaireId);
-            Optional<SleepDiaryAnswer> answerForToday = previousAnswers.stream()
-                    .filter(a -> a.getDate().equals(DataHandler.getSQLiteDate(ZonedDateTime.now())))
-                    .findAny();
-
-            if (answerForToday.isPresent()) {
+            if (getAnswerForToday() != null) {
                 //TODO add error saying answer's already been submitted
-                Toast.makeText(getActivity(), "You've already submitted your diary today.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), R.string.already_submitted_diary_message, Toast.LENGTH_LONG).show();
             } else {
                 //TODO validation for each answer
                 if (validateAnswers()) {
@@ -322,13 +336,20 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                     } else {
                         //TODO check time inputs are correct, numbers are not ridiculous
                     }
-                } else if (answerComponent instanceof RadioGroup) {
-                    RadioGroup radioGroup = (RadioGroup) answerComponent;
+                } else if (answerComponent instanceof SleepDiaryRadioGroupAnswerComponent) {
+                    SleepDiaryRadioGroupAnswerComponent sleepDiaryRadioGroupAnswerComponent = (SleepDiaryRadioGroupAnswerComponent) answerComponent;
 
-                    int lastOptionId = radioGroup.getChildCount() - 1;
-                    ((RadioButton) radioGroup.getChildAt(lastOptionId)).setError("Please select an option.");
+                    RadioGroup radioGroup = sleepDiaryRadioGroupAnswerComponent.getRadioGroup();
 
-                    hasErrors = true;
+                    if (radioGroup.getCheckedRadioButtonId() == -1) {
+                        sleepDiaryRadioGroupAnswerComponent.setError("Please select an option.");
+
+                        if (!hasErrors) {
+                            sleepDiaryRadioGroupAnswerComponent.requestFocus();
+                        }
+
+                        hasErrors = true;
+                    }
                 }
             }
         }
@@ -344,10 +365,10 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                 View answerComponent = this.view.findViewById(this.answerComponentIds[i][j]);
                 String answer = "";
 
-                if (answerComponent instanceof AutoCompleteTextView) {
-                    answer = ((AutoCompleteTextView) answerComponent).getText().toString();
-                } else if (answerComponent instanceof RadioGroup) {
-                    int answerId = ((RadioGroup) answerComponent).getCheckedRadioButtonId();
+                if (answerComponent instanceof SleepDiaryAnswerComponent) {
+                    answer = ((SleepDiaryAnswerComponent) answerComponent).getText().toString();
+                } else if (answerComponent instanceof SleepDiaryRadioGroupAnswerComponent) {
+                    int answerId = ((SleepDiaryRadioGroupAnswerComponent) answerComponent).getRadioGroup().getCheckedRadioButtonId();
                     answer = ((RadioButton) this.view.findViewById(answerId)).getText().toString();
                 }
 
@@ -368,12 +389,25 @@ public class SleepDiaryQuestionsFragment extends Fragment {
             for (int j = 0; j < this.answerComponentIds[i].length; j++) {
                 View answerComponent = this.view.findViewById(this.answerComponentIds[i][j]);
 
-                if (answerComponent instanceof AutoCompleteTextView) {
-                    ((AutoCompleteTextView) answerComponent).getText().clear();
-                } else if (answerComponent instanceof RadioGroup) {
-                    ((RadioGroup) answerComponent).clearCheck();
+                if (answerComponent instanceof SleepDiaryAnswerComponent) {
+                    ((SleepDiaryAnswerComponent) answerComponent).clear();
+                } else if (answerComponent instanceof SleepDiaryRadioGroupAnswerComponent) {
+                    ((SleepDiaryRadioGroupAnswerComponent) answerComponent).getRadioGroup().clearCheck();
                 }
             }
         }
+    }
+
+    private SleepDiaryAnswer getAnswerForToday() {
+        List<SleepDiaryAnswer> previousAnswers = model.getSleepDiaryAnswers(questionnaireId);
+        Optional<SleepDiaryAnswer> answerForToday = previousAnswers.stream()
+                .filter(a -> a.getDate().equals(DataHandler.getSQLiteDate(ZonedDateTime.now())))
+                .findAny();
+
+        if (answerForToday.isPresent()) {
+            return answerForToday.get();
+        }
+
+        return null;
     }
 }

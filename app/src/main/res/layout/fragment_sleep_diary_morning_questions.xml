@@ -4,7 +4,6 @@
     android:id="@+id/morningQuestions"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:theme="@style/Theme.SleepDiary"
     android:layout_marginHorizontal="7.5dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -20,6 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sleep_diary_morning_title"
+            style="@style/TextView"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -44,13 +44,22 @@
             app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <com.example.sleepaid.Component.ErrorMessage
+        android:id="@+id/alreadySubmittedMessage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:errorText="@string/already_submitted_diary_message"
+        android:layout_marginTop="15dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/morningTitleSection"
+        app:layout_constraintStart_toStartOf="parent"/>
+
     <com.example.sleepaid.Component.SleepDiaryQuestionComponent
         android:id="@+id/morningQuestion1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        app:questionText=""
-        app:layout_constraintTop_toBottomOf="@id/morningTitleSection"
+        app:layout_constraintTop_toBottomOf="@id/alreadySubmittedMessage"
         app:layout_constraintStart_toStartOf="parent"/>
 
     <com.example.sleepaid.Component.SleepDiaryAnswerComponent
@@ -129,9 +138,9 @@
         app:layout_constraintTop_toBottomOf="@id/morningAnswer4"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <RadioGroup
+    <com.example.sleepaid.Component.SleepDiaryRadioGroupAnswerComponent
         android:id="@+id/morningAnswer5"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         app:layout_constraintTop_toBottomOf="@id/morningQuestion5"
@@ -164,7 +173,7 @@
         app:layout_constraintTop_toBottomOf="@id/morningAnswer6"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <RadioGroup
+    <com.example.sleepaid.Component.SleepDiaryRadioGroupAnswerComponent
         android:id="@+id/morningAnswer7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -180,7 +189,7 @@
         app:layout_constraintTop_toBottomOf="@id/morningAnswer7"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <RadioGroup
+    <com.example.sleepaid.Component.SleepDiaryRadioGroupAnswerComponent
         android:id="@+id/morningAnswer8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -196,7 +205,7 @@
         app:layout_constraintTop_toBottomOf="@id/morningAnswer8"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <RadioGroup
+    <com.example.sleepaid.Component.SleepDiaryRadioGroupAnswerComponent
         android:id="@+id/morningAnswer9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

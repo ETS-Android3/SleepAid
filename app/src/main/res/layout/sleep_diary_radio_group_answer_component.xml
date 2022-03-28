@@ -7,20 +7,12 @@
     android:layout_height="wrap_content"
     android:exported="true">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/answerContainer"
-        android:layout_width="match_parent"
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:hintEnabled="false"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <AutoCompleteTextView
-            android:id="@+id/answerText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/AutoCompleteTextView"/>
-    </com.google.android.material.textfield.TextInputLayout>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.example.sleepaid.Component.ErrorMessage
         android:id="@+id/errorMessage"
@@ -29,6 +21,6 @@
         android:layout_marginTop="10dp"
         android:visibility="gone"
         app:errorTextSize="15"
-        app:layout_constraintTop_toBottomOf="@id/answerContainer"
+        app:layout_constraintTop_toBottomOf="@id/radioGroup"
         app:layout_constraintStart_toStartOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,11 +12,13 @@ import android.widget.AutoCompleteTextView;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.example.sleepaid.R;
 import com.google.android.material.textfield.TextInputLayout;
 
 @SuppressLint("ResourceType")
-public class SleepDiaryQuestionComponent extends FrameLayout {
+public class SleepDiaryQuestionComponent extends ConstraintLayout {
     TextView question;
     TextView information;
 
