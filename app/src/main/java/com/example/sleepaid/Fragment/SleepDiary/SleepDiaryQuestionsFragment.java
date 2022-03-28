@@ -299,7 +299,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
                                     () -> {
-                                        Toast.makeText(getActivity(), "Diary saved successfully!", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getActivity(), "Diary saved successfully!", Toast.LENGTH_SHORT).show();
                                         model.setSleepDiaryAnswers(questionnaireId, answers);
                                         clearAnswers();
                                     },

@@ -15,6 +15,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -151,6 +152,7 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
                             alarmId -> {
                                 alarm.setId(alarmId.get(0).intValue());
                                 alarm.schedule(App.getContext());
+                                Toast.makeText(getActivity(), "Alarm scheduled successfully!", Toast.LENGTH_SHORT).show();
 
                                 List<Alarm> newAlarmList = new ArrayList<>(this.model.getAlarmList(currentAlarmType));
                                 newAlarmList.add(alarm);
@@ -173,9 +175,8 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             () -> {
-                                // Cancel current alarm and reschedule it in case the days picked have changed
-                                //this.model.getSelectedAlarm().cancel(App.getContext());
                                 this.model.getSelectedAlarm().schedule(App.getContext());
+                                Toast.makeText(getActivity(), "Alarm scheduled successfully!", Toast.LENGTH_SHORT).show();
 
                                 List<Alarm> newAlarmList = new ArrayList<>(this.model.getAlarmList(currentAlarmType));
                                 Collections.sort(newAlarmList);

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -134,6 +135,7 @@ public class AlarmListFragment extends Fragment implements AdapterView.OnItemCli
             if (isOn == 1) {
                 if (a.getIsOn() == 0) {
                     a.schedule(App.getContext());
+                    Toast.makeText(getActivity(), "Alarm scheduled successfully!", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 if (a.getIsOn() == 1) {
