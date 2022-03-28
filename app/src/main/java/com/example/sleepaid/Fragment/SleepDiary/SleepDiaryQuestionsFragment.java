@@ -5,14 +5,12 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,6 +19,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.sleepaid.App;
+import com.example.sleepaid.Component.SleepDiaryAnswerComponent;
+import com.example.sleepaid.Component.SleepDiaryQuestionComponent;
 import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
@@ -29,7 +29,6 @@ import com.example.sleepaid.Handler.ComponentHandler;
 import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
-import com.example.sleepaid.Service.InitialSettingsService;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -50,7 +49,6 @@ public class SleepDiaryQuestionsFragment extends Fragment {
     private AppDatabase db;
 
     protected int[] questionComponentIds;
-    protected int[] informationComponentIds;
     protected int[][] answerComponentIds;
 
     protected List<Integer> questionIds;
@@ -71,7 +69,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
         Button saveButton = view.findViewById(R.id.saveSleepDiaryAnswersButton);
         saveButton.setOnClickListener(saveAnswers);
 
-        this.model.setSleepDiaryHasOptions(this.questionnaireId, this.questionnaireId == 4 ? true : false);
+        this.model.setSleepDiaryHasOptions(this.questionnaireId, this.questionnaireId == 4);
         this.loadQuestions();
     }
 
@@ -84,50 +82,34 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                     .subscribe(
                             questions -> {
                                 this.model.setSleepDiaryQuestions(this.questionnaireId, questions);
-
-                                this.questionIds = questions
-                                        .stream()
-                                        .map(q -> q.getId())
-                                        .collect(Collectors.toList());
-                                Collections.sort(this.questionIds);
-
-                                for (int i = 0; i < questions.size(); i++) {
-                                    TextView question = this.view.findViewById(this.questionComponentIds[i]);
-                                    question.setText(questions.get(i).getQuestion());
-
-                                    TextView information = this.view.findViewById(this.informationComponentIds[i]);
-                                    if (!questions.get(i).getInformation().isEmpty()) {
-                                        information.setText(questions.get(i).getInformation());
-                                    } else {
-                                        information.setVisibility(View.GONE);
-                                    }
-                                }
+                                this.setupQuestions(questions);
 
                                 this.loadOptions();
                             },
                             Throwable::printStackTrace
                     );
         } else {
-            List<Question> questions = this.model.getSleepDiaryQuestions(this.questionnaireId);
-
-            this.questionIds = questions
-                    .stream()
-                    .map(q -> q.getId())
-                    .collect(Collectors.toList());
-
-            for (int i = 0; i < questions.size(); i++) {
-                TextView question = this.view.findViewById(this.questionComponentIds[i]);
-                question.setText(questions.get(i).getQuestion());
-
-                TextView information = this.view.findViewById(this.informationComponentIds[i]);
-                if (!questions.get(i).getInformation().isEmpty()) {
-                    information.setText(questions.get(i).getInformation());
-                } else {
-                    information.setVisibility(View.GONE);
-                }
-            }
+            this.setupQuestions(this.model.getSleepDiaryQuestions(this.questionnaireId));
 
             this.loadOptions();
+        }
+    }
+
+    private void setupQuestions(List<Question> questions) {
+        this.questionIds = questions
+                .stream()
+                .map(Question::getId)
+                .collect(Collectors.toList());
+
+        for (int i = 0; i < questions.size(); i++) {
+            SleepDiaryQuestionComponent question = this.view.findViewById(this.questionComponentIds[i]);
+            question.setQuestionText(questions.get(i).getQuestion());
+
+            if (!questions.get(i).getInformation().isEmpty()) {
+                question.setInformationText(questions.get(i).getInformation());
+            } else {
+                question.setInformationVisibility(View.GONE);
+            }
         }
     }
 
@@ -188,10 +170,10 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                 List<String> suggestionsForQuestionAndSection = answers.stream()
                         .filter(s -> s.getQuestionId() == questionId &&
                                 s.getSection() == section)
-                        .map(a -> a.getValue())
+                        .map(SleepDiaryAnswer::getValue)
                         .collect(Collectors.toList());
 
-                if (suggestionsForQuestionAndSection != null) {
+                if (!suggestionsForQuestionAndSection.isEmpty()) {
                     Collections.sort(suggestionsForQuestionAndSection);
 
                     this.answerSuggestions[i][j] = new ArrayAdapter(context, layout, suggestionsForQuestionAndSection);
@@ -206,13 +188,13 @@ public class SleepDiaryQuestionsFragment extends Fragment {
             for (int j = 0; j < this.answerComponentIds[i].length; j++) {
                 View answer = this.view.findViewById(answerComponentIds[i][j]);
 
-                if (answer instanceof AutoCompleteTextView) {
-                    AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) answer;
+                if (answer instanceof SleepDiaryAnswerComponent) {
+                    SleepDiaryAnswerComponent sleepDiaryAnswer = (SleepDiaryAnswerComponent) answer;
 
-                    this.setupAutoCompleteSuggestions(autoCompleteTextView, i, j);
+                    this.setupAutoCompleteSuggestions(sleepDiaryAnswer, i, j);
 
-                    if(autoCompleteTextView.getInputType() == (InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_TIME)) {
-                        this.setupTimeInput(autoCompleteTextView);
+                    if(sleepDiaryAnswer.getInputType() == (InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_TIME)) {
+                        this.setupTimeInput(sleepDiaryAnswer);
                     }
                 } else if (answer instanceof RadioGroup) {
                     this.setupRadioGroup((RadioGroup) answer, this.questionIds.get(i));
@@ -221,26 +203,24 @@ public class SleepDiaryQuestionsFragment extends Fragment {
         }
     }
 
-    private void setupAutoCompleteSuggestions(AutoCompleteTextView autoCompleteTextView, int i, int j) {
+    private void setupAutoCompleteSuggestions(SleepDiaryAnswerComponent sleepDiaryAnswer, int i, int j) {
         if (this.answerSuggestions[i][j] != null) {
-            autoCompleteTextView.setAdapter(this.answerSuggestions[i][j]);
-
-            autoCompleteTextView.setOnTouchListener(new View.OnTouchListener(){
-                @Override
-                public boolean onTouch(View v, MotionEvent event){
-                    autoCompleteTextView.showDropDown();
-                    return false;
-                }
-            });
+            sleepDiaryAnswer.setAdapter(this.answerSuggestions[i][j]);
         }
+
+        sleepDiaryAnswer.setOnTouchListener((v, event) -> {
+            sleepDiaryAnswer.setError(null);
+            sleepDiaryAnswer.showDropDown();
+            return false;
+        });
     }
 
-    private void setupTimeInput(AutoCompleteTextView autoCompleteTextView) {
-        autoCompleteTextView.addTextChangedListener(new TextWatcher() {
+    private void setupTimeInput(SleepDiaryAnswerComponent sleepDiaryAnswer) {
+        sleepDiaryAnswer.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
-                if (autoCompleteTextView.length() == 2 && !autoCompleteTextView.getText().toString().contains(":")) {
-                    autoCompleteTextView.setText(autoCompleteTextView.getText() + ":");
-                    autoCompleteTextView.setSelection(autoCompleteTextView.length());
+                if (sleepDiaryAnswer.length() == 2 && !sleepDiaryAnswer.getText().toString().contains(":")) {
+                    sleepDiaryAnswer.setText(sleepDiaryAnswer.getText() + ":");
+                    sleepDiaryAnswer.setSelection(sleepDiaryAnswer.length());
                 }
             }
 
@@ -258,12 +238,12 @@ public class SleepDiaryQuestionsFragment extends Fragment {
 
         List<Integer> possibleOptionsIds = possibleOptions
                 .stream()
-                .map(o -> o.getId())
+                .map(Option::getId)
                 .collect(Collectors.toList());
 
         List<String> possibleOptionsTexts = possibleOptions
                 .stream()
-                .map(o -> o.getValue())
+                .map(Option::getValue)
                 .collect(Collectors.toList());
 
         ComponentHandler.setupRadioGroup(
@@ -279,7 +259,6 @@ public class SleepDiaryQuestionsFragment extends Fragment {
 
     private View.OnClickListener saveAnswers = new View.OnClickListener() {
         public void onClick(View view) {
-            //TODO check if it's already been submitted
             List<SleepDiaryAnswer> previousAnswers = model.getSleepDiaryAnswers(questionnaireId);
             Optional<SleepDiaryAnswer> answerForToday = previousAnswers.stream()
                     .filter(a -> a.getDate().equals(DataHandler.getSQLiteDate(ZonedDateTime.now())))
@@ -318,21 +297,26 @@ public class SleepDiaryQuestionsFragment extends Fragment {
             for (int j = 0; j < this.sections[i].length; j++) {
                 View answerComponent = this.view.findViewById(this.answerComponentIds[i][j]);
 
-                if (answerComponent instanceof AutoCompleteTextView) {
-                    AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) answerComponent;
-                    AutoCompleteTextView autoCompleteTextViewParent = (AutoCompleteTextView) this.view.findViewById(this.answerComponentIds[i][0]);
+                if (answerComponent instanceof SleepDiaryAnswerComponent) {
+                    SleepDiaryAnswerComponent sleepDiaryAnswer = (SleepDiaryAnswerComponent) answerComponent;
+                    SleepDiaryAnswerComponent sleepDiaryAnswerParent = this.view.findViewById(this.answerComponentIds[i][0]);
 
-                    boolean isEmptyAndHasError = autoCompleteTextView.getText().toString().trim().isEmpty()
+                    boolean isEmptyAndHasError = sleepDiaryAnswer.getText().toString().trim().isEmpty()
                             && this.emptyErrors[i][j] != null;
 
-                    boolean isEmptyAndHasErrorAndParentIsNotNoneOrEmpty = autoCompleteTextView.getText().toString().trim().isEmpty()
+                    boolean isEmptyAndHasErrorAndParentIsNotNoneOrEmpty = sleepDiaryAnswer.getText().toString().trim().isEmpty()
                             && this.emptyErrors[i][j] != null
-                            && !autoCompleteTextViewParent.getText().toString().trim().toLowerCase().equals("none")
-                            && !autoCompleteTextViewParent.getText().toString().trim().isEmpty();
+                            && !sleepDiaryAnswerParent.getText().toString().trim().equalsIgnoreCase("none")
+                            && !sleepDiaryAnswerParent.getText().toString().trim().isEmpty();
 
                     if((j == 0 && isEmptyAndHasError)
                             || (this.sections[i].length > 1 && j != 0 && isEmptyAndHasErrorAndParentIsNotNoneOrEmpty)) {
-                        autoCompleteTextView.setError(this.emptyErrors[i][j]);
+                        sleepDiaryAnswer.setError(this.emptyErrors[i][j]);
+
+                        // If this is the first error we encounter redirect the user to it
+                        if (!hasErrors) {
+                            sleepDiaryAnswer.requestFocus();
+                        }
 
                         hasErrors = true;
                     } else {

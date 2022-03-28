@@ -36,18 +36,6 @@ public class MorningSleepDiaryFragment extends SleepDiaryQuestionsFragment {
                 R.id.morningQuestion9
         };
 
-        this.informationComponentIds = new int[]{
-                R.id.morningInformation1,
-                R.id.morningInformation2,
-                R.id.morningInformation3,
-                R.id.morningInformation4,
-                R.id.morningInformation5,
-                R.id.morningInformation6,
-                R.id.morningInformation7,
-                R.id.morningInformation8,
-                R.id.morningInformation9
-        };
-
         this.answerComponentIds = new int[][]{
                 {R.id.morningAnswer1},
                 {R.id.morningAnswer2},

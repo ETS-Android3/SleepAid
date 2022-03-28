@@ -1,6 +1,5 @@
 package com.example.sleepaid.Model;
 
-import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
 import com.example.sleepaid.Database.SleepDiaryAnswer.SleepDiaryAnswer;

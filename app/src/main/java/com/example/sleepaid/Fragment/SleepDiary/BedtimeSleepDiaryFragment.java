@@ -33,15 +33,6 @@ public class BedtimeSleepDiaryFragment extends SleepDiaryQuestionsFragment {
                 R.id.bedtimeQuestion6
         };
 
-        this.informationComponentIds = new int[]{
-                R.id.bedtimeInformation1,
-                R.id.bedtimeInformation2,
-                R.id.bedtimeInformation3,
-                R.id.bedtimeInformation4,
-                R.id.bedtimeInformation5,
-                R.id.bedtimeInformation6
-        };
-
         this.answerComponentIds = new int[][]{
                 {R.id.bedtimeAnswer1},
                 {R.id.bedtimeAnswer2},

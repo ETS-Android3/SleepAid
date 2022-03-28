@@ -1,12 +1,9 @@
 package com.example.sleepaid.Database.SleepDiaryAnswer;
 
 import androidx.annotation.NonNull;
-import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
-import androidx.room.PrimaryKey;
 
-import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
 
 @Entity(primaryKeys = {

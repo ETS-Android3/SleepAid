@@ -3,4 +3,15 @@
     <declare-styleable name="TextBox">
         <attr name="text" format="string" />
     </declare-styleable>
+
+    <declare-styleable name="SleepDiaryQuestionComponent">
+        <attr name="questionText" format="string" />
+        <attr name="informationText" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="SleepDiaryAnswerComponent">
+        <attr name="hint" format="string" />
+        <attr name="inputType" format="string" />
+        <attr name="maxLength" format="integer" />
+    </declare-styleable>
 </resources>

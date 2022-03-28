@@ -46,7 +46,7 @@ public class TextBox extends FrameLayout {
     }
 
     private void initComponents() {
-        text = (TextView) findViewById(R.id.box_Text);
+        text = findViewById(R.id.box_Text);
     }
 
     public void setText(CharSequence value) {
