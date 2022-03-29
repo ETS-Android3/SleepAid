@@ -56,6 +56,12 @@ public class SleepDiaryRadioGroupAnswerComponent extends ConstraintLayout {
         }
     }
 
+    public void setOnClickListener(OnClickListener listener) {
+        for (int r = 0; r < radioGroup.getChildCount(); r++) {
+            radioGroup.getChildAt(r).setOnClickListener(listener);
+        }
+    }
+
     public RadioGroup getRadioGroup() {
         return radioGroup;
     }

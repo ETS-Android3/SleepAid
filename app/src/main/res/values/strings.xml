@@ -4,7 +4,11 @@
     <string name="welcome_text">Welcome to Sleep Aid, your personal sleep hygiene coach!\nWe’ll start by asking you a few questions that will help us personalise your experience and understand your needs.</string>
 
     <string name="exit_questionnaire">Are you sure you want to exit the questionnaire?\nYour answers will not be saved.</string>
-    <string name="question_validation">Please select an option.</string>
+
+    <string name="radio_group_validation">Please select an option.</string>
+    <string name="hour_validation">Please enter a valid hour (between \"00\" and \"23\").</string>
+    <string name="minute_validation">Please enter a valid minute (between \"00\" and \"59\").</string>
+    <string name="time_validation">Please enter a valid time (between \"00:00\" and \"23:59\").</string>
 
     <string name="exit_alarm_configuration">Save your changes or discard them?</string>
     <string name="exit_alarm_sound">Save your choice or discard it?</string>

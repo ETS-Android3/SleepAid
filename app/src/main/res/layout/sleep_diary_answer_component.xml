@@ -12,6 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:hintEnabled="false"
+        app:boxStrokeWidth="2.5dp"
+        app:boxStrokeWidthFocused="2.5dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 

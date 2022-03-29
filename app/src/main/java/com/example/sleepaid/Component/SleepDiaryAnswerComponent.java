@@ -9,7 +9,7 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
@@ -40,7 +40,11 @@ public class SleepDiaryAnswerComponent extends ConstraintLayout {
         TypedArray typedArray = context.obtainStyledAttributes(sets);
         CharSequence hint = typedArray.getText(0);
         CharSequence inputType = typedArray.getText(1);
-        int maxLength = typedArray.getInt(2, 5);
+
+        int maxLength = 0;
+        if (typedArray.hasValue(2)) {
+            maxLength = typedArray.getInt(2, 5);
+        }
 
         typedArray.recycle();
 
@@ -48,7 +52,10 @@ public class SleepDiaryAnswerComponent extends ConstraintLayout {
 
         setHint(hint);
         setInputType(inputType);
-        setMaxLength(maxLength);
+
+        if (maxLength != 0) {
+            setMaxLength(maxLength);
+        }
     }
 
     private void init(Context context, AttributeSet attributes) {
@@ -59,7 +66,11 @@ public class SleepDiaryAnswerComponent extends ConstraintLayout {
         TypedArray typedArray = context.obtainStyledAttributes(attributes, sets);
         CharSequence hint = typedArray.getText(0);
         CharSequence inputType = typedArray.getText(1);
-        int maxLength = typedArray.getInt(2, 5);
+
+        int maxLength = 0;
+        if (typedArray.hasValue(2)) {
+            maxLength = typedArray.getInt(2, 5);
+        }
 
         typedArray.recycle();
 
@@ -67,7 +78,10 @@ public class SleepDiaryAnswerComponent extends ConstraintLayout {
 
         setHint(hint);
         setInputType(inputType);
-        setMaxLength(maxLength);
+
+        if (maxLength != 0) {
+            setMaxLength(maxLength);
+        }
     }
 
     private void initComponents() {
@@ -119,6 +133,10 @@ public class SleepDiaryAnswerComponent extends ConstraintLayout {
 
     public void setOnTouchListener(OnTouchListener listener) {
         answerText.setOnTouchListener(listener);
+    }
+
+    public void setOnEditorActionListener(TextView.OnEditorActionListener listener) {
+        answerText.setOnEditorActionListener(listener);
     }
 
     public void setSelection(int index) {

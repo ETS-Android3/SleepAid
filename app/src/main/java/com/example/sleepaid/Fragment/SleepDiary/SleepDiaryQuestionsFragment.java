@@ -5,11 +5,15 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -203,7 +207,17 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                         this.setupAutoCompleteSuggestions(sleepDiaryAnswer, i, j);
 
                         if (sleepDiaryAnswer.getInputType() == (InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_TIME)) {
-                            this.setupTimeInput(sleepDiaryAnswer);
+                            this.setupTimeInput(sleepDiaryAnswer, i, j);
+                        } else {
+                            sleepDiaryAnswer.addTextChangedListener(new TextWatcher() {
+                                public void afterTextChanged(Editable s) {
+                                    sleepDiaryAnswer.setError(null);
+                                }
+
+                                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                                public void onTextChanged(CharSequence s, int start, int before, int count) { }
+                            });
                         }
                     }
                 } else if (answer instanceof SleepDiaryRadioGroupAnswerComponent) {
@@ -217,6 +231,8 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                         }
                     }
                 }
+
+                setupNextFocus(answer, i, j);
             }
         }
     }
@@ -227,18 +243,53 @@ public class SleepDiaryQuestionsFragment extends Fragment {
         }
 
         sleepDiaryAnswer.setOnTouchListener((v, event) -> {
-            sleepDiaryAnswer.setError(null);
             sleepDiaryAnswer.showDropDown();
             return false;
         });
     }
 
-    private void setupTimeInput(SleepDiaryAnswerComponent sleepDiaryAnswer) {
+    private void setupNextFocus(View component, int i, int j) {
+        if (component instanceof SleepDiaryAnswerComponent) {
+            SleepDiaryAnswerComponent sleepDiaryAnswer = (SleepDiaryAnswerComponent) component;
+
+            sleepDiaryAnswer.setOnEditorActionListener((v, actionId, event) -> {
+                if (actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_DONE) {
+                    goToNextComponent(i, j);
+                    return true;
+                }
+
+                return false;
+            });
+        } else if (component instanceof SleepDiaryRadioGroupAnswerComponent) {
+            SleepDiaryRadioGroupAnswerComponent sleepDiaryRadioGroupAnswer = (SleepDiaryRadioGroupAnswerComponent) component;
+
+            sleepDiaryRadioGroupAnswer.setOnClickListener(view -> {
+                sleepDiaryRadioGroupAnswer.setError(null);
+                goToNextComponent(i, j);
+            });
+        }
+    }
+
+    private void goToNextComponent(int i, int j) {
+        if (j < this.answerComponentIds[i].length - 1) {
+            this.view.findViewById(this.answerComponentIds[i][j + 1]).requestFocus();
+        } else if (i < this.answerComponentIds.length - 1) {
+            this.view.findViewById(this.answerComponentIds[i + 1][0]).requestFocus();
+        } else {
+            this.view.findViewById(R.id.saveSleepDiaryAnswersButton).requestFocus();
+        }
+    }
+
+    private void setupTimeInput(SleepDiaryAnswerComponent sleepDiaryAnswer, int i, int j) {
         sleepDiaryAnswer.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
+                sleepDiaryAnswer.setError(null);
+
                 if (sleepDiaryAnswer.length() == 2 && !sleepDiaryAnswer.getText().toString().contains(":")) {
                     sleepDiaryAnswer.setText(sleepDiaryAnswer.getText() + ":");
                     sleepDiaryAnswer.setSelection(sleepDiaryAnswer.length());
+                } else if (sleepDiaryAnswer.length() == 5) {
+                    goToNextComponent(i, j);
                 }
             }
 
@@ -248,7 +299,6 @@ public class SleepDiaryQuestionsFragment extends Fragment {
         });
     }
 
-    //TODO remove error on click?
     private void setupRadioGroup(RadioGroup radioGroup, int questionId) {
         List<Option> possibleOptions = this.options
                 .stream()
@@ -305,7 +355,6 @@ public class SleepDiaryQuestionsFragment extends Fragment {
 
     private boolean validateAnswers() {
         boolean hasErrors = false;
-        //TODO style the errors better
 
         for (int i = 0; i < this.sections.length; i++) {
             for (int j = 0; j < this.sections[i].length; j++) {
@@ -323,8 +372,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                             && !sleepDiaryAnswerParent.getText().toString().trim().equalsIgnoreCase("none")
                             && !sleepDiaryAnswerParent.getText().toString().trim().isEmpty();
 
-                    if((j == 0 && isEmptyAndHasError)
-                            || (this.sections[i].length > 1 && j != 0 && isEmptyAndHasErrorAndParentIsNotNoneOrEmpty)) {
+                    if((j == 0 && isEmptyAndHasError) || (this.sections[i].length > 1 && j != 0 && isEmptyAndHasErrorAndParentIsNotNoneOrEmpty)) {
                         sleepDiaryAnswer.setError(this.emptyErrors[i][j]);
 
                         // If this is the first error we encounter redirect the user to it
@@ -333,8 +381,37 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                         }
 
                         hasErrors = true;
-                    } else {
-                        //TODO check time inputs are correct, numbers are not ridiculous
+                    } else if (!isEmptyAndHasError && sleepDiaryAnswer.getInputType() == (InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_TIME)) {
+                            List<Integer> times = DataHandler.getIntsFromString(sleepDiaryAnswer.getText().toString());
+
+                            boolean isHourValid = times.size() == 2 && times.get(0) >= 0 && times.get(0) <= 23;
+                            boolean isMinuteValid = times.size() == 2 && times.get(1) >= 0 && times.get(1) <= 59;
+
+                            if (!isHourValid && isMinuteValid) {
+                                sleepDiaryAnswer.setError(getString(R.string.hour_validation));
+
+                                if (!hasErrors) {
+                                    sleepDiaryAnswer.requestFocus();
+                                }
+
+                                hasErrors = true;
+                            } else if (isHourValid && !isMinuteValid) {
+                                sleepDiaryAnswer.setError(getString(R.string.minute_validation));
+
+                                if (!hasErrors) {
+                                    sleepDiaryAnswer.requestFocus();
+                                }
+
+                                hasErrors = true;
+                            } else if (!isHourValid && !isMinuteValid) {
+                                sleepDiaryAnswer.setError(getString(R.string.time_validation));
+
+                                if (!hasErrors) {
+                                    sleepDiaryAnswer.requestFocus();
+                                }
+
+                                hasErrors = true;
+                            }
                     }
                 } else if (answerComponent instanceof SleepDiaryRadioGroupAnswerComponent) {
                     SleepDiaryRadioGroupAnswerComponent sleepDiaryRadioGroupAnswerComponent = (SleepDiaryRadioGroupAnswerComponent) answerComponent;
@@ -342,7 +419,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                     RadioGroup radioGroup = sleepDiaryRadioGroupAnswerComponent.getRadioGroup();
 
                     if (radioGroup.getCheckedRadioButtonId() == -1) {
-                        sleepDiaryRadioGroupAnswerComponent.setError("Please select an option.");
+                        sleepDiaryRadioGroupAnswerComponent.setError(getString(R.string.radio_group_validation));
 
                         if (!hasErrors) {
                             sleepDiaryRadioGroupAnswerComponent.requestFocus();

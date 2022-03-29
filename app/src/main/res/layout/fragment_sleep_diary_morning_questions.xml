@@ -223,6 +223,8 @@
         android:paddingVertical="7.5dp"
         android:text="Save"
         android:textSize="18sp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         app:layout_constraintTop_toBottomOf="@id/morningAnswer9"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

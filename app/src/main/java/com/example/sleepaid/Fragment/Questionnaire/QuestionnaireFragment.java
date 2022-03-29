@@ -164,7 +164,7 @@ public class QuestionnaireFragment extends Fragment {
 
             Modal.show(
                     requireActivity(),
-                    getString(R.string.question_validation),
+                    getString(R.string.radio_group_validation),
                     getString(R.string.ok_modal),
                     cancelAction,
                     null,
