@@ -19,9 +19,9 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.sleepaid.App;
-import com.example.sleepaid.Component.SleepDiaryAnswerComponent;
+import com.example.sleepaid.Component.EditTextAnswerComponent;
 import com.example.sleepaid.Component.SleepDiaryQuestionComponent;
-import com.example.sleepaid.Component.SleepDiaryRadioGroupAnswerComponent;
+import com.example.sleepaid.Component.RadioGroupAnswerComponent;
 import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.Option.Option;
@@ -31,6 +31,7 @@ import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
 import com.example.sleepaid.Service.RemoteDatabaseTransferService;
+import com.example.sleepaid.Service.ValidationService;
 import com.google.gson.Gson;
 
 import java.time.ZonedDateTime;
@@ -196,8 +197,8 @@ public class SleepDiaryQuestionsFragment extends Fragment {
             for (int j = 0; j < this.answerComponentIds[i].length; j++) {
                 View answer = this.view.findViewById(answerComponentIds[i][j]);
 
-                if (answer instanceof SleepDiaryAnswerComponent) {
-                    SleepDiaryAnswerComponent sleepDiaryAnswer = (SleepDiaryAnswerComponent) answer;
+                if (answer instanceof EditTextAnswerComponent) {
+                    EditTextAnswerComponent sleepDiaryAnswer = (EditTextAnswerComponent) answer;
 
                     if (answerForTodayExists) {
                         sleepDiaryAnswer.setEnabled(false);
@@ -218,8 +219,8 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                             });
                         }
                     }
-                } else if (answer instanceof SleepDiaryRadioGroupAnswerComponent) {
-                    SleepDiaryRadioGroupAnswerComponent sleepDiaryRadioGroupAnswer = (SleepDiaryRadioGroupAnswerComponent) answer;
+                } else if (answer instanceof RadioGroupAnswerComponent) {
+                    RadioGroupAnswerComponent sleepDiaryRadioGroupAnswer = (RadioGroupAnswerComponent) answer;
 
                     this.setupRadioGroup(sleepDiaryRadioGroupAnswer.getRadioGroup(), this.questionIds.get(i));
 
@@ -233,7 +234,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
         }
     }
 
-    private void setupAutoCompleteSuggestions(SleepDiaryAnswerComponent sleepDiaryAnswer, int i, int j) {
+    private void setupAutoCompleteSuggestions(EditTextAnswerComponent sleepDiaryAnswer, int i, int j) {
         if (this.answerSuggestions[i][j] != null) {
             sleepDiaryAnswer.setAdapter(this.answerSuggestions[i][j]);
         }
@@ -245,8 +246,8 @@ public class SleepDiaryQuestionsFragment extends Fragment {
     }
 
     private void setupNextFocus(View component, int i, int j) {
-        if (component instanceof SleepDiaryAnswerComponent) {
-            SleepDiaryAnswerComponent sleepDiaryAnswer = (SleepDiaryAnswerComponent) component;
+        if (component instanceof EditTextAnswerComponent) {
+            EditTextAnswerComponent sleepDiaryAnswer = (EditTextAnswerComponent) component;
 
             sleepDiaryAnswer.setOnEditorActionListener((v, actionId, event) -> {
                 if (actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_DONE) {
@@ -256,8 +257,8 @@ public class SleepDiaryQuestionsFragment extends Fragment {
 
                 return false;
             });
-        } else if (component instanceof SleepDiaryRadioGroupAnswerComponent) {
-            SleepDiaryRadioGroupAnswerComponent sleepDiaryRadioGroupAnswer = (SleepDiaryRadioGroupAnswerComponent) component;
+        } else if (component instanceof RadioGroupAnswerComponent) {
+            RadioGroupAnswerComponent sleepDiaryRadioGroupAnswer = (RadioGroupAnswerComponent) component;
 
             sleepDiaryRadioGroupAnswer.setOnClickListener(view -> {
                 sleepDiaryRadioGroupAnswer.setError(null);
@@ -276,7 +277,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
         }
     }
 
-    private void setupTimeInput(SleepDiaryAnswerComponent sleepDiaryAnswer, int i, int j) {
+    private void setupTimeInput(EditTextAnswerComponent sleepDiaryAnswer, int i, int j) {
         sleepDiaryAnswer.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
                 sleepDiaryAnswer.setError(null);
@@ -360,71 +361,16 @@ public class SleepDiaryQuestionsFragment extends Fragment {
             for (int j = 0; j < this.sections[i].length; j++) {
                 View answerComponent = this.view.findViewById(this.answerComponentIds[i][j]);
 
-                if (answerComponent instanceof SleepDiaryAnswerComponent) {
-                    SleepDiaryAnswerComponent sleepDiaryAnswer = (SleepDiaryAnswerComponent) answerComponent;
-                    SleepDiaryAnswerComponent sleepDiaryAnswerParent = this.view.findViewById(this.answerComponentIds[i][0]);
-
-                    boolean isEmptyAndHasError = sleepDiaryAnswer.getText().toString().trim().isEmpty()
-                            && this.emptyErrors[i][j] != null;
-
-                    boolean isEmptyAndHasErrorAndParentIsNotNoneOrEmpty = sleepDiaryAnswer.getText().toString().trim().isEmpty()
-                            && this.emptyErrors[i][j] != null
-                            && !sleepDiaryAnswerParent.getText().toString().trim().equalsIgnoreCase("none")
-                            && !sleepDiaryAnswerParent.getText().toString().trim().isEmpty();
-
-                    if((j == 0 && isEmptyAndHasError) || (this.sections[i].length > 1 && j != 0 && isEmptyAndHasErrorAndParentIsNotNoneOrEmpty)) {
-                        sleepDiaryAnswer.setError(this.emptyErrors[i][j]);
-
-                        // If this is the first error we encounter redirect the user to it
-                        if (!hasErrors) {
-                            sleepDiaryAnswer.requestFocus();
-                        }
-
-                        hasErrors = true;
-                    } else if (!isEmptyAndHasError && sleepDiaryAnswer.getInputType() == (InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_TIME)) {
-                            List<Integer> times = DataHandler.getIntsFromString(sleepDiaryAnswer.getText().toString());
-
-                            boolean isHourValid = times.size() == 2 && times.get(0) >= 0 && times.get(0) <= 23;
-                            boolean isMinuteValid = times.size() == 2 && times.get(1) >= 0 && times.get(1) <= 59;
-
-                            if (!isHourValid && isMinuteValid) {
-                                sleepDiaryAnswer.setError(getString(R.string.hour_validation));
-
-                                if (!hasErrors) {
-                                    sleepDiaryAnswer.requestFocus();
-                                }
-
-                                hasErrors = true;
-                            } else if (isHourValid && !isMinuteValid) {
-                                sleepDiaryAnswer.setError(getString(R.string.minute_validation));
-
-                                if (!hasErrors) {
-                                    sleepDiaryAnswer.requestFocus();
-                                }
-
-                                hasErrors = true;
-                            } else if (!isHourValid && !isMinuteValid) {
-                                sleepDiaryAnswer.setError(getString(R.string.time_validation));
-
-                                if (!hasErrors) {
-                                    sleepDiaryAnswer.requestFocus();
-                                }
-
-                                hasErrors = true;
-                            }
-                    }
-                } else if (answerComponent instanceof SleepDiaryRadioGroupAnswerComponent) {
-                    SleepDiaryRadioGroupAnswerComponent sleepDiaryRadioGroupAnswerComponent = (SleepDiaryRadioGroupAnswerComponent) answerComponent;
-
-                    if (sleepDiaryRadioGroupAnswerComponent.getCheckedRadioButtonId() == -1) {
-                        sleepDiaryRadioGroupAnswerComponent.setError(getString(R.string.radio_group_validation));
-
-                        if (!hasErrors) {
-                            sleepDiaryRadioGroupAnswerComponent.requestFocus();
-                        }
-
-                        hasErrors = true;
-                    }
+                if (answerComponent instanceof EditTextAnswerComponent) {
+                    hasErrors = ValidationService.validateEditText(
+                            (EditTextAnswerComponent) answerComponent,
+                            j != 0,
+                            this.view.findViewById(this.answerComponentIds[i][0]),
+                            this.emptyErrors[i][j],
+                            hasErrors
+                    );
+                } else if (answerComponent instanceof RadioGroupAnswerComponent) {
+                    hasErrors = ValidationService.validateRadioGroup((RadioGroupAnswerComponent) answerComponent, hasErrors);
                 }
             }
         }
@@ -441,10 +387,10 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                 String answer = "";
                 int checkedId = -1;
 
-                if (answerComponent instanceof SleepDiaryAnswerComponent) {
-                    answer = ((SleepDiaryAnswerComponent) answerComponent).getText().toString();
-                } else if (answerComponent instanceof SleepDiaryRadioGroupAnswerComponent) {
-                    checkedId = ((SleepDiaryRadioGroupAnswerComponent) answerComponent).getCheckedRadioButtonId();
+                if (answerComponent instanceof EditTextAnswerComponent) {
+                    answer = ((EditTextAnswerComponent) answerComponent).getText().toString();
+                } else if (answerComponent instanceof RadioGroupAnswerComponent) {
+                    checkedId = ((RadioGroupAnswerComponent) answerComponent).getCheckedRadioButtonId();
                     answer = ((RadioButton) this.view.findViewById(checkedId)).getText().toString();
                 }
 
@@ -470,10 +416,10 @@ public class SleepDiaryQuestionsFragment extends Fragment {
             for (int j = 0; j < this.answerComponentIds[i].length; j++) {
                 View answerComponent = this.view.findViewById(this.answerComponentIds[i][j]);
 
-                if (answerComponent instanceof SleepDiaryAnswerComponent) {
-                    ((SleepDiaryAnswerComponent) answerComponent).clear();
-                } else if (answerComponent instanceof SleepDiaryRadioGroupAnswerComponent) {
-                    ((SleepDiaryRadioGroupAnswerComponent) answerComponent).clearCheck();
+                if (answerComponent instanceof EditTextAnswerComponent) {
+                    ((EditTextAnswerComponent) answerComponent).clear();
+                } else if (answerComponent instanceof RadioGroupAnswerComponent) {
+                    ((RadioGroupAnswerComponent) answerComponent).clearCheck();
                 }
             }
         }

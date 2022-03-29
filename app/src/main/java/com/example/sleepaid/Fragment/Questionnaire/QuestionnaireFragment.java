@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -18,7 +19,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.sleepaid.App;
+import com.example.sleepaid.Component.EditTextAnswerComponent;
 import com.example.sleepaid.Component.Modal;
+import com.example.sleepaid.Component.RadioGroupAnswerComponent;
 import com.example.sleepaid.Component.TextBox;
 import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.Database.AppDatabase;
@@ -28,6 +31,7 @@ import com.example.sleepaid.Handler.ComponentHandler;
 import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
+import com.example.sleepaid.Service.ValidationService;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -48,6 +52,8 @@ public class QuestionnaireFragment extends Fragment {
     private List<Answer> currentAnswers;
 
     private int sizeInDp;
+
+    private LinearLayout answerContainer;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,6 +92,8 @@ public class QuestionnaireFragment extends Fragment {
 
         this.sizeInDp = DataHandler.getSizeInDp(25, getResources().getDisplayMetrics());
 
+        this.answerContainer = this.view.findViewById(R.id.questionnaireAnswerContainer);
+
         this.currentAnswers = this.model.getQuestionnaireAnswers() == null ? new ArrayList<>() : this.model.getQuestionnaireAnswers();
 
         Button backButton = this.view.findViewById(R.id.backButton);
@@ -94,7 +102,7 @@ public class QuestionnaireFragment extends Fragment {
         Button nextButton = this.view.findViewById(R.id.nextButton);
         nextButton.setOnClickListener(this::loadNextScreen);
 
-        if(this.model.getQuestionnaireQuestions(1) == null) {
+        if(this.model.getQuestionnaireQuestions() == null) {
             loadAllQuestions();
         }
         else {
@@ -153,60 +161,61 @@ public class QuestionnaireFragment extends Fragment {
     }
 
     public void loadNextScreen(View view) {
-        RadioGroup radioGroup = this.view.findViewById(R.id.radioGroup);
-        int checkedId = radioGroup.getCheckedRadioButtonId();
-
-        if (checkedId == -1) {
-            DialogInterface.OnClickListener cancelAction = (dialog, whichButton) -> {};
-
-            Modal.show(
-                    requireActivity(),
-                    getString(R.string.radio_group_validation),
-                    getString(R.string.ok_modal),
-                    cancelAction,
-                    null,
-                    null
-            );
-        }
-        else {
+        if (this.validateAnswers()) {
             loadScreen(this.model.getCurrentQuestionId() + 1);
         }
     }
 
     private void loadScreen(int questionId) {
-        int checkedId = ((RadioGroup) this.view.findViewById(R.id.radioGroup)).getCheckedRadioButtonId();
+        for (int i = 0; i < this.answerContainer.getChildCount(); i++) {
+            int answerId = -1;
+            String answerText = null;
 
-        if (checkedId != -1) {
-            int existingAnswerId = -1;
+            if (this.answerContainer.getChildAt(i) instanceof EditTextAnswerComponent) {
+                EditTextAnswerComponent answerComponent = (EditTextAnswerComponent) this.answerContainer.getChildAt(i);
 
-            if (!this.currentAnswers.isEmpty()) {
-                Optional<Answer> answer = this.currentAnswers
-                        .stream()
-                        .filter(a -> a.getQuestionId() == this.model.getCurrentQuestionId())
-                        .findAny();
+                answerText = answerComponent.getText().toString();
+            } else if (this.answerContainer.getChildAt(i) instanceof RadioGroupAnswerComponent) {
+                RadioGroupAnswerComponent answerComponent = (RadioGroupAnswerComponent) this.answerContainer.getChildAt(i);
 
-                if (answer.isPresent()) {
-                    existingAnswerId = this.currentAnswers.indexOf(answer.get());
+                answerId = answerComponent.getCheckedRadioButtonId();
+                if (answerId != -1) {
+                    answerText = ((RadioButton) this.view.findViewById(answerId)).getText().toString();
                 }
             }
 
-            if (existingAnswerId != -1) {
-                this.currentAnswers.set(existingAnswerId, new Answer(
-                        ((RadioButton) this.view.findViewById(checkedId)).getText().toString(),
-                        this.model.getCurrentQuestionId(),
-                        checkedId,
-                        1,
-                        DataHandler.getSQLiteDate(ZonedDateTime.now())
-                ));
-            }
-            else {
-                this.currentAnswers.add(new Answer(
-                        ((RadioButton) this.view.findViewById(checkedId)).getText().toString(),
-                        this.model.getCurrentQuestionId(),
-                        checkedId,
-                        1,
-                        DataHandler.getSQLiteDate(ZonedDateTime.now())
-                ));
+            if (!answerText.isEmpty() && answerText != null) {
+                int existingAnswerId = -1;
+
+                if (!this.currentAnswers.isEmpty()) {
+                    Optional<Answer> answer = this.currentAnswers
+                            .stream()
+                            .filter(a -> a.getQuestionId() == this.model.getCurrentQuestionId())
+                            .findAny();
+
+                    if (answer.isPresent()) {
+                        existingAnswerId = this.currentAnswers.indexOf(answer.get());
+                    }
+                }
+
+                if (existingAnswerId != -1) {
+                    this.currentAnswers.set(existingAnswerId, new Answer(
+                            answerText,
+                            this.model.getCurrentQuestionId(),
+                            answerId == -1 ? null : answerId,
+                            1,
+                            DataHandler.getSQLiteDate(ZonedDateTime.now())
+                    ));
+                }
+                else {
+                    this.currentAnswers.add(new Answer(
+                            answerText,
+                            this.model.getCurrentQuestionId(),
+                            answerId == -1 ? null : answerId,
+                            1,
+                            DataHandler.getSQLiteDate(ZonedDateTime.now())
+                    ));
+                }
             }
         }
 
@@ -214,6 +223,7 @@ public class QuestionnaireFragment extends Fragment {
             exitQuestionnaire();
         }
         else if (questionId == this.model.getQuestionnaireQuestions(6).get(this.model.getQuestionnaireQuestions(6).size() - 1).getId() + 1) {
+            //TODO fix this
             this.model.setQuestionnaireAnswers(6, this.currentAnswers);
 
             NavHostFragment.findNavController(this).navigate(R.id.showSummaryAction);
@@ -231,6 +241,29 @@ public class QuestionnaireFragment extends Fragment {
                 presetWakeUpTime(questionId);
             }
         }
+    }
+
+    private boolean validateAnswers() {
+        boolean hasErrors = false;
+
+        for (int i = 0; i < this.answerContainer.getChildCount(); i++) {
+            if (this.answerContainer.getChildAt(i) instanceof EditTextAnswerComponent) {
+                hasErrors = ValidationService.validateEditText(
+                        (EditTextAnswerComponent) this.answerContainer.getChildAt(i),
+                        false,
+                        null,
+                        "Please enter a value.",
+                        hasErrors
+                );
+            } else if (this.answerContainer.getChildAt(i) instanceof RadioGroupAnswerComponent) {
+                hasErrors = ValidationService.validateRadioGroup(
+                        (RadioGroupAnswerComponent) this.answerContainer.getChildAt(i),
+                        hasErrors
+                );
+            }
+        }
+
+        return !hasErrors;
     }
 
     private void exitQuestionnaire() {
@@ -261,38 +294,57 @@ public class QuestionnaireFragment extends Fragment {
 
         if (question.isPresent()) {
             questionBox.setText(question.get().getQuestion());
-            informationBox.setText(question.get().getInformation());
-            informationBox.setTextSize((int) (this.sizeInDp / 3.5));
+
+            if (!question.get().getInformation().isEmpty()) {
+                informationBox.setVisibility(View.VISIBLE);
+                informationBox.setText(question.get().getInformation());
+                informationBox.setTextSize((int) (this.sizeInDp / 3.5));
+            } else {
+                informationBox.setVisibility(View.GONE);
+            }
         }
     }
 
     private void loadOptionsForQuestion(int questionId) {
-        RadioGroup radioGroup = this.view.findViewById(R.id.radioGroup);
+        this.answerContainer.removeAllViews();
 
         List<Option> possibleOptions = this.model.getQuestionnaireOptions()
                 .stream()
                 .filter(o -> o.getQuestionId() == questionId)
                 .collect(Collectors.toList());
 
-        List<Integer> possibleOptionsIds = possibleOptions
-                .stream()
-                .map(o -> o.getId())
-                .collect(Collectors.toList());
+        if (!possibleOptions.isEmpty()) {
+            RadioGroupAnswerComponent radioGroupAnswerComponent = new RadioGroupAnswerComponent(App.getContext());
+            this.answerContainer.addView(radioGroupAnswerComponent);
 
-        List<String> possibleOptionsTexts = possibleOptions
-                .stream()
-                .map(o -> o.getValue())
-                .collect(Collectors.toList());
+            RadioGroup radioGroup = radioGroupAnswerComponent.getRadioGroup();
 
-        ComponentHandler.setupRadioGroup(
-                radioGroup,
-                R.style.RadioButton_White,
-                this.sizeInDp,
-                possibleOptionsIds,
-                possibleOptionsTexts,
-                null,
-                null
-        );
+            List<Integer> possibleOptionsIds = possibleOptions
+                    .stream()
+                    .map(o -> o.getId())
+                    .collect(Collectors.toList());
+
+            List<String> possibleOptionsTexts = possibleOptions
+                    .stream()
+                    .map(o -> o.getValue())
+                    .collect(Collectors.toList());
+
+            ComponentHandler.setupRadioGroup(
+                    radioGroup,
+                    R.style.RadioButton_White,
+                    this.sizeInDp,
+                    possibleOptionsIds,
+                    possibleOptionsTexts,
+                    null,
+                    null
+            );
+        } else {
+            EditTextAnswerComponent editTextAnswerComponent = new EditTextAnswerComponent(App.getContext());
+            //TODO do this based on question
+            editTextAnswerComponent.setInputType("number");
+
+            this.answerContainer.addView(editTextAnswerComponent);
+        }
     }
 
     private void loadPreviousAnswerForQuestion(int questionId) {
@@ -303,11 +355,13 @@ public class QuestionnaireFragment extends Fragment {
                     .findAny();
 
             if (answer.isPresent()) {
-                RadioGroup radioGroup = this.view.findViewById(R.id.radioGroup);
-
-                for (int i = 0; i < radioGroup.getChildCount(); i++) {
-                    RadioButton option = this.view.findViewById(answer.get().getOptionId());
-                    option.setChecked(true);
+                for (int i = 0; i < this.answerContainer.getChildCount(); i++) {
+                    if (this.answerContainer.getChildAt(i) instanceof EditTextAnswerComponent) {
+                        ((EditTextAnswerComponent) this.answerContainer.getChildAt(i)).setText(answer.get().getValue());
+                    } else if (this.answerContainer.getChildAt(i) instanceof RadioGroupAnswerComponent) {
+                        RadioButton option = this.view.findViewById(answer.get().getOptionId());
+                        option.setChecked(true);
+                    }
                 }
             }
         }

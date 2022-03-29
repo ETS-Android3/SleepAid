@@ -62,7 +62,7 @@
         app:layout_constraintTop_toBottomOf="@id/alreadySubmittedMessage"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.example.sleepaid.Component.SleepDiaryAnswerComponent
+    <com.example.sleepaid.Component.EditTextAnswerComponent
         android:id="@+id/bedtimeAnswer1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -81,7 +81,7 @@
         app:layout_constraintTop_toBottomOf="@id/bedtimeAnswer1"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.example.sleepaid.Component.SleepDiaryAnswerComponent
+    <com.example.sleepaid.Component.EditTextAnswerComponent
         android:id="@+id/bedtimeAnswer2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -100,7 +100,7 @@
         app:layout_constraintTop_toBottomOf="@id/bedtimeAnswer2"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.example.sleepaid.Component.SleepDiaryAnswerComponent
+    <com.example.sleepaid.Component.EditTextAnswerComponent
         android:id="@+id/bedtimeAnswer3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -127,7 +127,7 @@
         app:layout_constraintTop_toBottomOf="@id/bedtimeQuestion4"
         app:layout_constraintStart_toStartOf="parent">
 
-        <com.example.sleepaid.Component.SleepDiaryAnswerComponent
+        <com.example.sleepaid.Component.EditTextAnswerComponent
             android:id="@+id/bedtimeAnswer4Text"
             android:layout_width="110dp"
             android:layout_height="wrap_content"
@@ -137,7 +137,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
 
-        <com.example.sleepaid.Component.SleepDiaryAnswerComponent
+        <com.example.sleepaid.Component.EditTextAnswerComponent
             android:id="@+id/bedtimeAnswer4StartTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -150,7 +150,7 @@
             app:layout_constraintStart_toEndOf="@id/bedtimeAnswer4Text"
             app:layout_constraintEnd_toStartOf="@id/bedtimeAnswer4EndTime"/>
 
-        <com.example.sleepaid.Component.SleepDiaryAnswerComponent
+        <com.example.sleepaid.Component.EditTextAnswerComponent
             android:id="@+id/bedtimeAnswer4EndTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -187,7 +187,7 @@
         app:layout_constraintTop_toBottomOf="@id/bedtimeQuestion5"
         app:layout_constraintStart_toStartOf="parent">
 
-        <com.example.sleepaid.Component.SleepDiaryAnswerComponent
+        <com.example.sleepaid.Component.EditTextAnswerComponent
             android:id="@+id/bedtimeAnswer5Text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -206,7 +206,7 @@
         app:layout_constraintTop_toBottomOf="@id/bedtimeAnswer5"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.example.sleepaid.Component.SleepDiaryAnswerComponent
+    <com.example.sleepaid.Component.EditTextAnswerComponent
         android:id="@+id/bedtimeAnswer6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

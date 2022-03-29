@@ -10,7 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--TODO figure out why flipping the screen rather than starting in landscape changes size of boxes-->
         <RelativeLayout
             android:id="@+id/questionAndInfo"
             android:layout_width="0dp"
@@ -38,16 +37,17 @@
                 android:layout_below="@+id/question" />
         </RelativeLayout>
 
-        <RadioGroup
-            android:id="@+id/radioGroup"
+        <LinearLayout
+            android:id="@+id/questionnaireAnswerContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:maxWidth="360dp"
+            android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/questionAndInfo" />
+            app:layout_constraintTop_toBottomOf="@+id/questionAndInfo"/>
 
         <Button
             android:id="@+id/backButton"
@@ -59,7 +59,7 @@
             android:textAlignment="center"
             android:textSize="17sp"
             app:layout_constraintStart_toStartOf="@+id/questionAndInfo"
-            app:layout_constraintTop_toBottomOf="@+id/radioGroup"
+            app:layout_constraintTop_toBottomOf="@+id/questionnaireAnswerContainer"
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <Button
@@ -72,7 +72,7 @@
             android:textAlignment="center"
             android:textSize="17sp"
             app:layout_constraintEnd_toEndOf="@+id/questionAndInfo"
-            app:layout_constraintTop_toBottomOf="@+id/radioGroup"
+            app:layout_constraintTop_toBottomOf="@+id/questionnaireAnswerContainer"
             app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

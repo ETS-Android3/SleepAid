@@ -23,6 +23,7 @@ public class SharedViewModel extends ViewModel {
     private List<QuestionnaireModel> questionnaires = new ArrayList<>();
     private List<SleepDiaryModel> sleepDiaries = new ArrayList<>();
 
+    private int currentQuestionnaireId;
     private int currentQuestionId;
 
     private String graphViewType;
@@ -116,6 +117,10 @@ public class SharedViewModel extends ViewModel {
             this.sleepDiaries.add(new SleepDiaryModel(questionnaireId));
             this.sleepDiaries.get(this.sleepDiaries.size() - 1).setAnswers(answers);
         }
+    }
+
+    public void setCurrentQuestionnaireId(int currentQuestionnaireId) {
+        this.currentQuestionnaireId = currentQuestionnaireId;
     }
 
     public void setCurrentQuestionId(int currentQuestionId) {
@@ -252,11 +257,15 @@ public class SharedViewModel extends ViewModel {
     public List<Question> getQuestionnaireQuestions() {
         List<Question> questions = new ArrayList<>();
 
-        for(QuestionnaireModel q : this.questionnaires){
-            questions.addAll(q.getQuestions());
+        if (!this.questionnaires.isEmpty()) {
+            for (QuestionnaireModel q : this.questionnaires) {
+                if (q.getQuestions() != null) {
+                    questions.addAll(q.getQuestions());
+                }
+            }
         }
 
-        return questions;
+        return questions.isEmpty() ? null : questions;
     }
 
     public List<Question> getQuestionnaireQuestions(int questionnaireId) {
@@ -377,6 +386,10 @@ public class SharedViewModel extends ViewModel {
         }
 
         return null;
+    }
+
+    public int getCurrentQuestionnaireId() {
+        return this.currentQuestionnaireId;
     }
 
     public int getCurrentQuestionId() {

@@ -44,22 +44,6 @@ public class App extends Application {
         return alarmSounds;
     }
 
-    public static int getNotificationSound() {
-        return notificationSound;
-    }
-
-    public static boolean getNotificationVibrate() {
-        return notificationVibrate;
-    }
-
-    public static void setNotificationSound(int notificationSound) {
-        App.notificationSound = notificationSound;
-    }
-
-    public static void setNotificationVibrate(boolean notificationVibrate) {
-        App.notificationVibrate = notificationVibrate;
-    }
-
     private void createAlarmChannel() {
         NotificationChannel serviceChannel = new NotificationChannel(
                 ALARM_CHANNEL_ID,

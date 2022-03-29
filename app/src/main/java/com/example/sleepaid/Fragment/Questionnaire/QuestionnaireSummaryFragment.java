@@ -25,12 +25,13 @@ import com.example.sleepaid.Database.Question.Question;
 import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
 import com.example.sleepaid.Service.InitialSettingsService;
+import com.example.sleepaid.Service.RemoteDatabaseTransferService;
+import com.google.gson.Gson;
 
 import java.util.Optional;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-
 
 public class QuestionnaireSummaryFragment extends Fragment {
     private View view;
@@ -114,12 +115,7 @@ public class QuestionnaireSummaryFragment extends Fragment {
                     .findAny();
 
             if (currentAnswer.isPresent()) {
-                Optional<Option> option = this.model.getQuestionnaireOptions()
-                        .stream()
-                        .filter(o -> o.getId() == currentAnswer.get().getOptionId())
-                        .findAny();
-
-                answerText = "A: " + option.get().getValue();
+                answerText = "A: " + currentAnswer.get().getValue();
             }
             else {
                 answerText = "No answer";
@@ -141,7 +137,19 @@ public class QuestionnaireSummaryFragment extends Fragment {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        () -> new InitialSettingsService(this, this.db).getSettings(),
+                        () -> {
+                            for (int i : this.model.getQuestionnaireIds()) {
+                                if (i != 6) {
+                                    new RemoteDatabaseTransferService().execute(
+                                            "123",
+                                            Integer.toString(i),
+                                            new Gson().toJson(this.model.getQuestionnaireAnswers(i))
+                                    );
+                                }
+                            }
+
+                            new InitialSettingsService(this, this.db).getSettings();
+                        },
                         Throwable::printStackTrace
                 );
     }

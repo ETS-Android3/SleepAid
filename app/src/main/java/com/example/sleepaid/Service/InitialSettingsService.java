@@ -55,7 +55,7 @@ public class InitialSettingsService {
         configurationList.add(notificationVibration);
 
         db.answerDao()
-                .loadValuesByQuestionIds(new int[]{3})
+                .loadValuesByQuestionIds(new int[]{24})
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -82,7 +82,7 @@ public class InitialSettingsService {
 
     private void getGoalList() {
         db.answerDao()
-                .loadValuesByQuestionIds(new int[]{1, 2})
+                .loadValuesByQuestionIds(new int[]{22, 23})
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

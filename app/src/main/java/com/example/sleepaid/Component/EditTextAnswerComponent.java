@@ -17,29 +17,37 @@ import com.example.sleepaid.R;
 import com.google.android.material.textfield.TextInputLayout;
 
 @SuppressLint("ResourceType")
-public class SleepDiaryAnswerComponent extends ConstraintLayout {
+public class EditTextAnswerComponent extends ConstraintLayout {
     TextInputLayout answerContainer;
     AutoCompleteTextView answerText;
     ErrorMessage errorMessage;
 
-    public SleepDiaryAnswerComponent(Context context) {
+    public EditTextAnswerComponent(Context context) {
         super(context);
         init(context);
     }
 
-    public SleepDiaryAnswerComponent(Context context, AttributeSet attributes) {
+    public EditTextAnswerComponent(Context context, AttributeSet attributes) {
         super(context, attributes);
         init(context, attributes);
     }
 
     private void init(Context context) {
-        inflate(context, R.layout.sleep_diary_answer_component, this);
+        inflate(context, R.layout.edit_text_answer_component, this);
 
         int[] sets = {R.attr.hint, R.attr.inputType, R.attr.maxLength};
 
         TypedArray typedArray = context.obtainStyledAttributes(sets);
-        CharSequence hint = typedArray.getText(0);
-        CharSequence inputType = typedArray.getText(1);
+
+        CharSequence hint = null;
+        if (typedArray.hasValue(0)) {
+            hint = typedArray.getText(0);
+        }
+
+        CharSequence inputType = null;
+        if (typedArray.hasValue(1)) {
+            inputType = typedArray.getText(1);
+        }
 
         int maxLength = 0;
         if (typedArray.hasValue(2)) {
@@ -50,8 +58,13 @@ public class SleepDiaryAnswerComponent extends ConstraintLayout {
 
         initComponents();
 
-        setHint(hint);
-        setInputType(inputType);
+        if (hint != null) {
+            setHint(hint);
+        }
+
+        if (inputType != null) {
+            setInputType(inputType);
+        }
 
         if (maxLength != 0) {
             setMaxLength(maxLength);
@@ -59,13 +72,21 @@ public class SleepDiaryAnswerComponent extends ConstraintLayout {
     }
 
     private void init(Context context, AttributeSet attributes) {
-        inflate(context, R.layout.sleep_diary_answer_component, this);
+        inflate(context, R.layout.edit_text_answer_component, this);
 
         int[] sets = {R.attr.hint, R.attr.inputType, R.attr.maxLength};
 
         TypedArray typedArray = context.obtainStyledAttributes(attributes, sets);
-        CharSequence hint = typedArray.getText(0);
-        CharSequence inputType = typedArray.getText(1);
+
+        CharSequence hint = null;
+        if (typedArray.hasValue(0)) {
+            hint = typedArray.getText(0);
+        }
+
+        CharSequence inputType = null;
+        if (typedArray.hasValue(1)) {
+            inputType = typedArray.getText(1);
+        }
 
         int maxLength = 0;
         if (typedArray.hasValue(2)) {
@@ -76,8 +97,13 @@ public class SleepDiaryAnswerComponent extends ConstraintLayout {
 
         initComponents();
 
-        setHint(hint);
-        setInputType(inputType);
+        if (hint != null) {
+            setHint(hint);
+        }
+
+        if (inputType != null) {
+            setInputType(inputType);
+        }
 
         if (maxLength != 0) {
             setMaxLength(maxLength);
