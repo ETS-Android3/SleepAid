@@ -5,15 +5,12 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,10 +22,10 @@ import com.example.sleepaid.App;
 import com.example.sleepaid.Component.SleepDiaryAnswerComponent;
 import com.example.sleepaid.Component.SleepDiaryQuestionComponent;
 import com.example.sleepaid.Component.SleepDiaryRadioGroupAnswerComponent;
+import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
-import com.example.sleepaid.Database.SleepDiaryAnswer.SleepDiaryAnswer;
 import com.example.sleepaid.Handler.ComponentHandler;
 import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Model.SharedViewModel;
@@ -143,7 +140,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
 
     private void loadSuggestions() {
         if (model.getSleepDiaryAnswers(this.questionnaireId) == null) {
-            this.db.sleepDiaryAnswerDao()
+            this.db.answerDao()
                     .loadAllByQuestionIds(this.questionIds.stream().mapToInt(Integer::intValue).toArray())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -163,7 +160,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
         }
     }
 
-    private void setupSuggestions(List<SleepDiaryAnswer> answers) {
+    private void setupSuggestions(List<Answer> answers) {
         Context context = App.getContext();
         int layout = R.layout.auto_complete_text_view_dropdown;
 
@@ -176,7 +173,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                 List<String> suggestionsForQuestionAndSection = answers.stream()
                         .filter(s -> s.getQuestionId() == questionId &&
                                 s.getSection() == section)
-                        .map(SleepDiaryAnswer::getValue)
+                        .map(Answer::getValue)
                         .collect(Collectors.toList());
 
                 if (!suggestionsForQuestionAndSection.isEmpty()) {
@@ -331,9 +328,9 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                 Toast.makeText(getActivity(), R.string.already_submitted_diary_message, Toast.LENGTH_LONG).show();
             } else {
                 if (validateAnswers()) {
-                    List<SleepDiaryAnswer> answers = getAnswers();
+                    List<Answer> answers = getAnswers();
 
-                    db.sleepDiaryAnswerDao()
+                    db.answerDao()
                             .insert(answers)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -343,7 +340,11 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                                         model.setSleepDiaryAnswers(questionnaireId, answers);
                                         clearAnswers();
 
-                                        new RemoteDatabaseTransferService().execute("123", Integer.toString(questionnaireId), new Gson().toJson(answers));
+                                        new RemoteDatabaseTransferService().execute(
+                                                "123",
+                                                Integer.toString(questionnaireId),
+                                                new Gson().toJson(answers)
+                                        );
                                     },
                                     Throwable::printStackTrace
                             );
@@ -431,28 +432,30 @@ public class SleepDiaryQuestionsFragment extends Fragment {
         return !hasErrors;
     }
 
-    private List<SleepDiaryAnswer> getAnswers() {
-        List<SleepDiaryAnswer> answers = new ArrayList<>();
+    private List<Answer> getAnswers() {
+        List<Answer> answers = new ArrayList<>();
 
         for (int i = 0; i < this.sections.length; i++) {
             for (int j = 0; j < this.sections[i].length; j++) {
                 View answerComponent = this.view.findViewById(this.answerComponentIds[i][j]);
                 String answer = "";
+                int checkedId = -1;
 
                 if (answerComponent instanceof SleepDiaryAnswerComponent) {
                     answer = ((SleepDiaryAnswerComponent) answerComponent).getText().toString();
                 } else if (answerComponent instanceof SleepDiaryRadioGroupAnswerComponent) {
-                    int answerId = ((SleepDiaryRadioGroupAnswerComponent) answerComponent).getCheckedRadioButtonId();
-                    answer = ((RadioButton) this.view.findViewById(answerId)).getText().toString();
+                    checkedId = ((SleepDiaryRadioGroupAnswerComponent) answerComponent).getCheckedRadioButtonId();
+                    answer = ((RadioButton) this.view.findViewById(checkedId)).getText().toString();
                 }
 
                 String date = ZonedDateTime.now().getHour() <= 3 ?
                         DataHandler.getSQLiteDate(ZonedDateTime.now().minusDays(1)) :
                         DataHandler.getSQLiteDate(ZonedDateTime.now());
 
-                answers.add(new SleepDiaryAnswer(
+                answers.add(new Answer(
                         answer,
                         this.questionIds.get(i),
+                        checkedId == -1 ? null : checkedId,
                         this.sections[i][j],
                         date
                 ));
@@ -476,9 +479,9 @@ public class SleepDiaryQuestionsFragment extends Fragment {
         }
     }
 
-    private SleepDiaryAnswer getAnswerForToday() {
-        List<SleepDiaryAnswer> previousAnswers = model.getSleepDiaryAnswers(questionnaireId);
-        Optional<SleepDiaryAnswer> answerForToday = previousAnswers.stream()
+    private Answer getAnswerForToday() {
+        List<Answer> previousAnswers = model.getSleepDiaryAnswers(questionnaireId);
+        Optional<Answer> answerForToday = previousAnswers.stream()
                 .filter(a -> a.getDate().equals(DataHandler.getSQLiteDate(ZonedDateTime.now())))
                 .findAny();
 

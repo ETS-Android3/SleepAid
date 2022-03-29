@@ -36,7 +36,10 @@ public class GreetingFragment extends Fragment implements View.OnClickListener {
     }
 
     public void onClick(View view) {
-        this.model.setQuestionnaireAnswers(6, null);
+        for (int i : this.model.getQuestionnaireIds()) {
+            this.model.setQuestionnaireAnswers(i, null);
+        }
+
         this.model.setCurrentQuestionId(1);
 
         NavHostFragment.findNavController(this).navigate(R.id.startQuestionnaireAction);

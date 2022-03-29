@@ -1,1 +1,139 @@
-<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:\Aurelia\Uni\Year 4\Dissertation\App\app\src\main\assets\database\initial-data.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="1"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="150"/><column_width id="3" width="3528"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,8:mainQuestion"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="Alarm" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="93"/><column index="2" value="61"/><column index="3" value="68"/><column index="4" value="61"/><column index="5" value="61"/><column index="6" value="73"/><column index="7" value="84"/><column index="8" value="61"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Question" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="122"/><column index="2" value="300"/><column index="3" value="300"/><column index="4" value="174"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Questionnaire" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="174"/><column index="2" value="300"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">UPDATE Question SET questionnaireId = 4 WHERE questionnaireId = 5</sql><current_tab id="0"/></tab_sql></sqlb_project>
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:\Aurelia\Uni\Year 4\Dissertation\App\app\src\main\assets\database\initial-data.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="1"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="150"/><column_width id="3" width="3528"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,8:mainQuestion"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="Alarm" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="93"/><column index="2" value="61"/><column index="3" value="68"/><column index="4" value="61"/><column index="5" value="61"/><column index="6" value="73"/><column index="7" value="84"/><column index="8" value="61"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Answer" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="67"/><column index="2" value="122"/><column index="3" value="99"/><column index="4" value="84"/><column index="5" value="61"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Option" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="99"/><column index="2" value="300"/><column index="3" value="122"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Question" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="122"/><column index="2" value="4042"/><column index="3" value="300"/><column index="4" value="174"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Questionnaire" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="174"/><column index="2" value="300"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="SleepData" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="61"/><column index="2" value="61"/><column index="3" value="67"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="SleepDataField" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="80"/><column index="2" value="136"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="android_metadata" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="71"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">DELETE FROM Option;
+
+delete from sqlite_sequence where name='Option';
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Not during the past two weeks.', '5');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Less than once a week.', '5');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Once or twice a week.', '5');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Three or more times a week.', '5');
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Very good.', '6');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Fairly good.', '6');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Fairly bad.', '6');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Very bad.', '6');
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Very beneficial to sleep.', '7');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Moderately beneficial to sleep.', '7');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Mildly beneficial to sleep.', '7');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('No effect on sleep.', '7');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Mildly disruptive to sleep.', '7');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Moderately disruptive to sleep.', '7');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Very disruptive to sleep.', '7');
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Yes, it contains caffeine.', '8');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES (&quot;No, it doesn't contain caffeine.&quot;, '8');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Never heard of this item.', '8');
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Never.', '9');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Rarely.', '9');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Sometimes.', '9');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Frequently.', '9');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Always.', '9');
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Never.', '10');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Rarely.', '10');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Sometimes.', '10');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Frequently.', '10');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Always.', '10');
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Never.', '11');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Rarely.', '11');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Sometimes.', '11');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Frequently.', '11');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Always.', '11');
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Never.', '12');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Rarely.', '12');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Sometimes.', '12');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Frequently.', '12');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Always.', '12');
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Never.', '13');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Rarely.', '13');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Sometimes.', '13');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Frequently.', '13');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Always.', '13');
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Never.', '14');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Rarely.', '14');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Sometimes.', '14');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Frequently.', '14');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Always.', '14');
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Never.', '15');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Rarely.', '15');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Sometimes.', '15');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Frequently.', '15');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Always.', '15');
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Never.', '16');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Rarely.', '16');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Sometimes.', '16');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Frequently.', '16');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Always.', '16');
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Never.', '17');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Rarely.', '17');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Sometimes.', '17');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Frequently.', '17');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Always.', '17');
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Never.', '18');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Rarely.', '18');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Sometimes.', '18');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Frequently.', '18');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Always.', '18');
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Never.', '19');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Rarely.', '19');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Sometimes.', '19');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Frequently.', '19');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Always.', '19');
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Never.', '20');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Rarely.', '20');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Sometimes.', '20');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Frequently.', '20');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Always.', '20');
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Never.', '21');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Rarely.', '21');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Sometimes.', '21');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Frequently.', '21');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Always.', '21');
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Between 20:00 and 21:00.', '22');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Between 21:00 and 22:00.', '22');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Between 22:00 and 23:00.', '22');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Between 23:00 and 00:00.', '22');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Between 00:00 and 01:00.', '22');
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Between 05:00 and 06:00.', '23');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Between 06:00 and 07:00.', '23');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Between 07:00 and 08:00.', '23');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Between 08:00 and 09:00.', '23');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Between 09:00 and 10:00.', '23');
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Yes.', '24');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('No.', '24');
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Alarm.', '35');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Someone whom I asked to wake me.', '35');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Noise.', '35');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Just woke.', '35');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Other.', '35');
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Very good.', '37');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Fairly good.', '37');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Fairly bad.', '37');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Very bad.', '37');
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Very calm.', '38');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Fairly calm.', '38');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Fairly tense.', '38');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Very tense.', '38');
+
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Very alert.', '39');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Fairly alert.', '39');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Fairly sleepy.', '39');
+INSERT INTO &quot;main&quot;.&quot;Option&quot; (&quot;value&quot;, &quot;questionId&quot;) VALUES ('Very sleepy.', '39');</sql><current_tab id="0"/></tab_sql></sqlb_project>

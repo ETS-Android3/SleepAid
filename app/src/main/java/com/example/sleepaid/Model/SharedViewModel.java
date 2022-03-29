@@ -7,7 +7,6 @@ import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
 import com.example.sleepaid.Database.SleepData.SleepData;
-import com.example.sleepaid.Database.SleepDiaryAnswer.SleepDiaryAnswer;
 import com.example.sleepaid.Handler.DataHandler;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -20,6 +19,7 @@ import java.util.Optional;
 
 
 public class SharedViewModel extends ViewModel {
+    private int[] questionnaireIds = new int[]{1, 2, 3, 6};
     private List<QuestionnaireModel> questionnaires = new ArrayList<>();
     private List<SleepDiaryModel> sleepDiaries = new ArrayList<>();
 
@@ -107,7 +107,7 @@ public class SharedViewModel extends ViewModel {
         }
     }
 
-    public void setSleepDiaryAnswers(int questionnaireId, List<SleepDiaryAnswer> answers) {
+    public void setSleepDiaryAnswers(int questionnaireId, List<Answer> answers) {
         SleepDiaryModel sleepDiary = this.getSleepDiaryModel(questionnaireId);
 
         if (sleepDiary != null) {
@@ -233,6 +233,10 @@ public class SharedViewModel extends ViewModel {
         }
     }
 
+    public int[] getQuestionnaireIds() {
+        return this.questionnaireIds;
+    }
+
     public QuestionnaireModel getQuestionnaireModel(int questionnaireId) {
         Optional<QuestionnaireModel> questionnaire = this.questionnaires.stream()
                 .filter(q -> q.getQuestionnaireId() == questionnaireId)
@@ -243,6 +247,16 @@ public class SharedViewModel extends ViewModel {
         }
 
         return null;
+    }
+
+    public List<Question> getQuestionnaireQuestions() {
+        List<Question> questions = new ArrayList<>();
+
+        for(QuestionnaireModel q : this.questionnaires){
+            questions.addAll(q.getQuestions());
+        }
+
+        return questions;
     }
 
     public List<Question> getQuestionnaireQuestions(int questionnaireId) {
@@ -257,6 +271,16 @@ public class SharedViewModel extends ViewModel {
         return null;
     }
 
+    public List<Option> getQuestionnaireOptions() {
+        List<Option> options = new ArrayList<>();
+
+        for(QuestionnaireModel q : this.questionnaires){
+            options.addAll(q.getOptions());
+        }
+
+        return options;
+    }
+
     public List<Option> getQuestionnaireOptions(int questionnaireId) {
         Optional<QuestionnaireModel> questionnaire = this.questionnaires.stream()
                 .filter(q -> q.getQuestionnaireId() == questionnaireId)
@@ -267,6 +291,20 @@ public class SharedViewModel extends ViewModel {
         }
 
         return null;
+    }
+
+    public List<Answer> getQuestionnaireAnswers() {
+        List<Answer> answers = new ArrayList<>();
+
+        if (!this.questionnaires.isEmpty()) {
+            for (QuestionnaireModel q : this.questionnaires) {
+                if (q.getAnswers() != null) {
+                    answers.addAll(q.getAnswers());
+                }
+            }
+        }
+
+        return answers.isEmpty() ? null : answers;
     }
 
     public List<Answer> getQuestionnaireAnswers(int questionnaireId) {
@@ -329,7 +367,7 @@ public class SharedViewModel extends ViewModel {
         return null;
     }
 
-    public List<SleepDiaryAnswer> getSleepDiaryAnswers(int questionnaireId) {
+    public List<Answer> getSleepDiaryAnswers(int questionnaireId) {
         Optional<SleepDiaryModel> sleepDiary = this.sleepDiaries.stream()
                 .filter(s -> s.getQuestionnaireId() == questionnaireId)
                 .findFirst();

@@ -28,8 +28,6 @@ import com.example.sleepaid.Database.SleepData.SleepData;
 import com.example.sleepaid.Database.SleepData.SleepDataDao;
 import com.example.sleepaid.Database.SleepDataField.SleepDataField;
 import com.example.sleepaid.Database.SleepDataField.SleepDataFieldDao;
-import com.example.sleepaid.Database.SleepDiaryAnswer.SleepDiaryAnswer;
-import com.example.sleepaid.Database.SleepDiaryAnswer.SleepDiaryAnswerDao;
 
 @Database(entities = {
         Questionnaire.class,
@@ -42,8 +40,7 @@ import com.example.sleepaid.Database.SleepDiaryAnswer.SleepDiaryAnswerDao;
         Goal.class,
         SleepData.class,
         SleepDataField.class,
-        Notification.class,
-        SleepDiaryAnswer.class
+        Notification.class
 },
         version = 1,
         exportSchema = false)
@@ -72,8 +69,6 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract SleepDataFieldDao sleepDataFieldDao();
 
     public abstract NotificationDao notificationDao();
-
-    public abstract SleepDiaryAnswerDao sleepDiaryAnswerDao();
 
     public static AppDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {

@@ -7,12 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatRadioButton;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
@@ -29,6 +29,7 @@ import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,8 +46,6 @@ public class QuestionnaireFragment extends Fragment {
     private SharedViewModel model;
 
     private List<Answer> currentAnswers;
-
-    private int[] questionnaireIds = new int[]{6};
 
     private int sizeInDp;
 
@@ -87,7 +86,7 @@ public class QuestionnaireFragment extends Fragment {
 
         this.sizeInDp = DataHandler.getSizeInDp(25, getResources().getDisplayMetrics());
 
-        this.currentAnswers = this.model.getQuestionnaireAnswers(6) == null ? new ArrayList<>() : this.model.getQuestionnaireAnswers(6);
+        this.currentAnswers = this.model.getQuestionnaireAnswers() == null ? new ArrayList<>() : this.model.getQuestionnaireAnswers();
 
         Button backButton = this.view.findViewById(R.id.backButton);
         backButton.setOnClickListener(this::loadPreviousScreen);
@@ -95,7 +94,7 @@ public class QuestionnaireFragment extends Fragment {
         Button nextButton = this.view.findViewById(R.id.nextButton);
         nextButton.setOnClickListener(this::loadNextScreen);
 
-        if(this.model.getQuestionnaireQuestions(6) == null) {
+        if(this.model.getQuestionnaireQuestions(1) == null) {
             loadAllQuestions();
         }
         else {
@@ -105,12 +104,12 @@ public class QuestionnaireFragment extends Fragment {
 
     private void loadAllQuestions() {
         this.db.questionDao()
-                .loadAllByQuestionnaireIds(this.questionnaireIds)
+                .loadAllByQuestionnaireIds(this.model.getQuestionnaireIds())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         questionData -> {
-                            for (int i : this.questionnaireIds) {
+                            for (int i : this.model.getQuestionnaireIds()) {
                                 List<Question> questionsForQuestionnaire = questionData.stream()
                                         .filter(q -> q.getQuestionnaireId() == i)
                                         .collect(Collectors.toList());
@@ -126,12 +125,12 @@ public class QuestionnaireFragment extends Fragment {
 
     private void loadAllOptions() {
         this.db.optionDao()
-                .loadAllByQuestionnaireIds(this.questionnaireIds)
+                .loadAllByQuestionnaireIds(this.model.getQuestionnaireIds())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         optionData -> {
-                            for (int i : this.questionnaireIds) {
+                            for (int i : this.model.getQuestionnaireIds()) {
                                 List<Integer> questionIds = this.model.getQuestionnaireQuestions(i).stream()
                                         .map(q -> q.getId())
                                         .collect(Collectors.toList());
@@ -158,9 +157,7 @@ public class QuestionnaireFragment extends Fragment {
         int checkedId = radioGroup.getCheckedRadioButtonId();
 
         if (checkedId == -1) {
-            DialogInterface.OnClickListener cancelAction = new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {}
-            };
+            DialogInterface.OnClickListener cancelAction = (dialog, whichButton) -> {};
 
             Modal.show(
                     requireActivity(),
@@ -177,8 +174,7 @@ public class QuestionnaireFragment extends Fragment {
     }
 
     private void loadScreen(int questionId) {
-        RadioGroup radioGroup = this.view.findViewById(R.id.radioGroup);
-        int checkedId = radioGroup.getCheckedRadioButtonId();
+        int checkedId = ((RadioGroup) this.view.findViewById(R.id.radioGroup)).getCheckedRadioButtonId();
 
         if (checkedId != -1) {
             int existingAnswerId = -1;
@@ -194,18 +190,30 @@ public class QuestionnaireFragment extends Fragment {
                 }
             }
 
-            if (existingAnswerId > -1) {
-                this.currentAnswers.set(existingAnswerId, new Answer(checkedId, this.model.getCurrentQuestionId()));
+            if (existingAnswerId != -1) {
+                this.currentAnswers.set(existingAnswerId, new Answer(
+                        ((RadioButton) this.view.findViewById(checkedId)).getText().toString(),
+                        this.model.getCurrentQuestionId(),
+                        checkedId,
+                        1,
+                        DataHandler.getSQLiteDate(ZonedDateTime.now())
+                ));
             }
             else {
-                this.currentAnswers.add(new Answer(checkedId, this.model.getCurrentQuestionId()));
+                this.currentAnswers.add(new Answer(
+                        ((RadioButton) this.view.findViewById(checkedId)).getText().toString(),
+                        this.model.getCurrentQuestionId(),
+                        checkedId,
+                        1,
+                        DataHandler.getSQLiteDate(ZonedDateTime.now())
+                ));
             }
         }
 
         if (questionId == 0) {
             exitQuestionnaire();
         }
-        else if (questionId == this.model.getQuestionnaireQuestions(6).size() + 1) {
+        else if (questionId == this.model.getQuestionnaireQuestions(6).get(this.model.getQuestionnaireQuestions(6).size() - 1).getId() + 1) {
             this.model.setQuestionnaireAnswers(6, this.currentAnswers);
 
             NavHostFragment.findNavController(this).navigate(R.id.showSummaryAction);
@@ -219,7 +227,7 @@ public class QuestionnaireFragment extends Fragment {
             loadOptionsForQuestion(questionId);
             loadPreviousAnswerForQuestion(questionId);
 
-            if (questionId == 2) {
+            if (questionId == 24) {
                 presetWakeUpTime(questionId);
             }
         }
@@ -228,15 +236,9 @@ public class QuestionnaireFragment extends Fragment {
     private void exitQuestionnaire() {
         Fragment fragment = this;
 
-        DialogInterface.OnClickListener exitAction = new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                NavHostFragment.findNavController(fragment).navigate(R.id.exitQuestionnaireAction);
-            }
-        };
+        DialogInterface.OnClickListener exitAction = (dialog, whichButton) -> NavHostFragment.findNavController(fragment).navigate(R.id.exitQuestionnaireAction);
 
-        DialogInterface.OnClickListener cancelAction = new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {}
-        };
+        DialogInterface.OnClickListener cancelAction = (dialog, whichButton) -> {};
 
         Modal.show(
                 requireActivity(),
@@ -252,7 +254,7 @@ public class QuestionnaireFragment extends Fragment {
         TextBox questionBox = this.view.findViewById(R.id.question);
         TextBox informationBox = this.view.findViewById(R.id.information);
 
-        Optional<Question> question = this.model.getQuestionnaireQuestions(6)
+        Optional<Question> question = this.model.getQuestionnaireQuestions()
                 .stream()
                 .filter(q -> q.getId() == questionId)
                 .findAny();
@@ -267,7 +269,7 @@ public class QuestionnaireFragment extends Fragment {
     private void loadOptionsForQuestion(int questionId) {
         RadioGroup radioGroup = this.view.findViewById(R.id.radioGroup);
 
-        List<Option> possibleOptions = this.model.getQuestionnaireOptions(6)
+        List<Option> possibleOptions = this.model.getQuestionnaireOptions()
                 .stream()
                 .filter(o -> o.getQuestionId() == questionId)
                 .collect(Collectors.toList());
@@ -301,8 +303,12 @@ public class QuestionnaireFragment extends Fragment {
                     .findAny();
 
             if (answer.isPresent()) {
-                AppCompatRadioButton option = this.view.findViewById(answer.get().getOptionId());
-                option.setChecked(true);
+                RadioGroup radioGroup = this.view.findViewById(R.id.radioGroup);
+
+                for (int i = 0; i < radioGroup.getChildCount(); i++) {
+                    RadioButton option = this.view.findViewById(answer.get().getOptionId());
+                    option.setChecked(true);
+                }
             }
         }
     }
@@ -313,13 +319,13 @@ public class QuestionnaireFragment extends Fragment {
                 .filter(a -> a.getQuestionId() == (questionId - 1))
                 .findAny();
 
-        Optional<Option> firstOption = this.model.getQuestionnaireOptions(6)
+        Optional<Option> firstOption = this.model.getQuestionnaireOptions()
                 .stream()
                 .filter(o -> o.getQuestionId() == questionId)
                 .findFirst();
 
         if (previousAnswer.isPresent() && firstOption.isPresent()) {
-            AppCompatRadioButton option = this.view.findViewById(previousAnswer.get().getOptionId() + firstOption.get().getId() - 1);
+            RadioButton option = this.view.findViewById(previousAnswer.get().getOptionId() + firstOption.get().getId() - 1);
 
             TextBox information = this.view.findViewById(R.id.information);
             String currentText = information.getText().toString();

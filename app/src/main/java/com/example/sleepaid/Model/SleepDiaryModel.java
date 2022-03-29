@@ -1,8 +1,8 @@
 package com.example.sleepaid.Model;
 
+import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
-import com.example.sleepaid.Database.SleepDiaryAnswer.SleepDiaryAnswer;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public class SleepDiaryModel {
     private List<Question> questions;
     private boolean hasOptions;
     private List<Option> options;
-    private List<SleepDiaryAnswer> answers;
+    private List<Answer> answers;
 
     public SleepDiaryModel(int questionnaireId) {
         this.questionnaireId = questionnaireId;
@@ -31,7 +31,7 @@ public class SleepDiaryModel {
         this.options = options;
     }
 
-    public void setAnswers(List<SleepDiaryAnswer> answers) {
+    public void setAnswers(List<Answer> answers) {
         this.answers = answers;
     }
 
@@ -51,7 +51,7 @@ public class SleepDiaryModel {
         return this.options;
     }
 
-    public List<SleepDiaryAnswer> getAnswers() {
+    public List<Answer> getAnswers() {
         return this.answers;
     }
 }
