@@ -193,7 +193,6 @@ public class SleepDiaryQuestionsFragment extends Fragment {
             this.view.findViewById(R.id.alreadySubmittedMessage).setVisibility(View.VISIBLE);
         }
 
-        //TODO make it more obvious edit texts have been clicked
         for (int i = 0; i < this.answerComponentIds.length; i++) {
             for (int j = 0; j < this.answerComponentIds[i].length; j++) {
                 View answer = this.view.findViewById(answerComponentIds[i][j]);
@@ -221,14 +220,12 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                         }
                     }
                 } else if (answer instanceof SleepDiaryRadioGroupAnswerComponent) {
-                    RadioGroup radioGroup = ((SleepDiaryRadioGroupAnswerComponent) answer).getRadioGroup();
+                    SleepDiaryRadioGroupAnswerComponent sleepDiaryRadioGroupAnswer = (SleepDiaryRadioGroupAnswerComponent) answer;
 
-                    this.setupRadioGroup(radioGroup, this.questionIds.get(i));
+                    this.setupRadioGroup(sleepDiaryRadioGroupAnswer.getRadioGroup(), this.questionIds.get(i));
 
                     if (answerForTodayExists) {
-                        for (int r = 0; r < radioGroup.getChildCount(); r++) {
-                            radioGroup.getChildAt(r).setEnabled(false);
-                        }
+                        sleepDiaryRadioGroupAnswer.setEnabled(false);
                     }
                 }
 
@@ -414,9 +411,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                 } else if (answerComponent instanceof SleepDiaryRadioGroupAnswerComponent) {
                     SleepDiaryRadioGroupAnswerComponent sleepDiaryRadioGroupAnswerComponent = (SleepDiaryRadioGroupAnswerComponent) answerComponent;
 
-                    RadioGroup radioGroup = sleepDiaryRadioGroupAnswerComponent.getRadioGroup();
-
-                    if (radioGroup.getCheckedRadioButtonId() == -1) {
+                    if (sleepDiaryRadioGroupAnswerComponent.getCheckedRadioButtonId() == -1) {
                         sleepDiaryRadioGroupAnswerComponent.setError(getString(R.string.radio_group_validation));
 
                         if (!hasErrors) {
@@ -443,7 +438,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                 if (answerComponent instanceof SleepDiaryAnswerComponent) {
                     answer = ((SleepDiaryAnswerComponent) answerComponent).getText().toString();
                 } else if (answerComponent instanceof SleepDiaryRadioGroupAnswerComponent) {
-                    int answerId = ((SleepDiaryRadioGroupAnswerComponent) answerComponent).getRadioGroup().getCheckedRadioButtonId();
+                    int answerId = ((SleepDiaryRadioGroupAnswerComponent) answerComponent).getCheckedRadioButtonId();
                     answer = ((RadioButton) this.view.findViewById(answerId)).getText().toString();
                 }
 
@@ -471,7 +466,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                 if (answerComponent instanceof SleepDiaryAnswerComponent) {
                     ((SleepDiaryAnswerComponent) answerComponent).clear();
                 } else if (answerComponent instanceof SleepDiaryRadioGroupAnswerComponent) {
-                    ((SleepDiaryRadioGroupAnswerComponent) answerComponent).getRadioGroup().clearCheck();
+                    ((SleepDiaryRadioGroupAnswerComponent) answerComponent).clearCheck();
                 }
             }
         }

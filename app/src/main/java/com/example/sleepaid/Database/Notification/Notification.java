@@ -31,19 +31,19 @@ public class Notification {
     @NonNull
     public String time;
     @NonNull
-    public int isDaily;
+    public int frequency;
     @NonNull
     public int destination;
 
     public Notification(String name,
                         String content,
                         String time,
-                        int isDaily,
+                        int frequency,
                         int destination) {
         this.name = name;
         this.content = content;
         this.time = time;
-        this.isDaily = isDaily;
+        this.frequency = frequency;
         this.destination = destination;
     }
 
@@ -87,7 +87,7 @@ public class Notification {
         intent.putExtra("ID", this.id);
         intent.putExtra("NAME", this.name);
         intent.putExtra("CONTENT", this.content);
-        intent.putExtra("DAILY", this.isDaily == 1);
+        intent.putExtra("RECURRING", this.frequency > 0);
         if (this.destination != 0) {
             intent.putExtra("DESTINATION", this.destination);
         }
@@ -120,7 +120,7 @@ public class Notification {
         intent.putExtra("NAME", this.name);
         intent.putExtra("CONTENT", this.content);
         intent.putExtra("TIME", this.time);
-        intent.putExtra("DAILY", this.isDaily == 1);
+        intent.putExtra("RECURRING", this.frequency > 0);
         if (this.destination != 0) {
             intent.putExtra("DESTINATION", this.destination);
         }
@@ -131,7 +131,7 @@ public class Notification {
         ZonedDateTime date = ZonedDateTime.now()
                 .withHour(time.get(0))
                 .withMinute(time.get(1))
-                .plusDays(1)
+                .plusDays(this.frequency)
                 .truncatedTo(ChronoUnit.MINUTES);
 
         alarmManager.setAlarmClock(

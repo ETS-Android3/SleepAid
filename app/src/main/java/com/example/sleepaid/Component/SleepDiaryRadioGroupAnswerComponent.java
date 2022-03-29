@@ -56,6 +56,12 @@ public class SleepDiaryRadioGroupAnswerComponent extends ConstraintLayout {
         }
     }
 
+    public void setEnabled(boolean enabled) {
+        for (int r = 0; r < radioGroup.getChildCount(); r++) {
+            radioGroup.getChildAt(r).setEnabled(enabled);
+        }
+    }
+
     public void setOnClickListener(OnClickListener listener) {
         for (int r = 0; r < radioGroup.getChildCount(); r++) {
             radioGroup.getChildAt(r).setOnClickListener(listener);
@@ -64,5 +70,13 @@ public class SleepDiaryRadioGroupAnswerComponent extends ConstraintLayout {
 
     public RadioGroup getRadioGroup() {
         return radioGroup;
+    }
+
+    public int getCheckedRadioButtonId() {
+        return radioGroup.getCheckedRadioButtonId();
+    }
+
+    public void clearCheck() {
+        radioGroup.clearCheck();
     }
 }
