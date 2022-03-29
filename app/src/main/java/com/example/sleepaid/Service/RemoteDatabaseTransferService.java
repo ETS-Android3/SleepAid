@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 import com.example.sleepaid.Handler.ServiceHandler;
 
 public class RemoteDatabaseTransferService extends AsyncTask<String, Void, Void> {
-    private String url = "https://192.168.0.47/new_testing.php";
+    private String url = "https://192.168.0.47/sleepaid.php";
 
     @Override
     protected void onPreExecute() {
@@ -18,36 +18,13 @@ public class RemoteDatabaseTransferService extends AsyncTask<String, Void, Void>
         // Preparing post params
         ContentValues params = new ContentValues();
         params.put("userId", arg[0]);
-        params.put("questionnaireId", arg[1]);
+        params.put("questionnaireId", Integer.valueOf(arg[1]));
         params.put("data", arg[2]);
 
         ServiceHandler serviceClient = new ServiceHandler();
 
         serviceClient.makeServiceCall(url, ServiceHandler.POST, params);
 
-//            Log.d("Create Prediction Request: ", "> " + json);
-
-//            if (json != null) {
-//                try {
-//                    JSONObject jsonObj = new JSONObject(json);
-//                    boolean error = jsonObj.getBoolean("error");
-//                    // checking for error node in json
-//                    if (!error) {
-//                        // new category created successfully
-//                        Log.e("Prediction added successfully ",
-//                                "> " + jsonObj.getString("message"));
-//                    } else {
-//                        Log.e("Add Prediction Error: ",
-//                                "> " + jsonObj.getString("message"));
-//                    }
-//
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            } else {
-//                Log.e("JSON Data", "JSON data error!");
-//            }
         return null;
     }
 
