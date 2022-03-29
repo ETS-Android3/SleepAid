@@ -33,6 +33,8 @@ import com.example.sleepaid.Handler.ComponentHandler;
 import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
+import com.example.sleepaid.Service.RemoteDatabaseTransferService;
+import com.google.gson.Gson;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -340,6 +342,8 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                                         Toast.makeText(getActivity(), "Diary saved successfully!", Toast.LENGTH_SHORT).show();
                                         model.setSleepDiaryAnswers(questionnaireId, answers);
                                         clearAnswers();
+
+                                        new RemoteDatabaseTransferService().execute("123", Integer.toString(questionnaireId), new Gson().toJson(answers));
                                     },
                                     Throwable::printStackTrace
                             );
