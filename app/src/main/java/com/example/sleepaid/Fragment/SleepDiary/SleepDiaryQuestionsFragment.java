@@ -329,10 +329,8 @@ public class SleepDiaryQuestionsFragment extends Fragment {
     private View.OnClickListener saveAnswers = new View.OnClickListener() {
         public void onClick(View view) {
             if (getAnswerForToday() != null) {
-                //TODO add error saying answer's already been submitted
                 Toast.makeText(getActivity(), R.string.already_submitted_diary_message, Toast.LENGTH_LONG).show();
             } else {
-                //TODO validation for each answer
                 if (validateAnswers()) {
                     List<SleepDiaryAnswer> answers = getAnswers();
 
@@ -449,11 +447,15 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                     answer = ((RadioButton) this.view.findViewById(answerId)).getText().toString();
                 }
 
+                String date = ZonedDateTime.now().getHour() <= 3 ?
+                        DataHandler.getSQLiteDate(ZonedDateTime.now().minusDays(1)) :
+                        DataHandler.getSQLiteDate(ZonedDateTime.now());
+
                 answers.add(new SleepDiaryAnswer(
                         answer,
                         this.questionIds.get(i),
                         this.sections[i][j],
-                        DataHandler.getSQLiteDate(ZonedDateTime.now())
+                        date
                 ));
             }
         }
