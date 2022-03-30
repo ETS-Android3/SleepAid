@@ -140,9 +140,8 @@
 
     <com.example.sleepaid.Component.RadioGroupAnswerComponent
         android:id="@+id/morningAnswer5"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
         app:layout_constraintTop_toBottomOf="@id/morningQuestion5"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -177,7 +176,6 @@
         android:id="@+id/morningAnswer7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
         app:layout_constraintTop_toBottomOf="@id/morningQuestion7"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -193,7 +191,6 @@
         android:id="@+id/morningAnswer8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
         app:layout_constraintTop_toBottomOf="@id/morningQuestion8"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -209,7 +206,6 @@
         android:id="@+id/morningAnswer9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
         app:layout_constraintTop_toBottomOf="@id/morningQuestion9"
         app:layout_constraintStart_toStartOf="parent" />
 

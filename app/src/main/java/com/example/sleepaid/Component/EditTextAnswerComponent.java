@@ -9,6 +9,7 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -17,7 +18,7 @@ import com.example.sleepaid.R;
 import com.google.android.material.textfield.TextInputLayout;
 
 @SuppressLint("ResourceType")
-public class EditTextAnswerComponent extends ConstraintLayout {
+public class EditTextAnswerComponent extends FrameLayout {
     TextInputLayout answerContainer;
     AutoCompleteTextView answerText;
     ErrorMessage errorMessage;

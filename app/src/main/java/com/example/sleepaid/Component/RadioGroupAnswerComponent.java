@@ -3,6 +3,7 @@ package com.example.sleepaid.Component;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -44,6 +45,7 @@ public class RadioGroupAnswerComponent extends ConstraintLayout {
 
     public void setSubQuestion(CharSequence question) {
         subQuestion.setText(question);
+        subQuestion.setVisibility(VISIBLE);
     }
 
     public void setError(CharSequence error) {
@@ -67,12 +69,28 @@ public class RadioGroupAnswerComponent extends ConstraintLayout {
         }
     }
 
+    public void setChecked(int optionId, boolean checked) {
+        ((RadioButton) findViewById(optionId)).setChecked(checked);
+    }
+
     public RadioGroup getRadioGroup() {
         return radioGroup;
     }
 
     public int getCheckedRadioButtonId() {
         return radioGroup.getCheckedRadioButtonId();
+    }
+
+    public String getCheckedRadioButtonText() {
+        if (radioGroup.getCheckedRadioButtonId() != -1) {
+            return ((RadioButton) findViewById(radioGroup.getCheckedRadioButtonId())).getText().toString();
+        }
+
+        return null;
+    }
+
+    public String getRadioButtonText(int radioButtonId) {
+        return ((RadioButton) findViewById(radioButtonId)).getText().toString();
     }
 
     public void clearCheck() {

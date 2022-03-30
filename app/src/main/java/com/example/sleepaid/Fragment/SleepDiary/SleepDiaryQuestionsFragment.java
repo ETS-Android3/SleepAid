@@ -61,6 +61,9 @@ public class SleepDiaryQuestionsFragment extends Fragment {
     protected ArrayAdapter<String>[][] answerSuggestions;
     protected String[][] emptyErrors;
 
+    //TODO add question about wake up time
+    //TODO make plus work for exercise
+    //TODO make nap section add boxes for time based on answer
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
         this.view = view;
@@ -390,8 +393,9 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                 if (answerComponent instanceof EditTextAnswerComponent) {
                     answer = ((EditTextAnswerComponent) answerComponent).getText().toString();
                 } else if (answerComponent instanceof RadioGroupAnswerComponent) {
-                    checkedId = ((RadioGroupAnswerComponent) answerComponent).getCheckedRadioButtonId();
-                    answer = ((RadioButton) this.view.findViewById(checkedId)).getText().toString();
+                    RadioGroupAnswerComponent radioGroupAnswerComponent = (RadioGroupAnswerComponent) answerComponent;
+                    checkedId = radioGroupAnswerComponent.getCheckedRadioButtonId();
+                    answer = radioGroupAnswerComponent.getCheckedRadioButtonText();
                 }
 
                 String date = ZonedDateTime.now().getHour() <= 3 ?

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 public class SharedViewModel extends ViewModel {
@@ -61,6 +62,27 @@ public class SharedViewModel extends ViewModel {
         } else {
             this.questionnaires.add(new QuestionnaireModel(questionnaireId));
             this.questionnaires.get(this.questionnaires.size() - 1).setOptions(options);
+        }
+    }
+
+    public void setQuestionnaireAnswers(List<Answer> answers) {
+        for (int i : this.questionnaireIds) {
+            List<Integer> questionIdsForQuestionnaire = this.getQuestionnaireQuestions(i).stream()
+                    .map(Question::getId)
+                    .collect(Collectors.toList());
+
+            List<Answer> answersForQuestionnaire = answers.stream()
+                    .filter(a -> questionIdsForQuestionnaire.contains(a.getQuestionId()))
+                    .collect(Collectors.toList());
+
+            QuestionnaireModel questionnaire = this.getQuestionnaireModel(i);
+
+            if (questionnaire != null) {
+                questionnaire.setAnswers(answersForQuestionnaire);
+            } else {
+                this.questionnaires.add(new QuestionnaireModel(i));
+                this.questionnaires.get(this.questionnaires.size() - 1).setAnswers(answersForQuestionnaire);
+            }
         }
     }
 

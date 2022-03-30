@@ -32,7 +32,7 @@ public class Answer {
     @NonNull
     public String date;
 
-    public Answer(String value, int questionId, int optionId, int section, String date) {
+    public Answer(String value, int questionId, Integer optionId, int section, String date) {
         this.value = value;
         this.questionId = questionId;
         this.optionId = optionId;
@@ -48,7 +48,7 @@ public class Answer {
         return this.questionId;
     }
 
-    public int getOptionId() {
+    public Integer getOptionId() {
         return this.optionId;
     }
 

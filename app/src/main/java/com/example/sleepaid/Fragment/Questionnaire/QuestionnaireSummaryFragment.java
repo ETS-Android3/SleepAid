@@ -88,6 +88,7 @@ public class QuestionnaireSummaryFragment extends Fragment {
         loadAllAnswers();
     }
 
+    //TODO fix this for questions with multiple sections
     private void loadAllAnswers() {
         LinearLayout layout = this.view.findViewById(R.id.answers);
 
@@ -98,7 +99,7 @@ public class QuestionnaireSummaryFragment extends Fragment {
         layoutParams.setMargins(0, 0, 0, sizeInDp / 2);
 
         for (Question q : this.model.getQuestionnaireQuestions()) {
-            TextBox textBox = new TextBox(this.context);
+            TextBox textBox = new TextBox(requireActivity());
 
             textBox.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
             textBox.setTextSize((int) (this.sizeInDp / 3.5));

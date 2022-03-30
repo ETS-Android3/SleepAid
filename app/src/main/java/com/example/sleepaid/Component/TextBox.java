@@ -1,5 +1,6 @@
 package com.example.sleepaid.Component;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -8,6 +9,7 @@ import android.widget.TextView;
 
 import com.example.sleepaid.R;
 
+@SuppressLint("ResourceType")
 public class TextBox extends FrameLayout {
     TextView text;
 
@@ -24,25 +26,47 @@ public class TextBox extends FrameLayout {
     private void init(Context context) {
         inflate(context, R.layout.text_box, this);
 
-        int[] sets = {R.attr.text};
+        int[] sets = {R.attr.text, R.attr.textSize};
         TypedArray typedArray = context.obtainStyledAttributes(sets);
+
         CharSequence text = typedArray.getText(0);
+
+        int textSize = 0;
+        if (typedArray.hasValue(1)) {
+            textSize = typedArray.getInt(1, 15);
+        }
         typedArray.recycle();
 
         initComponents();
+
         setText(text);
+
+        if (textSize != 0) {
+            setTextSize(textSize);
+        }
     }
 
     private void init(Context context, AttributeSet attributes) {
         inflate(context, R.layout.text_box, this);
 
-        int[] sets = {R.attr.text};
+        int[] sets = {R.attr.text, R.attr.textSize};
         TypedArray typedArray = context.obtainStyledAttributes(attributes, sets);
+
         CharSequence text = typedArray.getText(0);
+
+        int textSize = 0;
+        if (typedArray.hasValue(1)) {
+            textSize = typedArray.getInt(1, 15);
+        }
         typedArray.recycle();
 
         initComponents();
+
         setText(text);
+
+        if (textSize != 0) {
+            setTextSize(textSize);
+        }
     }
 
     private void initComponents() {

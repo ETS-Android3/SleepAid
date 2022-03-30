@@ -2,6 +2,7 @@
 <resources>
     <declare-styleable name="TextBox">
         <attr name="text" format="string" />
+        <attr name="textSize" format="integer" />
     </declare-styleable>
 
     <declare-styleable name="SleepDiaryQuestionComponent">
