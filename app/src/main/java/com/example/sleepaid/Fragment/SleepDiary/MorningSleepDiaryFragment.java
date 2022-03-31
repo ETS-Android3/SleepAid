@@ -33,7 +33,8 @@ public class MorningSleepDiaryFragment extends SleepDiaryQuestionsFragment {
                 R.id.morningQuestion6,
                 R.id.morningQuestion7,
                 R.id.morningQuestion8,
-                R.id.morningQuestion9
+                R.id.morningQuestion9,
+                R.id.morningQuestion10
         };
 
         this.answerComponentIds = new int[][]{
@@ -45,10 +46,12 @@ public class MorningSleepDiaryFragment extends SleepDiaryQuestionsFragment {
                 {R.id.morningAnswer6},
                 {R.id.morningAnswer7},
                 {R.id.morningAnswer8},
-                {R.id.morningAnswer9}
+                {R.id.morningAnswer9},
+                {R.id.morningAnswer10}
         };
 
         this.sections = new int[][] {
+                {1},
                 {1},
                 {1},
                 {1},
@@ -69,6 +72,7 @@ public class MorningSleepDiaryFragment extends SleepDiaryQuestionsFragment {
                 {null},
                 {null},
                 {null},
+                {null},
                 {null}
         };
 
@@ -76,6 +80,7 @@ public class MorningSleepDiaryFragment extends SleepDiaryQuestionsFragment {
                 {"Please enter a time."},
                 {"Please enter a time."},
                 {"Please enter a duration."},
+                {"Please enter a time."},
                 {"Please enter a duration."},
                 null,
                 {"Please enter a number."},

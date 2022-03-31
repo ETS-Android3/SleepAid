@@ -126,12 +126,16 @@
         app:layout_constraintTop_toBottomOf="@id/morningAnswer4"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.example.sleepaid.Component.RadioGroupAnswerComponent
+    <com.example.sleepaid.Component.EditTextAnswerComponent
         android:id="@+id/morningAnswer5"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        app:inputType="time"
+        app:hint="e.g. 00:30"
+        app:maxLength="5"
         app:layout_constraintTop_toBottomOf="@id/morningQuestion5"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <com.example.sleepaid.Component.SleepDiaryQuestionComponent
         android:id="@+id/morningQuestion6"
@@ -141,16 +145,12 @@
         app:layout_constraintTop_toBottomOf="@id/morningAnswer5"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.example.sleepaid.Component.EditTextAnswerComponent
+    <com.example.sleepaid.Component.RadioGroupAnswerComponent
         android:id="@+id/morningAnswer6"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        app:inputType="number"
-        app:hint="e.g. 1"
-        app:maxLength="2"
         app:layout_constraintTop_toBottomOf="@id/morningQuestion6"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.example.sleepaid.Component.SleepDiaryQuestionComponent
         android:id="@+id/morningQuestion7"
@@ -160,12 +160,16 @@
         app:layout_constraintTop_toBottomOf="@id/morningAnswer6"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.example.sleepaid.Component.RadioGroupAnswerComponent
+    <com.example.sleepaid.Component.EditTextAnswerComponent
         android:id="@+id/morningAnswer7"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        app:inputType="number"
+        app:hint="e.g. 1"
+        app:maxLength="2"
         app:layout_constraintTop_toBottomOf="@id/morningQuestion7"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <com.example.sleepaid.Component.SleepDiaryQuestionComponent
         android:id="@+id/morningQuestion8"
@@ -197,6 +201,21 @@
         app:layout_constraintTop_toBottomOf="@id/morningQuestion9"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <com.example.sleepaid.Component.SleepDiaryQuestionComponent
+        android:id="@+id/morningQuestion10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        app:layout_constraintTop_toBottomOf="@id/morningAnswer9"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.example.sleepaid.Component.RadioGroupAnswerComponent
+        android:id="@+id/morningAnswer10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/morningQuestion10"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <Button
         android:id="@+id/saveSleepDiaryAnswersButton"
         android:layout_width="wrap_content"
@@ -209,7 +228,7 @@
         android:textSize="18sp"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        app:layout_constraintTop_toBottomOf="@id/morningAnswer9"
+        app:layout_constraintTop_toBottomOf="@id/morningAnswer10"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
