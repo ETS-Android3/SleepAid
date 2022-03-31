@@ -113,7 +113,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         app:inputType="time"
-        app:hint="e.g. 00:30"
+        app:hint="e.g. 08:00"
         app:maxLength="5"
         app:layout_constraintTop_toBottomOf="@id/morningQuestion4"
         app:layout_constraintStart_toStartOf="parent"/>
@@ -227,7 +227,6 @@
         android:text="Save"
         android:textSize="18sp"
         android:focusable="true"
-        android:focusableInTouchMode="true"
         app:layout_constraintTop_toBottomOf="@id/morningAnswer10"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

@@ -305,18 +305,26 @@ public class QuestionFragment extends QuestionnaireFragment {
 
         for (int i = 0; i < this.answerContainer.getChildCount(); i++) {
             if (this.answerContainer.getChildAt(i) instanceof EditTextAnswerComponent) {
-                hasErrors = !ValidationService.validateEditText(
+                boolean componentHasErrors = !ValidationService.validateEditText(
                         (EditTextAnswerComponent) this.answerContainer.getChildAt(i),
                         false,
                         null,
                         "Please enter a value.",
                         hasErrors
                 );
+
+                if (componentHasErrors) {
+                    hasErrors = true;
+                }
             } else if (this.answerContainer.getChildAt(i) instanceof RadioGroupAnswerComponent) {
-                hasErrors = !ValidationService.validateRadioGroup(
+                boolean componentHasErrors = !ValidationService.validateRadioGroup(
                         (RadioGroupAnswerComponent) this.answerContainer.getChildAt(i),
                         hasErrors
                 );
+
+                if (componentHasErrors) {
+                    hasErrors = true;
+                }
             }
         }
 

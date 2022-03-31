@@ -61,8 +61,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
     protected List<Option> options;
     protected ArrayAdapter<String>[][] answerSuggestions;
     protected String[][] emptyErrors;
-
-    //TODO add question about wake up time
+    
     //TODO make plus work for exercise
     //TODO make nap section add boxes for time based on answer
     public void onViewCreated(@NonNull View view,
@@ -316,7 +315,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
         } else if (i < this.answerComponentIds.length - 1) {
             this.view.findViewById(this.answerComponentIds[i + 1][0]).requestFocus();
         } else {
-            this.view.findViewById(R.id.saveSleepDiaryAnswersButton).requestFocus();
+            this.view.findViewById(this.answerComponentIds[i][j]).clearFocus();
         }
     }
 
@@ -401,15 +400,23 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                 View answerComponent = this.view.findViewById(this.answerComponentIds[i][j]);
 
                 if (answerComponent instanceof EditTextAnswerComponent) {
-                    hasErrors = ValidationService.validateEditText(
+                    boolean componentHasErrors = !ValidationService.validateEditText(
                             (EditTextAnswerComponent) answerComponent,
                             j != 0,
                             this.view.findViewById(this.answerComponentIds[i][0]),
                             this.emptyErrors[i][j],
                             hasErrors
                     );
+
+                    if (componentHasErrors) {
+                        hasErrors = true;
+                    }
                 } else if (answerComponent instanceof RadioGroupAnswerComponent) {
-                    hasErrors = ValidationService.validateRadioGroup((RadioGroupAnswerComponent) answerComponent, hasErrors);
+                    boolean componentHasErrors = !ValidationService.validateRadioGroup((RadioGroupAnswerComponent) answerComponent, hasErrors);
+
+                    if (componentHasErrors) {
+                        hasErrors = true;
+                    }
                 }
             }
         }
@@ -434,7 +441,9 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                     answer = radioGroupAnswerComponent.getCheckedRadioButtonText();
                 }
 
-                String date = ZonedDateTime.now().getHour() <= 3 ?
+                //TODO change this to sometime the next day?
+                //TODO add some info to let them know what day they're filling it in for
+                String date = ZonedDateTime.now().getHour() <= 12 ?
                         DataHandler.getSQLiteDate(ZonedDateTime.now().minusDays(1)) :
                         DataHandler.getSQLiteDate(ZonedDateTime.now());
 
