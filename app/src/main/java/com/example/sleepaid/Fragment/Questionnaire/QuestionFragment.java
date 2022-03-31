@@ -30,6 +30,7 @@ import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
 import com.example.sleepaid.Database.Questionnaire.Questionnaire;
+import com.example.sleepaid.Fragment.QuestionnaireFragment;
 import com.example.sleepaid.Handler.ComponentHandler;
 import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Model.SharedViewModel;
@@ -48,7 +49,7 @@ import java.util.stream.Collectors;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class QuestionFragment extends Fragment {
+public class QuestionFragment extends QuestionnaireFragment {
     private View view;
     private Context context;
     private AppDatabase db;
@@ -94,6 +95,8 @@ public class QuestionFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         this.view = view;
         this.context = App.getContext();
         this.db = AppDatabase.getDatabase(context);

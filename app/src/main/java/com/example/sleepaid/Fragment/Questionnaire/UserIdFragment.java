@@ -18,11 +18,12 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.sleepaid.Component.EditTextAnswerComponent;
 import com.example.sleepaid.Component.Modal;
+import com.example.sleepaid.Fragment.QuestionnaireFragment;
 import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
 import com.example.sleepaid.Service.ValidationService;
 
-public class UserIdFragment extends Fragment implements View.OnClickListener {
+public class UserIdFragment extends QuestionnaireFragment implements View.OnClickListener {
     private SharedViewModel model;
     private View view;
 
@@ -53,6 +54,8 @@ public class UserIdFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         this.model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
         this.view = view;
 

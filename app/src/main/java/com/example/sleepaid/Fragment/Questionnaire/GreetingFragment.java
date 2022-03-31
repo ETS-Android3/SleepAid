@@ -12,10 +12,12 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.sleepaid.Fragment.QuestionnaireFragment;
+import com.example.sleepaid.Listener.OnSwipeTouchListener;
 import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
 
-public class GreetingFragment extends Fragment implements View.OnClickListener {
+public class GreetingFragment extends QuestionnaireFragment implements View.OnClickListener {
     private SharedViewModel model;
 
     @Override
@@ -29,10 +31,20 @@ public class GreetingFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         this.model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
         Button startButton = view.findViewById(R.id.startButton);
         startButton.setOnClickListener(this);
+//
+//        view.findViewById(R.id.scrollView).setOnTouchListener(new OnSwipeTouchListener(requireActivity()) {
+//            @Override
+//            public void onSwipeLeft() {
+//                super.onSwipeLeft();
+//                startButton.performClick();
+//            }
+//        });
     }
 
     public void onClick(View view) {
