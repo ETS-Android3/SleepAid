@@ -21,30 +21,30 @@
             android:id="@+id/exitUserIdAction"
             app:destination="@id/greetingFragment" />
         <action
-            android:id="@+id/startQuestionnaireAction"
-            app:destination="@id/questionnaireFragment" />
+            android:id="@+id/startQuestionnairesAction"
+            app:destination="@id/questionFragment" />
     </fragment>
     <fragment
-        android:id="@+id/questionnaireFragment"
-        android:name="com.example.sleepaid.Fragment.Questionnaire.QuestionnaireFragment"
+        android:id="@+id/questionFragment"
+        android:name="com.example.sleepaid.Fragment.Questionnaire.QuestionFragment"
         android:label="QuestionnaireFragment" >
         <action
             android:id="@+id/exitQuestionnaireAction"
             app:destination="@id/greetingFragment" />
         <action
             android:id="@+id/showSummaryAction"
-            app:destination="@id/questionnaireSummaryFragment" />
+            app:destination="@id/answersSummaryFragment" />
     </fragment>
     <fragment
-        android:id="@+id/questionnaireSummaryFragment"
-        android:name="com.example.sleepaid.Fragment.Questionnaire.QuestionnaireSummaryFragment"
+        android:id="@+id/answersSummaryFragment"
+        android:name="com.example.sleepaid.Fragment.Questionnaire.AnswersSummaryFragment"
         android:label="fragment_questionnaire_summary"
-        tools:layout="@layout/fragment_questionnaire_summary" >
+        tools:layout="@layout/fragment_answers_summary" >
         <action
             android:id="@+id/exitSummaryAction"
-            app:destination="@id/questionnaireFragment" />
+            app:destination="@id/questionFragment" />
         <action
-            android:id="@+id/finishQuestionnaireAction"
+            android:id="@+id/finishQuestionnairesAction"
             app:destination="@id/mainMenuScreen" />
     </fragment>
     <activity

@@ -61,7 +61,7 @@ public class SleepDiaryQuestionComponent extends ConstraintLayout {
 
     private void initComponents() {
         question = findViewById(R.id.question);
-        information = findViewById(R.id.information);
+        information = findViewById(R.id.questionInformation);
     }
 
     public void setQuestionText(CharSequence questionText) {

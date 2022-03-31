@@ -13,6 +13,8 @@ public class Questionnaire {
 
     @NonNull
     public String name;
+    public String information;
+    public String copyright;
 
     public int getId() {
         return this.id;
@@ -20,5 +22,13 @@ public class Questionnaire {
 
     public String getName() {
         return this.name;
+    }
+
+    public String getInformation() {
+        return this.information;
+    }
+
+    public String getCopyright() {
+        return this.copyright;
     }
 }

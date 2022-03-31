@@ -15,7 +15,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/information"
+        android:id="@+id/questionInformation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="@style/TextView.Information"

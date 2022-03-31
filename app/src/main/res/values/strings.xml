@@ -37,14 +37,6 @@
         <item>Year</item>
     </string-array>
 
-    <string name="sleep_diary_bedtime_title">Pittsburgh Sleep Diary - Bedtime</string>
-    <string name="sleep_diary_bedtime_instructions">Please fill this out last thing at night.</string>
-    <string name="sleep_diary_bedtime_disclaimer">We know that estimates of time you had your meals, exercised, had naps, or used technology can be difficult to get exact. Do not worry about being precise, just do the best you can.</string>
-
-    <string name="sleep_diary_morning_title">Pittsburgh Sleep Diary - Morning</string>
-    <string name="sleep_diary_morning_instructions">Please fill this out first thing in the morning.</string>
-    <string name="sleep_diary_morning_disclaimer">We know that estimates of time to fall asleep can be difficult to get exact. Do not worry about being precise, just do the best you can.</string>
-
     <string name="already_submitted_diary_message">You\'ve already submitted this diary today.</string>
 
     <string name="large_text">

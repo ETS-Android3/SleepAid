@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -28,26 +29,26 @@ import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
+import com.example.sleepaid.Database.Questionnaire.Questionnaire;
 import com.example.sleepaid.Handler.ComponentHandler;
 import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
 import com.example.sleepaid.Service.ValidationService;
+import com.google.common.collect.ImmutableMap;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-
-public class QuestionnaireFragment extends Fragment {
+public class QuestionFragment extends Fragment {
     private View view;
     private Context context;
     private AppDatabase db;
@@ -87,7 +88,7 @@ public class QuestionnaireFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_questionnaire, container, false);
+        return inflater.inflate(R.layout.fragment_question, container, false);
     }
 
     @Override
@@ -104,23 +105,26 @@ public class QuestionnaireFragment extends Fragment {
 
         this.currentAnswers = this.model.getQuestionnaireAnswers() == null ? new ArrayList<>() : this.model.getQuestionnaireAnswers();
 
-        this.answerInputTypes = new HashMap<>();
-        this.answerInputTypes.put(1, "time");
-        this.answerInputTypes.put(2, "float");
-        this.answerInputTypes.put(3, "time");
-        this.answerInputTypes.put(4, "float");
+        this.answerInputTypes = new HashMap<>(ImmutableMap.of(
+                1, "time",
+                2, "float",
+                3, "time",
+                4, "float"
+        ));
 
-        this.answerHints = new HashMap<>();
-        this.answerHints.put(1, "e.g. 22:30");
-        this.answerHints.put(2, "e.g. 30");
-        this.answerHints.put(3, "e.g. 06:30");
-        this.answerHints.put(4, "e.g. 8");
+        this.answerHints = new HashMap<>(ImmutableMap.of(
+                1, "e.g. 22:30",
+                2, "e.g. 30",
+                3, "e.g. 06:30",
+                4, "e.g. 8"
+        ));
 
-        this.answerMaxLengths = new HashMap<>();
-        this.answerMaxLengths.put(1, 5);
-        this.answerMaxLengths.put(2, 5);
-        this.answerMaxLengths.put(3, 5);
-        this.answerMaxLengths.put(4, 5);
+        this.answerMaxLengths = new HashMap<>(ImmutableMap.of(
+                1, 5,
+                2, 5,
+                3, 5,
+                4, 5
+        ));
 
         Button backButton = this.view.findViewById(R.id.backButton);
         backButton.setOnClickListener(this::loadPreviousScreen);
@@ -128,11 +132,28 @@ public class QuestionnaireFragment extends Fragment {
         Button nextButton = this.view.findViewById(R.id.nextButton);
         nextButton.setOnClickListener(this::loadNextScreen);
 
-        if(this.model.getQuestionnaireQuestions() == null) {
-            loadAllQuestions();
+        if(this.model.getQuestionnaires() == null) {
+            loadAllQuestionnaires();
         } else {
             loadScreen(this.model.getCurrentQuestionId());
         }
+    }
+
+    private void loadAllQuestionnaires() {
+        this.db.questionnaireDao()
+                .loadAllByIds(this.model.getQuestionnaireIds())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        questionnaireData -> {
+                            for (int i = 0; i < questionnaireData.size(); i++) {
+                                this.model.setQuestionnaire(questionnaireData.get(i).getId(), questionnaireData.get(i));
+                            }
+
+                            loadAllQuestions();
+                        },
+                        Throwable::printStackTrace
+                );
     }
 
     private void loadAllQuestions() {
@@ -317,8 +338,11 @@ public class QuestionnaireFragment extends Fragment {
     }
 
     private void setupQuestion(int questionId) {
+        TextView questionnaireTitle = this.view.findViewById(R.id.questionnaireTitle);
+        TextBox questionnaireInformationBox = this.view.findViewById(R.id.questionnaireInformation);
         TextBox questionBox = this.view.findViewById(R.id.question);
-        TextBox informationBox = this.view.findViewById(R.id.information);
+        TextBox questionInformationBox = this.view.findViewById(R.id.questionInformation);
+        TextView questionnaireCopyright = this.view.findViewById(R.id.questionnaireCopyright);
 
         Optional<Question> question = this.model.getQuestionnaireQuestions()
                 .stream()
@@ -326,6 +350,16 @@ public class QuestionnaireFragment extends Fragment {
                 .findAny();
 
         if (question.isPresent()) {
+            Questionnaire questionnaire = this.model.getQuestionnaire(question.get().getQuestionnaireId());
+            questionnaireTitle.setText(questionnaire.getName());
+
+            if (this.model.getFirstQuestionsIds().containsValue(questionId)) {
+                questionnaireInformationBox.setVisibility(View.VISIBLE);
+                questionnaireInformationBox.setText(questionnaire.getInformation());
+            } else {
+                questionnaireInformationBox.setVisibility(View.GONE);
+            }
+
             String questionText = question.get().getQuestion().contains("{") ?
                     question.get().getQuestion().substring(0, question.get().getQuestion().indexOf("{") - 1) :
                     question.get().getQuestion();
@@ -333,22 +367,22 @@ public class QuestionnaireFragment extends Fragment {
             questionBox.setText(questionText);
 
             if (!question.get().getInformation().isEmpty()) {
-                informationBox.setVisibility(View.VISIBLE);
-                informationBox.setText(question.get().getInformation());
-                informationBox.setTextSize((int) (this.sizeInDp / 3.5));
+                questionInformationBox.setVisibility(View.VISIBLE);
+                questionInformationBox.setText(question.get().getInformation());
             } else {
-                informationBox.setVisibility(View.GONE);
+                questionInformationBox.setVisibility(View.GONE);
+            }
+
+            if (questionnaire.getCopyright() != null) {
+                questionnaireCopyright.setVisibility(View.VISIBLE);
+                questionnaireCopyright.setText(questionnaire.getCopyright());
+            } else {
+                questionnaireCopyright.setVisibility(View.GONE);
             }
         }
     }
 
     private void setupOptions(int questionId) {
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        layoutParams.setMargins(0, 0, 0, sizeInDp);
-
         this.answerContainer.removeAllViews();
 
         List<Option> possibleOptions = this.model.getQuestionnaireOptions()
@@ -357,96 +391,118 @@ public class QuestionnaireFragment extends Fragment {
                 .collect(Collectors.toList());
 
         if (!possibleOptions.isEmpty()) {
-            List<String> sections = new ArrayList<>();
-
-            Optional<Question> question = this.model.getQuestionnaireQuestions()
-                    .stream()
-                    .filter(q -> q.getId() == questionId)
-                    .findAny();
-
-            if (question.isPresent() && question.get().getQuestion().contains("{")) {
-                String sectionsText = question.get().getQuestion().substring(
-                        question.get().getQuestion().indexOf("{") + 1,
-                        question.get().getQuestion().length() - 1
-                );
-
-                sections = Arrays.asList(sectionsText.split("; "));
-            } else {
-                sections.add(null);
-            }
-
-            for (String s : sections) {
-                RadioGroupAnswerComponent radioGroupAnswerComponent = new RadioGroupAnswerComponent(App.getContext());
-
-                if (s != null) {
-                    radioGroupAnswerComponent.setSubQuestion(s);
-                }
-
-                RadioGroup radioGroup = radioGroupAnswerComponent.getRadioGroup();
-
-                List<Integer> possibleOptionsIds = possibleOptions
-                        .stream()
-                        .map(o -> o.getId())
-                        .collect(Collectors.toList());
-
-                List<String> possibleOptionsTexts = possibleOptions
-                        .stream()
-                        .map(o -> o.getValue())
-                        .collect(Collectors.toList());
-
-                ComponentHandler.setupRadioGroup(
-                        radioGroup,
-                        R.style.RadioButton_White,
-                        this.sizeInDp,
-                        possibleOptionsIds,
-                        possibleOptionsTexts,
-                        null,
-                        view -> radioGroupAnswerComponent.setError(null)
-                );
-
-                if (s != null && !s.equals(sections.get(sections.size() - 1))) {
-                    radioGroupAnswerComponent.setLayoutParams(layoutParams);
-                }
-
-                this.answerContainer.addView(radioGroupAnswerComponent);
-            }
+            this.setupRadioGroupComponents(questionId, possibleOptions);
         } else {
-            EditTextAnswerComponent editTextAnswerComponent = new EditTextAnswerComponent(requireActivity());
-
-            editTextAnswerComponent.setInputType(this.answerInputTypes.get(questionId));
-            editTextAnswerComponent.setHint(this.answerHints.get(questionId));
-            editTextAnswerComponent.setMaxLength(this.answerMaxLengths.get(questionId));
-            editTextAnswerComponent.setTextSize(20);
-
-            if (this.answerInputTypes.get(questionId).equals("time")) {
-                editTextAnswerComponent.addTextChangedListener(new TextWatcher() {
-                    public void afterTextChanged(Editable s) {
-                        editTextAnswerComponent.setError(null);
-
-                        if (editTextAnswerComponent.length() == 2 && !editTextAnswerComponent.getText().toString().contains(":")) {
-                            editTextAnswerComponent.setText(editTextAnswerComponent.getText() + ":");
-                            editTextAnswerComponent.setSelection(editTextAnswerComponent.length());
-                        }
-                    }
-
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-                    public void onTextChanged(CharSequence s, int start, int before, int count) { }
-                });
-            } else {
-                editTextAnswerComponent.addTextChangedListener(new TextWatcher() {
-                    public void afterTextChanged(Editable s) {
-                        editTextAnswerComponent.setError(null);
-                    }
-
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-                    public void onTextChanged(CharSequence s, int start, int before, int count) { }
-                });
-            }
-
-            this.answerContainer.addView(editTextAnswerComponent);
+            this.setupEditTextComponent(questionId);
         }
+    }
+
+    private void setupRadioGroupComponents(int questionId,
+                                           List<Option> possibleOptions) {
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        layoutParams.setMargins(0, 0, 0, sizeInDp);
+
+        List<String> sections = new ArrayList<>();
+
+        Optional<Question> question = this.model.getQuestionnaireQuestions()
+                .stream()
+                .filter(q -> q.getId() == questionId)
+                .findAny();
+
+        if (question.isPresent() && question.get().getQuestion().contains("{")) {
+            String sectionsText = question.get().getQuestion().substring(
+                    question.get().getQuestion().indexOf("{") + 1,
+                    question.get().getQuestion().length() - 1
+            );
+
+            sections = Arrays.asList(sectionsText.split("; "));
+        } else {
+            sections.add(null);
+        }
+
+        for (String s : sections) {
+            this.setupRadioGroupSection(s, sections.get(sections.size() - 1), possibleOptions, layoutParams);
+        }
+    }
+
+    private void setupRadioGroupSection(String s,
+                                        String lastSection,
+                                        List<Option> possibleOptions,
+                                        LinearLayout.LayoutParams layoutParams) {
+        RadioGroupAnswerComponent radioGroupAnswerComponent = new RadioGroupAnswerComponent(requireActivity());
+
+        if (s != null) {
+            radioGroupAnswerComponent.setSubQuestion(s);
+        }
+
+        RadioGroup radioGroup = radioGroupAnswerComponent.getRadioGroup();
+
+        List<Integer> possibleOptionsIds = possibleOptions
+                .stream()
+                .map(o -> o.getId())
+                .collect(Collectors.toList());
+
+        List<String> possibleOptionsTexts = possibleOptions
+                .stream()
+                .map(o -> o.getValue())
+                .collect(Collectors.toList());
+
+        ComponentHandler.setupRadioGroup(
+                radioGroup,
+                R.style.RadioButton_White,
+                this.sizeInDp,
+                possibleOptionsIds,
+                possibleOptionsTexts,
+                null,
+                view -> radioGroupAnswerComponent.setError(null)
+        );
+
+        if (s != null && !s.equals(lastSection)) {
+            radioGroupAnswerComponent.setLayoutParams(layoutParams);
+        }
+
+        this.answerContainer.addView(radioGroupAnswerComponent);
+    }
+
+    private void setupEditTextComponent(int questionId) {
+        EditTextAnswerComponent editTextAnswerComponent = new EditTextAnswerComponent(requireActivity());
+
+        editTextAnswerComponent.setInputType(this.answerInputTypes.get(questionId));
+        editTextAnswerComponent.setHint(this.answerHints.get(questionId));
+        editTextAnswerComponent.setMaxLength(this.answerMaxLengths.get(questionId));
+        editTextAnswerComponent.setTextSize(20);
+
+        if (this.answerInputTypes.get(questionId).equals("time")) {
+            editTextAnswerComponent.addTextChangedListener(new TextWatcher() {
+                public void afterTextChanged(Editable s) {
+                    editTextAnswerComponent.setError(null);
+
+                    if (editTextAnswerComponent.length() == 2 && !editTextAnswerComponent.getText().toString().contains(":")) {
+                        editTextAnswerComponent.setText(editTextAnswerComponent.getText() + ":");
+                        editTextAnswerComponent.setSelection(editTextAnswerComponent.length());
+                    }
+                }
+
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                public void onTextChanged(CharSequence s, int start, int before, int count) { }
+            });
+        } else {
+            editTextAnswerComponent.addTextChangedListener(new TextWatcher() {
+                public void afterTextChanged(Editable s) {
+                    editTextAnswerComponent.setError(null);
+                }
+
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                public void onTextChanged(CharSequence s, int start, int before, int count) { }
+            });
+        }
+
+        this.answerContainer.addView(editTextAnswerComponent);
     }
 
     private void setupPreviousAnswer(int questionId) {
@@ -464,9 +520,13 @@ public class QuestionnaireFragment extends Fragment {
                             .findFirst();
 
                     if (this.answerContainer.getChildAt(i) instanceof EditTextAnswerComponent) {
-                        ((EditTextAnswerComponent) this.answerContainer.getChildAt(i)).setText(answerForSection.get().getValue());
+                        if (answerForSection.isPresent()) {
+                            ((EditTextAnswerComponent) this.answerContainer.getChildAt(i)).setText(answerForSection.get().getValue());
+                        }
                     } else if (this.answerContainer.getChildAt(i) instanceof RadioGroupAnswerComponent) {
-                        ((RadioGroupAnswerComponent) this.answerContainer.getChildAt(i)).setChecked(answerForSection.get().getOptionId(), true);
+                        if (answerForSection.isPresent()) {
+                            ((RadioGroupAnswerComponent) this.answerContainer.getChildAt(i)).setChecked(answerForSection.get().getOptionId(), true);
+                        }
                     }
                 }
             }
@@ -490,7 +550,7 @@ public class QuestionnaireFragment extends Fragment {
             int optionId = previousAnswer.get().getOptionId() + numberOfOptions;
             System.out.println(optionId);
 
-            TextBox information = this.view.findViewById(R.id.information);
+            TextBox information = this.view.findViewById(R.id.questionInformation);
             String currentText = information.getText().toString();
             String newText = getString(R.string.wakeup_time) + radioGroupAnswerComponent.getRadioButtonText(optionId).toLowerCase();
 

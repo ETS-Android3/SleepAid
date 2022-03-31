@@ -15,32 +15,20 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <TextView
-            android:id="@+id/bedtimeTitle"
+            android:id="@+id/diaryTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/sleep_diary_bedtime_title"
             style="@style/TextView"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/bedtimeInstructions"
+            android:id="@+id/diaryInformation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="@string/sleep_diary_bedtime_instructions"
             style="@style/TextView.Information"
-            app:layout_constraintTop_toBottomOf="@id/bedtimeTitle"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-            android:id="@+id/bedtimeDisclaimer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="@string/sleep_diary_bedtime_disclaimer"
-            style="@style/TextView.Information"
-            app:layout_constraintTop_toBottomOf="@id/bedtimeInstructions"
+            app:layout_constraintTop_toBottomOf="@id/diaryTitle"
             app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

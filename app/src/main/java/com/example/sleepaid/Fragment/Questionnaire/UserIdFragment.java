@@ -16,19 +16,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.sleepaid.App;
 import com.example.sleepaid.Component.EditTextAnswerComponent;
 import com.example.sleepaid.Component.Modal;
-import com.example.sleepaid.Database.AppDatabase;
-import com.example.sleepaid.Database.Configuration.Configuration;
 import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
 import com.example.sleepaid.Service.ValidationService;
-
-import java.util.Collections;
-
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class UserIdFragment extends Fragment implements View.OnClickListener {
     private SharedViewModel model;
@@ -121,7 +113,7 @@ public class UserIdFragment extends Fragment implements View.OnClickListener {
             this.model.setCurrentQuestionnaireId(1);
             this.model.setCurrentQuestionId(1);
 
-            NavHostFragment.findNavController(this).navigate(R.id.startQuestionnaireAction);
+            NavHostFragment.findNavController(this).navigate(R.id.startQuestionnairesAction);
         }
     }
 }

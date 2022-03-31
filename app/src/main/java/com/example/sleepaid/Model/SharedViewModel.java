@@ -6,15 +6,19 @@ import com.example.sleepaid.Database.Alarm.Alarm;
 import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
+import com.example.sleepaid.Database.Questionnaire.Questionnaire;
 import com.example.sleepaid.Database.SleepData.SleepData;
 import com.example.sleepaid.Handler.DataHandler;
+import com.google.common.collect.ImmutableMap;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -23,6 +27,13 @@ public class SharedViewModel extends ViewModel {
     private String userId;
 
     private int[] questionnaireIds = new int[]{1, 2, 3, 6};
+    private HashMap<Integer, Integer> firstQuestionsIds = new HashMap<>(ImmutableMap.of(
+            1, 1,
+            2, 7,
+            3, 9,
+            6, 22
+    ));
+
     private List<QuestionnaireModel> questionnaires = new ArrayList<>();
     private List<SleepDiaryModel> sleepDiaries = new ArrayList<>();
 
@@ -47,6 +58,17 @@ public class SharedViewModel extends ViewModel {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public void setQuestionnaire(int questionnaireId, Questionnaire questionnaire) {
+        QuestionnaireModel questionnaireModel = this.getQuestionnaireModel(questionnaireId);
+
+        if (questionnaireModel != null) {
+            questionnaireModel.setQuestionnaire(questionnaire);
+        } else {
+            this.questionnaires.add(new QuestionnaireModel(questionnaireId));
+            this.questionnaires.get(this.questionnaires.size() - 1).setQuestionnaire(questionnaire);
+        }
     }
 
     public void setQuestionnaireQuestions(int questionnaireId, List<Question> questions) {
@@ -274,6 +296,10 @@ public class SharedViewModel extends ViewModel {
         return this.questionnaireIds;
     }
 
+    public HashMap<Integer, Integer> getFirstQuestionsIds() {
+        return this.firstQuestionsIds;
+    }
+
     public QuestionnaireModel getQuestionnaireModel(int questionnaireId) {
         Optional<QuestionnaireModel> questionnaire = this.questionnaires.stream()
                 .filter(q -> q.getQuestionnaireId() == questionnaireId)
@@ -281,6 +307,32 @@ public class SharedViewModel extends ViewModel {
 
         if (questionnaire.isPresent()) {
             return questionnaire.get();
+        }
+
+        return null;
+    }
+
+    public List<Questionnaire> getQuestionnaires() {
+        List<Questionnaire> questionnaires = new ArrayList<>();
+
+        if (!this.questionnaires.isEmpty()) {
+            for (QuestionnaireModel q : this.questionnaires) {
+                if (q.getQuestionnaire() != null) {
+                    questionnaires.add(q.getQuestionnaire());
+                }
+            }
+        }
+
+        return questionnaires.isEmpty() ? null : questionnaires;
+    }
+
+    public Questionnaire getQuestionnaire(int questionnaireId) {
+        Optional<QuestionnaireModel> questionnaire = this.questionnaires.stream()
+                .filter(q -> q.getQuestionnaireId() == questionnaireId)
+                .findFirst();
+
+        if (questionnaire.isPresent()) {
+            return questionnaire.get().getQuestionnaire();
         }
 
         return null;

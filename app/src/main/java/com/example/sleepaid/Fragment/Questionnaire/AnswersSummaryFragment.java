@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class QuestionnaireSummaryFragment extends Fragment {
+public class AnswersSummaryFragment extends Fragment {
     private View view;
     private Context context;
     private AppDatabase db;
@@ -66,7 +66,7 @@ public class QuestionnaireSummaryFragment extends Fragment {
                              ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_questionnaire_summary, container, false);
+        return inflater.inflate(R.layout.fragment_answers_summary, container, false);
     }
 
     @Override

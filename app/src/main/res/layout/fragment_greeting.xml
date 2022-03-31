@@ -27,7 +27,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.example.sleepaid.Component.TextBox
-            android:id="@+id/information"
+            android:id="@+id/questionInformation"
             android:layout_width="0dp"
             app:layout_constraintWidth_max="wrap"
             app:layout_constraintWidth_percent="0.9"
@@ -49,8 +49,8 @@
             android:text="@string/start_button"
             android:textAlignment="center"
             android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="@+id/information"
-            app:layout_constraintTop_toBottomOf="@+id/information"
+            app:layout_constraintEnd_toEndOf="@+id/questionInformation"
+            app:layout_constraintTop_toBottomOf="@+id/questionInformation"
             app:layout_constraintBottom_toBottomOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

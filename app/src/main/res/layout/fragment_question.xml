@@ -8,7 +8,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <RelativeLayout
             android:id="@+id/questionAndInfo"
@@ -20,20 +20,41 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <TextView
+                android:id="@+id/questionnaireTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:textSize="25sp"
+                android:textColor="@color/white"
+                android:textAlignment="center"
+                android:layout_centerHorizontal="true" />
+
+            <com.example.sleepaid.Component.TextBox
+                android:id="@+id/questionnaireInformation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                app:textSize="18"
+                android:visibility="gone"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/questionnaireTitle" />
+
             <com.example.sleepaid.Component.TextBox
                 android:id="@+id/question"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 app:textSize="20"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/questionnaireInformation" />
 
             <com.example.sleepaid.Component.TextBox
-                android:id="@+id/information"
+                android:id="@+id/questionInformation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                app:textSize="20"
+                app:textSize="18"
                 android:layout_alignLeft="@+id/question"
                 android:layout_alignRight="@+id/question"
                 android:layout_below="@+id/question" />
@@ -63,7 +84,7 @@
             android:textSize="17sp"
             app:layout_constraintStart_toStartOf="@+id/questionAndInfo"
             app:layout_constraintTop_toBottomOf="@+id/questionnaireAnswerContainer"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toTopOf="@id/questionnaireCopyright" />
 
         <Button
             android:id="@+id/nextButton"
@@ -76,6 +97,21 @@
             android:textSize="17sp"
             app:layout_constraintEnd_toEndOf="@+id/questionAndInfo"
             app:layout_constraintTop_toBottomOf="@+id/questionnaireAnswerContainer"
+            app:layout_constraintBottom_toTopOf="@id/questionnaireCopyright" />
+
+        <TextView
+            android:id="@+id/questionnaireCopyright"
+            android:layout_width="0dp"
+            app:layout_constraintWidth_max="wrap"
+            app:layout_constraintWidth_percent="0.9"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:textSize="15sp"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            app:flow_horizontalBias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

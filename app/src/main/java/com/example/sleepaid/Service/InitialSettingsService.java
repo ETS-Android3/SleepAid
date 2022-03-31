@@ -236,7 +236,7 @@ public class InitialSettingsService {
                             Intent intent = new Intent(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                            NavHostFragment.findNavController(this.fragment).navigate(R.id.finishQuestionnaireAction);
+                            NavHostFragment.findNavController(this.fragment).navigate(R.id.finishQuestionnairesAction);
                         },
                         Throwable::printStackTrace
                 );

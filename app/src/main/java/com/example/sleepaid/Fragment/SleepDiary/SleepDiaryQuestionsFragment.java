@@ -10,6 +10,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,7 @@ import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
+import com.example.sleepaid.Database.Questionnaire.Questionnaire;
 import com.example.sleepaid.Handler.ComponentHandler;
 import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Model.SharedViewModel;
@@ -76,7 +78,37 @@ public class SleepDiaryQuestionsFragment extends Fragment {
         saveButton.setOnClickListener(saveAnswers);
 
         this.model.setSleepDiaryHasOptions(this.questionnaireId, this.questionnaireId == 4);
-        this.loadQuestions();
+        this.loadQuestionnaire();
+    }
+
+    private void loadQuestionnaire() {
+        if (this.model.getQuestionnaire(this.questionnaireId) == null) {
+            this.db.questionnaireDao()
+                    .loadAllByIds(new int[]{this.questionnaireId})
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            questionnaire -> {
+                                this.model.setQuestionnaire(this.questionnaireId, questionnaire.get(0));
+                                this.setupDiary(questionnaire.get(0));
+
+                                this.loadQuestions();
+                            },
+                            Throwable::printStackTrace
+                    );
+        } else {
+            this.setupDiary(this.model.getQuestionnaire(this.questionnaireId));
+
+            this.loadQuestions();
+        }
+    }
+
+    private void setupDiary(Questionnaire questionnaire) {
+        TextView diaryTitle = this.view.findViewById(R.id.diaryTitle);
+        diaryTitle.setText(questionnaire.getName());
+
+        TextView diaryInformation = this.view.findViewById(R.id.diaryInformation);
+        diaryInformation.setText(questionnaire.getInformation());
     }
 
     private void loadQuestions() {
