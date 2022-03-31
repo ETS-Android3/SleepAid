@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 
 
 public class SharedViewModel extends ViewModel {
+    private String userId;
+
     private int[] questionnaireIds = new int[]{1, 2, 3, 6};
     private List<QuestionnaireModel> questionnaires = new ArrayList<>();
     private List<SleepDiaryModel> sleepDiaries = new ArrayList<>();
@@ -42,6 +44,10 @@ public class SharedViewModel extends ViewModel {
     private List<GraphSeriesModel> graphSeries = new ArrayList<>();
     private List<GoalModel> goals = new ArrayList<>();
     private List<AlarmListModel> alarms = new ArrayList<>();
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public void setQuestionnaireQuestions(int questionnaireId, List<Question> questions) {
         QuestionnaireModel questionnaire = this.getQuestionnaireModel(questionnaireId);
@@ -258,6 +264,10 @@ public class SharedViewModel extends ViewModel {
                     alarmList
             ));
         }
+    }
+
+    public String getUserId() {
+        return this.userId;
     }
 
     public int[] getQuestionnaireIds() {

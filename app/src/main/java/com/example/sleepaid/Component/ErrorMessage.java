@@ -29,7 +29,7 @@ public class ErrorMessage extends FrameLayout {
         int[] sets = {R.attr.errorText, R.attr.errorTextSize};
 
         CharSequence errorText = null;
-        int errorTextSize = 0;
+        float errorTextSize = 0;
 
         TypedArray typedArray = context.obtainStyledAttributes(sets);
 
@@ -39,7 +39,7 @@ public class ErrorMessage extends FrameLayout {
 
 
         if (typedArray.hasValue(1)) {
-            errorTextSize = typedArray.getInt(1, 20);
+            errorTextSize = typedArray.getFloat(1, 20);
         }
 
         typedArray.recycle();
@@ -61,7 +61,7 @@ public class ErrorMessage extends FrameLayout {
         int[] sets = {R.attr.errorText, R.attr.errorTextSize};
 
         CharSequence errorText = null;
-        int errorTextSize = 0;
+        float errorTextSize = 0;
 
         TypedArray typedArray = context.obtainStyledAttributes(attributes, sets);
 
@@ -71,7 +71,7 @@ public class ErrorMessage extends FrameLayout {
 
 
         if (typedArray.hasValue(1)) {
-            errorTextSize = typedArray.getInt(1, 20);
+            errorTextSize = typedArray.getFloat(1, 20);
         }
 
         typedArray.recycle();
@@ -95,7 +95,7 @@ public class ErrorMessage extends FrameLayout {
         error.setText(text);
     }
 
-    public void setTextSize(int textSize) {
+    public void setTextSize(float textSize) {
         error.setTextSize(textSize);
     }
 }

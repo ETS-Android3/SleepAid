@@ -3,15 +3,14 @@ package com.example.sleepaid.Fragment.Questionnaire;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -38,8 +37,9 @@ import com.example.sleepaid.Service.ValidationService;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -59,7 +59,10 @@ public class QuestionnaireFragment extends Fragment {
 
     private LinearLayout answerContainer;
 
-    //TODO make edit texts bigger and add special hints and input types
+    private HashMap<Integer, String> answerInputTypes;
+    private HashMap<Integer, String> answerHints;
+    private HashMap<Integer, Integer> answerMaxLengths;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,6 +103,24 @@ public class QuestionnaireFragment extends Fragment {
         this.answerContainer = this.view.findViewById(R.id.questionnaireAnswerContainer);
 
         this.currentAnswers = this.model.getQuestionnaireAnswers() == null ? new ArrayList<>() : this.model.getQuestionnaireAnswers();
+
+        this.answerInputTypes = new HashMap<>();
+        this.answerInputTypes.put(1, "time");
+        this.answerInputTypes.put(2, "float");
+        this.answerInputTypes.put(3, "time");
+        this.answerInputTypes.put(4, "float");
+
+        this.answerHints = new HashMap<>();
+        this.answerHints.put(1, "e.g. 22:30");
+        this.answerHints.put(2, "e.g. 30");
+        this.answerHints.put(3, "e.g. 06:30");
+        this.answerHints.put(4, "e.g. 8");
+
+        this.answerMaxLengths = new HashMap<>();
+        this.answerMaxLengths.put(1, 5);
+        this.answerMaxLengths.put(2, 5);
+        this.answerMaxLengths.put(3, 5);
+        this.answerMaxLengths.put(4, 5);
 
         Button backButton = this.view.findViewById(R.id.backButton);
         backButton.setOnClickListener(this::loadPreviousScreen);
@@ -165,9 +186,9 @@ public class QuestionnaireFragment extends Fragment {
     }
 
     public void loadNextScreen(View view) {
-        //if (this.validateAnswers()) {
+        if (this.validateAnswers()) {
             loadScreen(this.model.getCurrentQuestionId() + 1);
-        //}
+        }
     }
 
     private void loadScreen(int questionId) {
@@ -391,9 +412,38 @@ public class QuestionnaireFragment extends Fragment {
             }
         } else {
             EditTextAnswerComponent editTextAnswerComponent = new EditTextAnswerComponent(requireActivity());
-            //TODO do this based on question
-            editTextAnswerComponent.setInputType("number");
-            editTextAnswerComponent.setHint("e.g. 1");
+
+            editTextAnswerComponent.setInputType(this.answerInputTypes.get(questionId));
+            editTextAnswerComponent.setHint(this.answerHints.get(questionId));
+            editTextAnswerComponent.setMaxLength(this.answerMaxLengths.get(questionId));
+            editTextAnswerComponent.setTextSize(20);
+
+            if (this.answerInputTypes.get(questionId).equals("time")) {
+                editTextAnswerComponent.addTextChangedListener(new TextWatcher() {
+                    public void afterTextChanged(Editable s) {
+                        editTextAnswerComponent.setError(null);
+
+                        if (editTextAnswerComponent.length() == 2 && !editTextAnswerComponent.getText().toString().contains(":")) {
+                            editTextAnswerComponent.setText(editTextAnswerComponent.getText() + ":");
+                            editTextAnswerComponent.setSelection(editTextAnswerComponent.length());
+                        }
+                    }
+
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                    public void onTextChanged(CharSequence s, int start, int before, int count) { }
+                });
+            } else {
+                editTextAnswerComponent.addTextChangedListener(new TextWatcher() {
+                    public void afterTextChanged(Editable s) {
+                        editTextAnswerComponent.setError(null);
+                    }
+
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                    public void onTextChanged(CharSequence s, int start, int before, int count) { }
+                });
+            }
 
             this.answerContainer.addView(editTextAnswerComponent);
         }

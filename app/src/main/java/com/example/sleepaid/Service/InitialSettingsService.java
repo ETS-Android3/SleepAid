@@ -48,12 +48,6 @@ public class InitialSettingsService {
     }
 
     private void getConfigurationList() {
-        Configuration notificationSound = new Configuration("notificationSound", "Default");
-        configurationList.add(notificationSound);
-
-        Configuration notificationVibration = new Configuration("notificationVibrate", "1");
-        configurationList.add(notificationVibration);
-
         db.answerDao()
                 .loadValuesByQuestionIds(new int[]{24})
                 .subscribeOn(Schedulers.io())

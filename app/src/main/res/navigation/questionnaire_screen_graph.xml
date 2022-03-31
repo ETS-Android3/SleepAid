@@ -10,6 +10,17 @@
         android:name="com.example.sleepaid.Fragment.Questionnaire.GreetingFragment"
         android:label="GreetingFragment">
         <action
+            android:id="@+id/startUserIdAction"
+            app:destination="@id/userIdFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/userIdFragment"
+        android:name="com.example.sleepaid.Fragment.Questionnaire.UserIdFragment"
+        android:label="UserIdFragment">
+        <action
+            android:id="@+id/exitUserIdAction"
+            app:destination="@id/greetingFragment" />
+        <action
             android:id="@+id/startQuestionnaireAction"
             app:destination="@id/questionnaireFragment" />
     </fragment>

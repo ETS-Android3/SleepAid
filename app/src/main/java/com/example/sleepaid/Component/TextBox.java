@@ -31,9 +31,9 @@ public class TextBox extends FrameLayout {
 
         CharSequence text = typedArray.getText(0);
 
-        int textSize = 0;
+        float textSize = 0;
         if (typedArray.hasValue(1)) {
-            textSize = typedArray.getInt(1, 15);
+            textSize = typedArray.getFloat(1, 15);
         }
         typedArray.recycle();
 
@@ -54,9 +54,9 @@ public class TextBox extends FrameLayout {
 
         CharSequence text = typedArray.getText(0);
 
-        int textSize = 0;
+        float textSize = 0;
         if (typedArray.hasValue(1)) {
-            textSize = typedArray.getInt(1, 15);
+            textSize = typedArray.getFloat(1, 15);
         }
         typedArray.recycle();
 
@@ -85,7 +85,7 @@ public class TextBox extends FrameLayout {
         text.setTextAlignment(value);
     }
 
-    public void setTextSize(int value) {
+    public void setTextSize(float value) {
         text.setTextSize(value);
     }
 }

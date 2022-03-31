@@ -20,7 +20,7 @@ import com.example.sleepaid.App;
 import com.example.sleepaid.Component.TextBox;
 import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.Database.AppDatabase;
-import com.example.sleepaid.Database.Option.Option;
+import com.example.sleepaid.Database.Configuration.Configuration;
 import com.example.sleepaid.Database.Question.Question;
 import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
@@ -28,7 +28,11 @@ import com.example.sleepaid.Service.InitialSettingsService;
 import com.example.sleepaid.Service.RemoteDatabaseTransferService;
 import com.google.gson.Gson;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -88,7 +92,6 @@ public class QuestionnaireSummaryFragment extends Fragment {
         loadAllAnswers();
     }
 
-    //TODO fix this for questions with multiple sections
     private void loadAllAnswers() {
         LinearLayout layout = this.view.findViewById(R.id.answers);
 
@@ -98,34 +101,65 @@ public class QuestionnaireSummaryFragment extends Fragment {
         );
         layoutParams.setMargins(0, 0, 0, sizeInDp / 2);
 
+        this.addUserId(layout, layoutParams);
+
         for (Question q : this.model.getQuestionnaireQuestions()) {
-            TextBox textBox = new TextBox(requireActivity());
-
-            textBox.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-            textBox.setTextSize((int) (this.sizeInDp / 3.5));
-            textBox.setLayoutParams(layoutParams);
-
             int questionId = q.getId();
 
-            String questionText = questionId + ". " + q.getQuestion();
-            String answerText;
+            String questionText;
+            List<String> sections = new ArrayList<>();
 
-            Optional<Answer> currentAnswer = this.model.getQuestionnaireAnswers()
+            if (q.getQuestion().contains("{")) {
+                questionText = questionId + ". " + q.getQuestion().substring(0, q.getQuestion().indexOf("{") - 1);
+
+                String sectionsText = q.getQuestion().substring(
+                        q.getQuestion().indexOf("{") + 1,
+                        q.getQuestion().length() - 1
+                );
+
+                sections = Arrays.asList(sectionsText.split("; "));
+            } else {
+                questionText = questionId + ". " + q.getQuestion();
+                sections.add("");
+            }
+
+            String answerText;
+            String sectionText;
+
+            List<Answer> currentAnswers = this.model.getQuestionnaireAnswers()
                     .stream()
                     .filter(a -> a.getQuestionId() == questionId)
-                    .findAny();
+                    .collect(Collectors.toList());
 
-            if (currentAnswer.isPresent()) {
-                answerText = "A: " + currentAnswer.get().getValue();
+            if (!currentAnswers.isEmpty()) {
+                for (int i = 0; i < currentAnswers.size(); i++) {
+                    answerText = "\nA: " + currentAnswers.get(i).getValue();
+                    sectionText = sections.get(i).isEmpty() ?
+                            "" :
+                            "\n" + sections.get(i);
+
+                    TextBox textBox = new TextBox(requireActivity());
+
+                    textBox.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+                    textBox.setTextSize((int) (this.sizeInDp / 3.5));
+                    textBox.setLayoutParams(layoutParams);
+                    textBox.setText(questionText + sectionText + answerText);
+
+                    layout.addView(textBox);
+                }
             }
-            else {
-                answerText = "No answer";
-            }
-
-            textBox.setText(questionText + "\n" + answerText);
-
-            layout.addView(textBox);
         }
+    }
+
+    private void addUserId(LinearLayout layout, LinearLayout.LayoutParams layoutParams) {
+        TextBox textBox = new TextBox(requireActivity());
+
+        textBox.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+        textBox.setTextSize((int) (this.sizeInDp / 3.5));
+        textBox.setLayoutParams(layoutParams);
+        textBox.setText(getResources().getString(R.string.user_id_question) + "\n" + "A: " + this.model.getUserId());
+
+        layout.addView(textBox);
     }
 
     public void loadPreviousScreen(View view) {
@@ -142,15 +176,28 @@ public class QuestionnaireSummaryFragment extends Fragment {
                             for (int i : this.model.getQuestionnaireIds()) {
                                 if (i != 6) {
                                     new RemoteDatabaseTransferService().execute(
-                                            "123",
+                                            this.model.getUserId(),
                                             Integer.toString(i),
                                             new Gson().toJson(this.model.getQuestionnaireAnswers(i))
                                     );
                                 }
                             }
 
-                            new InitialSettingsService(this, this.db).getSettings();
+                            this.storeUserId();
                         },
+                        Throwable::printStackTrace
+                );
+    }
+
+    private void storeUserId() {
+        Configuration userIdConfiguration = new Configuration("userId", this.model.getUserId());
+
+        this.db.configurationDao()
+                .insert(Collections.singletonList(userIdConfiguration))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        () -> new InitialSettingsService(this, this.db).getSettings(),
                         Throwable::printStackTrace
                 );
     }

@@ -3,19 +3,12 @@ package com.example.sleepaid.Component;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.text.InputFilter;
-import android.text.InputType;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.sleepaid.R;
-import com.google.android.material.textfield.TextInputLayout;
 
 @SuppressLint("ResourceType")
 public class SleepDiaryQuestionComponent extends ConstraintLayout {

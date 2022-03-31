@@ -2,7 +2,7 @@
 <resources>
     <declare-styleable name="TextBox">
         <attr name="text" format="string" />
-        <attr name="textSize" format="integer" />
+        <attr name="textSize" format="float" />
     </declare-styleable>
 
     <declare-styleable name="SleepDiaryQuestionComponent">
@@ -10,14 +10,15 @@
         <attr name="informationText" format="string" />
     </declare-styleable>
 
-    <declare-styleable name="SleepDiaryAnswerComponent">
+    <declare-styleable name="EditTextAnswerComponent">
         <attr name="hint" format="string" />
         <attr name="inputType" format="string" />
         <attr name="maxLength" format="integer" />
+        <attr name="editTextTextSize" format="float" />
     </declare-styleable>
 
     <declare-styleable name="ErrorMessage">
         <attr name="errorText" format="string" />
-        <attr name="errorTextSize" format="integer" />
+        <attr name="errorTextSize" format="float" />
     </declare-styleable>
 </resources>

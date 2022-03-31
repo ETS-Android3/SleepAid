@@ -12,8 +12,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
-
 import com.example.sleepaid.R;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -36,7 +34,7 @@ public class EditTextAnswerComponent extends FrameLayout {
     private void init(Context context) {
         inflate(context, R.layout.edit_text_answer_component, this);
 
-        int[] sets = {R.attr.hint, R.attr.inputType, R.attr.maxLength};
+        int[] sets = {R.attr.hint, R.attr.inputType, R.attr.maxLength, R.attr.editTextTextSize};
 
         TypedArray typedArray = context.obtainStyledAttributes(sets);
 
@@ -55,6 +53,11 @@ public class EditTextAnswerComponent extends FrameLayout {
             maxLength = typedArray.getInt(2, 5);
         }
 
+        float textSize = 0;
+        if (typedArray.hasValue(3)) {
+            textSize = typedArray.getFloat(3, 15);
+        }
+
         typedArray.recycle();
 
         initComponents();
@@ -70,12 +73,16 @@ public class EditTextAnswerComponent extends FrameLayout {
         if (maxLength != 0) {
             setMaxLength(maxLength);
         }
+
+        if (textSize != 0) {
+            setTextSize(textSize);
+        }
     }
 
     private void init(Context context, AttributeSet attributes) {
         inflate(context, R.layout.edit_text_answer_component, this);
 
-        int[] sets = {R.attr.hint, R.attr.inputType, R.attr.maxLength};
+        int[] sets = {R.attr.hint, R.attr.inputType, R.attr.maxLength, R.attr.editTextTextSize};
 
         TypedArray typedArray = context.obtainStyledAttributes(attributes, sets);
 
@@ -94,6 +101,11 @@ public class EditTextAnswerComponent extends FrameLayout {
             maxLength = typedArray.getInt(2, 5);
         }
 
+        float textSize = 0;
+        if (typedArray.hasValue(3)) {
+            textSize = typedArray.getFloat(3, 15);
+        }
+
         typedArray.recycle();
 
         initComponents();
@@ -109,92 +121,108 @@ public class EditTextAnswerComponent extends FrameLayout {
         if (maxLength != 0) {
             setMaxLength(maxLength);
         }
+
+        if (textSize != 0) {
+            setTextSize(textSize);
+        }
     }
 
     private void initComponents() {
-        answerContainer = findViewById(R.id.answerContainer);
-        answerText = findViewById(R.id.answerText);
-        errorMessage = findViewById(R.id.errorMessage);
+        this.answerContainer = findViewById(R.id.answerContainer);
+        this.answerText = findViewById(R.id.answerText);
+        this.errorMessage = findViewById(R.id.errorMessage);
     }
 
     public void setText(CharSequence text) {
-        answerText.setText(text);
+        this.answerText.setText(text);
+    }
+
+    public void setTextSize(float textSize) {
+        this.answerText.setTextSize(textSize);
+    }
+    
+    public void setAllCaps(boolean allCaps) {
+        this.answerText.setAllCaps(allCaps);
     }
 
     public void setHint(CharSequence hint) {
-        answerText.setHint(hint);
+        this.answerText.setHint(hint);
     }
 
     public void setError(CharSequence error) {
         if (error == null) {
-            errorMessage.setVisibility(GONE);
+            this.errorMessage.setVisibility(GONE);
         } else {
-            errorMessage.setVisibility(VISIBLE);
-            errorMessage.setText(error);
+            this.errorMessage.setVisibility(VISIBLE);
+            this.errorMessage.setText(error);
         }
     }
 
     public void setInputType(CharSequence inputType) {
         switch (inputType.toString()) {
             case "textShortMessage":
-                answerText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE);
+                this.answerText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE);
                 break;
 
             case "number":
-                answerText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                this.answerText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                break;
+
+            case "float":
+                this.answerText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                 break;
 
             default:
-                answerText.setInputType(InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_TIME);
+                this.answerText.setInputType(InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_TIME);
                 break;
         }
     }
 
     public void setMaxLength(int maxLength) {
-        answerText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(maxLength) });
+        this.answerText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(maxLength) });
     }
 
     public void setAdapter(ArrayAdapter<String> arrayAdapter) {
-        answerText.setAdapter(arrayAdapter);
+        this.answerText.setAdapter(arrayAdapter);
     }
 
     public void setOnTouchListener(OnTouchListener listener) {
-        answerText.setOnTouchListener(listener);
+        this.answerText.setOnTouchListener(listener);
     }
 
     public void setOnEditorActionListener(TextView.OnEditorActionListener listener) {
-        answerText.setOnEditorActionListener(listener);
+        this.answerText.setOnEditorActionListener(listener);
     }
 
     public void setSelection(int index) {
-        answerText.setSelection(index);
+        this.answerText.setSelection(index);
     }
 
     public void setEnabled(boolean enabled) {
-        answerText.setEnabled(enabled);
+        this.answerText.setEnabled(enabled);
     }
 
     public void addTextChangedListener(TextWatcher textWatcher) {
-        answerText.addTextChangedListener(textWatcher);
+        this.answerText.addTextChangedListener(textWatcher);
     }
 
     public void showDropDown() {
-        answerText.showDropDown();
+        this.answerText.showDropDown();
     }
 
     public CharSequence getText() {
-        return answerText.getText();
+        return this.answerText.getText();
     }
 
     public int getInputType() {
-        return answerText.getInputType();
+        return this.answerText.getInputType();
     }
 
     public int length() {
-        return answerText.length();
+        return this.answerText.length();
     }
 
     public void clear() {
-        answerText.getText().clear();
+        this.answerText.getText().clear();
     }
 }

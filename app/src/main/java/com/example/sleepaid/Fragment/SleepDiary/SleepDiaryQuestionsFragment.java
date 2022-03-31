@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -20,8 +19,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.sleepaid.App;
 import com.example.sleepaid.Component.EditTextAnswerComponent;
-import com.example.sleepaid.Component.SleepDiaryQuestionComponent;
 import com.example.sleepaid.Component.RadioGroupAnswerComponent;
+import com.example.sleepaid.Component.SleepDiaryQuestionComponent;
 import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.Option.Option;
@@ -201,39 +200,48 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                 View answer = this.view.findViewById(answerComponentIds[i][j]);
 
                 if (answer instanceof EditTextAnswerComponent) {
-                    EditTextAnswerComponent sleepDiaryAnswer = (EditTextAnswerComponent) answer;
-
-                    if (answerForTodayExists) {
-                        sleepDiaryAnswer.setEnabled(false);
-                    } else {
-                        this.setupAutoCompleteSuggestions(sleepDiaryAnswer, i, j);
-
-                        if (sleepDiaryAnswer.getInputType() == (InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_TIME)) {
-                            this.setupTimeInput(sleepDiaryAnswer, i, j);
-                        } else {
-                            sleepDiaryAnswer.addTextChangedListener(new TextWatcher() {
-                                public void afterTextChanged(Editable s) {
-                                    sleepDiaryAnswer.setError(null);
-                                }
-
-                                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-                                public void onTextChanged(CharSequence s, int start, int before, int count) { }
-                            });
-                        }
-                    }
+                    this.setupEditTextComponent((EditTextAnswerComponent) answer, answerForTodayExists, i, j);
                 } else if (answer instanceof RadioGroupAnswerComponent) {
-                    RadioGroupAnswerComponent sleepDiaryRadioGroupAnswer = (RadioGroupAnswerComponent) answer;
-
-                    this.setupRadioGroup(sleepDiaryRadioGroupAnswer.getRadioGroup(), this.questionIds.get(i));
-
-                    if (answerForTodayExists) {
-                        sleepDiaryRadioGroupAnswer.setEnabled(false);
-                    }
+                    this.setupRadioGroupComponent((RadioGroupAnswerComponent) answer, answerForTodayExists, i);
                 }
 
                 setupNextFocus(answer, i, j);
             }
+        }
+    }
+
+    private void setupEditTextComponent(EditTextAnswerComponent editTextAnswerComponent,
+                                        boolean answerForTodayExists,
+                                        int i,
+                                        int j) {
+        if (answerForTodayExists) {
+            editTextAnswerComponent.setEnabled(false);
+        } else {
+            this.setupAutoCompleteSuggestions(editTextAnswerComponent, i, j);
+
+            if (editTextAnswerComponent.getInputType() == (InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_TIME)) {
+                this.setupTimeInput(editTextAnswerComponent, i, j);
+            } else {
+                editTextAnswerComponent.addTextChangedListener(new TextWatcher() {
+                    public void afterTextChanged(Editable s) {
+                        editTextAnswerComponent.setError(null);
+                    }
+
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                    public void onTextChanged(CharSequence s, int start, int before, int count) { }
+                });
+            }
+        }
+    }
+
+    private void setupRadioGroupComponent(RadioGroupAnswerComponent radioGroupAnswerComponent,
+                                          boolean answerForTodayExists,
+                                          int i) {
+        this.setupRadioGroup(radioGroupAnswerComponent.getRadioGroup(), this.questionIds.get(i));
+
+        if (answerForTodayExists) {
+            radioGroupAnswerComponent.setEnabled(false);
         }
     }
 
@@ -344,11 +352,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                                         model.setSleepDiaryAnswers(questionnaireId, answers);
                                         clearAnswers();
 
-                                        new RemoteDatabaseTransferService().execute(
-                                                "123",
-                                                Integer.toString(questionnaireId),
-                                                new Gson().toJson(answers)
-                                        );
+                                        transferToRemoteDatabase(answers);
                                     },
                                     Throwable::printStackTrace
                             );
@@ -426,6 +430,31 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                     ((RadioGroupAnswerComponent) answerComponent).clearCheck();
                 }
             }
+        }
+    }
+
+    private void transferToRemoteDatabase(List<Answer> answers) {
+        if (this.model.getUserId() == null) {
+            this.db.configurationDao()
+                    .loadAllByNames(new String[]{"userId"})
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            userId -> {
+                                new RemoteDatabaseTransferService().execute(
+                                        userId.get(0).getValue(),
+                                        Integer.toString(this.questionnaireId),
+                                        new Gson().toJson(answers)
+                                );
+                            },
+                            Throwable::printStackTrace
+                    );
+        } else {
+            new RemoteDatabaseTransferService().execute(
+                    this.model.getUserId(),
+                    Integer.toString(this.questionnaireId),
+                    new Gson().toJson(answers)
+            );
         }
     }
 

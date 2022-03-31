@@ -3,6 +3,9 @@
 
     <string name="welcome_text">Welcome to Sleep Aid, your personal sleep hygiene coach!\nWe’ll start by asking you a few questions that will help us personalise your experience and understand your needs.</string>
 
+    <string name="user_id_question">Please fill in your unique identifier given to you by the researcher.\nThis will be stored against your questionnaire answers.</string>
+    <string name="exit_user_id">Are you sure you want to exit?\nYour answer will not be saved.</string>
+
     <string name="exit_questionnaire">Are you sure you want to exit the questionnaire?\nYour answers will not be saved.</string>
 
     <string name="radio_group_validation">Please select an option.</string>
