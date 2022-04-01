@@ -48,10 +48,6 @@ public class SleepDataFragment extends MainMenuFragment {
     protected ZonedDateTime rangeMax;
     protected ZonedDateTime rangeMin;
 
-    protected String todayDuration;
-    protected String todayWakeupTime;
-    protected String todayBedtime;
-
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
@@ -129,7 +125,7 @@ public class SleepDataFragment extends MainMenuFragment {
         String todayString = DataHandler.getSQLiteDate(today);
         List<SleepData> modelSleepData = model.getTodaySleepData();
 
-        boolean doesSleepDataExist = modelSleepData.size() == 3;
+        boolean doesSleepDataExist = modelSleepData.size() == 4;
         boolean isSleepDataForToday = true;
 
         for (SleepData s : modelSleepData) {
@@ -145,24 +141,8 @@ public class SleepDataFragment extends MainMenuFragment {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             sleepData -> {
-                                todayDuration = "-";
-                                todayWakeupTime = "-";
-                                todayBedtime = "-";
-
-                                for (SleepData s : sleepData) {
-                                    switch (s.getField()) {
-                                        case "Wake-up time":
-                                            todayWakeupTime = s.getValue();
-                                            break;
-
-                                        case "Bedtime":
-                                            todayBedtime = s.getValue();
-                                            break;
-
-                                        //"Sleep duration"
-                                        default:
-                                            todayDuration = s.getValue();
-                                    }
+                                if (!sleepData.isEmpty()) {
+                                    model.setTodaySleepData(sleepData);
                                 }
 
                                 graphFragment.loadTodayData();
@@ -170,26 +150,6 @@ public class SleepDataFragment extends MainMenuFragment {
                             Throwable::printStackTrace
                     );
         } else {
-            todayDuration = "-";
-            todayWakeupTime = "-";
-            todayBedtime = "-";
-
-            for (SleepData s : modelSleepData) {
-                switch (s.getField()) {
-                    case "Wake-up time":
-                        todayWakeupTime = s.getValue();
-                        break;
-
-                    case "Bedtime":
-                        todayBedtime = s.getValue();
-                        break;
-
-                    //"Sleep duration"
-                    default:
-                        todayDuration = s.getValue();
-                }
-            }
-
             graphFragment.loadTodayData();
         }
     }

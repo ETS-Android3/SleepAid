@@ -28,6 +28,7 @@ import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
 import com.example.sleepaid.Database.Questionnaire.Questionnaire;
 import com.example.sleepaid.Database.SleepData.SleepData;
+import com.example.sleepaid.Database.SleepDataField.SleepDataField;
 import com.example.sleepaid.Handler.ComponentHandler;
 import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Model.SharedViewModel;
@@ -499,9 +500,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                                         new Gson().toJson(answers)
                                 );
 
-                                if (this.questionnaireId == 4) {
-                                    this.generateSleepData(answers);
-                                }
+                                this.generateSleepData(answers);
                             },
                             Throwable::printStackTrace
                     );
@@ -520,74 +519,102 @@ public class SleepDiaryQuestionsFragment extends Fragment {
 
     private void generateSleepData(List<Answer> answers) {
         List<Answer> sleepDataAnswers = answers.stream()
-                .filter(a -> a.getQuestionId() == 32 || a.getQuestionId() == 35)
+                .filter(a -> a.getQuestionId() == 31 || a.getQuestionId() == 32 || a.getQuestionId() == 35)
                 .collect(Collectors.toList());
 
         if (!sleepDataAnswers.isEmpty()) {
             List<SleepData> sleepData = new ArrayList<>();
-            List<String> fieldNames = Arrays.asList(new String[]{"Sleep duration", "Wake-up time", "Bedtime"});
 
-            ZonedDateTime wakeupTime = ZonedDateTime.now();
-            ZonedDateTime bedtime = ZonedDateTime.now();
-            String date = sleepDataAnswers.get(0).getDate();
-
-            for (Answer a : sleepDataAnswers) {
-                if (a.getQuestionId() == 32) {
-                    sleepData.add(new SleepData(
-                            fieldNames.get(2),
-                            a.getDate(),
-                            a.getValue()
-                    ));
-
-                    List<Integer> times = DataHandler.getIntsFromString(a.getValue());
-                    bedtime = bedtime
-                            .withHour(times.get(0))
-                            .withMinute(times.get(1))
-                            .minusDays(1)
-                            .truncatedTo(ChronoUnit.MINUTES);
-                } else {
-                    sleepData.add(new SleepData(
-                            fieldNames.get(1),
-                            a.getDate(),
-                            a.getValue()
-                    ));
-
-                    List<Integer> times = DataHandler.getIntsFromString(a.getValue());
-                    wakeupTime = wakeupTime
-                            .withHour(times.get(0))
-                            .withMinute(times.get(1))
-                            .truncatedTo(ChronoUnit.MINUTES);
-                }
-            }
-
-            List<Integer> differenceTimes = DataHandler.getIntsFromString(Duration.between(wakeupTime, bedtime).toString());
-            int hours = differenceTimes.size() >= 1 ?
-                    differenceTimes.get(0) :
-                    0;
-            int minutes = differenceTimes.size() >= 2 ?
-                    differenceTimes.get(1) :
-                    0;
-
-            sleepData.add(new SleepData(
-               fieldNames.get(0),
-                    date,
-                    DataHandler.getFormattedDuration(hours, minutes)
-            ));
-
-            this.db.sleepDataDao()
-                    .insert(sleepData)
+            this.db.sleepDataFieldDao()
+                    .getAll()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
-                            () -> {
-                                for (String n : fieldNames) {
-                                    model.setLineSeries(n, null);
+                            sleepDataFields -> {
+                                List<String> fieldNames = sleepDataFields.stream()
+                                        .map(SleepDataField::getName)
+                                        .collect(Collectors.toList());
+
+                                if (this.questionnaireId == 4) {
+                                    ZonedDateTime wakeupTime = null;
+                                    ZonedDateTime bedtime = null;
+
+                                    for (Answer a : sleepDataAnswers) {
+                                        if (a.getQuestionId() == 32) {
+                                            sleepData.add(new SleepData(
+                                                    fieldNames.get(1),
+                                                    a.getDate(),
+                                                    a.getValue()
+                                            ));
+
+                                            List<Integer> times = DataHandler.getIntsFromString(a.getValue());
+                                            bedtime = ZonedDateTime.now()
+                                                    .withHour(times.get(0))
+                                                    .withMinute(times.get(1))
+                                                    .minusDays(1)
+                                                    .truncatedTo(ChronoUnit.MINUTES);
+                                        } else {
+                                            sleepData.add(new SleepData(
+                                                    fieldNames.get(0),
+                                                    a.getDate(),
+                                                    a.getValue()
+                                            ));
+
+                                            List<Integer> times = DataHandler.getIntsFromString(a.getValue());
+                                            wakeupTime = ZonedDateTime.now()
+                                                    .withHour(times.get(0))
+                                                    .withMinute(times.get(1))
+                                                    .truncatedTo(ChronoUnit.MINUTES);
+                                        }
+                                    }
+
+                                    if (wakeupTime != null && bedtime != null) {
+                                        String date = sleepDataAnswers.get(0).getDate();
+                                        List<Integer> differenceTimes = DataHandler.getIntsFromString(Duration.between(wakeupTime, bedtime).toString());
+
+                                        int hours = differenceTimes.size() >= 1 ?
+                                                differenceTimes.get(0) :
+                                                0;
+                                        int minutes = differenceTimes.size() >= 2 ?
+                                                differenceTimes.get(1) :
+                                                0;
+
+                                        sleepData.add(new SleepData(
+                                                fieldNames.get(2),
+                                                date,
+                                                DataHandler.getFormattedDuration(hours, minutes)
+                                        ));
+                                    }
+                                } else {
+                                    if (sleepDataAnswers.get(0).getQuestionId() == 31) {
+                                        sleepData.add(new SleepData(
+                                                fieldNames.get(3),
+                                                sleepDataAnswers.get(0).getDate(),
+                                                sleepDataAnswers.get(0).getValue()
+                                        ));
+                                    }
                                 }
+
+                                this.saveSleepData(sleepData, fieldNames);
                             },
                             Throwable::printStackTrace
                     );
-
         }
+    }
+
+    private void saveSleepData(List<SleepData> sleepData, List<String> fieldNames) {
+        this.db.sleepDataDao()
+                .insert(sleepData)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        () -> {
+                            for (String n : fieldNames) {
+                                model.setLineSeries(n, null);
+                            }
+                        },
+                        Throwable::printStackTrace
+                );
     }
 
     private Answer getAnswerForToday() {

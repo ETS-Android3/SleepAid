@@ -53,9 +53,19 @@ public class DataHandler {
     }
 
     public static String getFormattedDuration(int hours, int minutes) {
-        return minutes != 0 ?
-                hours + "h" + minutes + "m" :
-                hours + "h";
+        if (hours == 0) {
+            if (minutes == 0) {
+                return "0h";
+            } else {
+                return minutes + "m";
+            }
+        } else {
+            if (minutes == 0) {
+                return hours + "h";
+            } else {
+                return hours + "h" + minutes + "m";
+            }
+        }
     }
 
     public static String getFormattedDate(ZonedDateTime date) {

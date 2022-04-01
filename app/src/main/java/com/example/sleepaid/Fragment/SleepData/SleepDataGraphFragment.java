@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.sleepaid.App;
+import com.example.sleepaid.Component.CircleBox;
 import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.SleepData.SleepData;
 import com.example.sleepaid.Handler.DataHandler;
@@ -43,6 +44,9 @@ public class SleepDataGraphFragment extends Fragment {
     private AppDatabase db;
 
     private SharedViewModel model;
+
+    protected String fieldName;
+    protected int graphColor;
 
     private GraphView graph;
 
@@ -98,7 +102,6 @@ public class SleepDataGraphFragment extends Fragment {
         });
 
         loadGraph(sleepDataFragment.rangeMin, sleepDataFragment.rangeMax);
-        loadTodayData();
     }
 
     protected void loadGraph(ZonedDateTime min, ZonedDateTime max) {
@@ -160,117 +163,103 @@ public class SleepDataGraphFragment extends Fragment {
                 graph.getGridLabelRenderer().setLabelFormatter(sleepDataFragment.getWeekLabelFormatter());
                 break;
         }
+
+        this.loadGoal();
     }
 
-    protected void loadGoal(String goalName) {
+    protected void loadGoal() {
         Bitmap goalIcon = BitmapFactory.decodeResource(getResources(), R.drawable.trophy_icon);
 
-        if (model.getGoalMinLine(goalName) == null &&
-                model.getGoalMaxLine(goalName) == null) {
-            db.goalDao()
-                    .loadAllByNames(new String[]{goalName})
+        if (model.getGoalMinLine(this.fieldName) == null &&
+                model.getGoalMaxLine(this.fieldName) == null) {
+            this.db.goalDao()
+                    .loadAllByNames(new String[]{this.fieldName})
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             goalData -> {
                                 if (!goalData.isEmpty()) {
                                     model.setGoal(
-                                            goalName,
+                                            this.fieldName,
                                             goalData.get(0).getValueMin(),
                                             goalData.get(0).getValueMax(),
                                             ContextCompat.getColor(App.getContext(), R.color.white),
                                             ContextCompat.getColor(App.getContext(), R.color.white)
                                     );
 
-                                    graph.addSeries(model.getGoalMaxLine(goalName));
-                                    graph.addSeries(model.getGoalMaxPoint(goalName));
+                                    graph.addSeries(model.getGoalMaxLine(this.fieldName));
+                                    graph.addSeries(model.getGoalMaxPoint(this.fieldName));
 
-                                    if (!model.getGoalMin(goalName).equals(model.getGoalMax(goalName))) {
-                                        graph.addSeries(model.getGoalMinLine(goalName));
-                                        graph.addSeries(model.getGoalMinPoint(goalName));
+                                    if (!model.getGoalMin(this.fieldName).equals(model.getGoalMax(this.fieldName))) {
+                                        graph.addSeries(model.getGoalMinLine(this.fieldName));
+                                        graph.addSeries(model.getGoalMinPoint(this.fieldName));
                                     }
                                 }
 
-                                loadFromDatabase(goalName);
+                                loadFromDatabase();
                             },
                             Throwable::printStackTrace
                     );
         } else {
-            graph.addSeries(model.getGoalMaxLine(goalName));
-            graph.addSeries(model.getGoalMaxPoint(goalName));
+            graph.addSeries(model.getGoalMaxLine(this.fieldName));
+            graph.addSeries(model.getGoalMaxPoint(this.fieldName));
 
-            if (!model.getGoalMin(goalName).equals(model.getGoalMax(goalName))) {
-                graph.addSeries(model.getGoalMinLine(goalName));
-                graph.addSeries(model.getGoalMinPoint(goalName));
+            if (!model.getGoalMin(this.fieldName).equals(model.getGoalMax(this.fieldName))) {
+                graph.addSeries(model.getGoalMinLine(this.fieldName));
+                graph.addSeries(model.getGoalMinPoint(this.fieldName));
             }
 
-            loadFromDatabase(goalName);
+            loadFromDatabase();
         }
     }
 
-    private void loadFromDatabase(String name) {
+    private void loadFromDatabase() {
         String periodStart = DataHandler.getSQLiteDate(sleepDataFragment.rangeMin);
         String periodEnd = DataHandler.getSQLiteDate(sleepDataFragment.rangeMax);
 
-        if (model.getLineSeries(name, periodStart, periodEnd) == null) {
+        if (model.getSeriesModel(this.fieldName, periodStart, periodEnd) == null ||
+                model.getLineSeries(this.fieldName, periodStart, periodEnd) == null) {
             db.sleepDataDao()
                     .loadAllByDateRangeAndType(
                             periodStart,
                             periodEnd,
-                            name
+                            this.fieldName
                     )
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             sleepData -> {
-                                this.setTranslation(name, sleepData);
+                                this.setTranslation(sleepData);
 
                                 List<Double> processedSleepData = this.processFromDatabase(sleepData);
 
-                                int graphColor;
-
-                                switch (name) {
-                                    case "Wake-up time":
-                                        graphColor = ContextCompat.getColor(App.getContext(), R.color.lightest_purple_sleep_transparent);
-                                        break;
-
-                                    case "Bedtime":
-                                        graphColor = ContextCompat.getColor(App.getContext(), R.color.darkest_purple_sleep_transparent);
-                                        break;
-
-                                    //"Sleep duration"
-                                    default:
-                                        graphColor = ContextCompat.getColor(App.getContext(), R.color.purple_sleep_transparent);
-                                        break;
-                                }
-
                                 model.setSeries(
-                                        name,
+                                        this.fieldName,
                                         processedSleepData,
                                         periodStart,
                                         periodEnd,
-                                        graphColor,
+                                        this.graphColor,
                                         ContextCompat.getColor(App.getContext(), R.color.white),
                                         ContextCompat.getColor(App.getContext(), R.color.white)
                                 );
 
-                                graph.getViewport().setMaxY(model.getMaxY(name, periodStart, periodEnd));
+                                graph.getViewport().setMaxY(model.getMaxY(this.fieldName, periodStart, periodEnd));
 
-                                graph.addSeries(model.getLineSeries(name, periodStart, periodEnd));
+                                graph.addSeries(model.getLineSeries(this.fieldName, periodStart, periodEnd));
                                 //TODO add click on point and popup with value
                                 //graph.addSeries(model.getPointsSeries(name, periodStart, periodEnd));
                             },
                             Throwable::printStackTrace
                     );
         } else {
-            graph.getViewport().setMaxY(model.getMaxY(name, periodStart, periodEnd));
+            graph.getViewport().setMaxY(model.getMaxY(this.fieldName, periodStart, periodEnd));
 
-            graph.addSeries(model.getLineSeries(name, periodStart, periodEnd));
+            graph.addSeries(model.getLineSeries(this.fieldName, periodStart, periodEnd));
             //graph.addSeries(model.getPointsSeries(name, periodStart, periodEnd));
         }
     }
 
-    private void setTranslation(String dataType, List<SleepData> sleepData) {
+    private void setTranslation(List<SleepData> sleepData) {
         if (!sleepData.isEmpty()) {
             List<String> sleepDataValues = sleepData
                     .stream()
@@ -281,7 +270,7 @@ public class SleepDataGraphFragment extends Fragment {
 
             this.translation = new int[sleepDataNumberValues.size()];
 
-            if (dataType.equals("Bedtime")) {
+            if (this.fieldName.equals("Bedtime")) {
                 for (int i = 0; i < sleepDataNumberValues.size(); i++) {
                     if (sleepDataNumberValues.get(i) > 12 && sleepDataNumberValues.get(i) < 24) {
                         translation[i] = -12;
@@ -428,5 +417,15 @@ public class SleepDataGraphFragment extends Fragment {
         return processedSleepData;
     }
 
-    protected void loadTodayData() {}
+    protected void loadTodayData() {
+        CircleBox todayDataBox = sleepDataFragment.getView().findViewById(R.id.middleBox);
+
+        String todayData = this.model.getTodaySleepData(this.fieldName) == null ||
+                this.model.getTodaySleepData(this.fieldName).getValue() == null
+                || this.model.getTodaySleepData(this.fieldName).getValue().isEmpty() ?
+                "-" :
+                this.model.getTodaySleepData(this.fieldName).getValue();
+
+        todayDataBox.setText(todayData);
+    }
 }

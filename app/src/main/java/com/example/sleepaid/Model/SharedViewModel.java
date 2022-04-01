@@ -546,7 +546,7 @@ public class SharedViewModel extends ViewModel {
                 .collect(Collectors.toList());
     }
 
-    private GraphSeriesModel getSeriesModel(String dataType,
+    public GraphSeriesModel getSeriesModel(String dataType,
                                             String periodStart,
                                             String periodEnd) {
         Optional<GraphSeriesModel> graphSeries = this.graphSeries.stream()
@@ -664,11 +664,14 @@ public class SharedViewModel extends ViewModel {
         List<Double> data = graphSeriesModel.getData();
 
         double maxValue = Collections.max(data);
+        double goalValue = 0;
 
         GoalModel goalModel = this.getGoalModel(dataType);
 
-        double goalValue = DataHandler.getDoubleFromTime(goalModel.getGoalMax());
-        goalValue += goalModel.getTranslation(1);
+        if (goalModel != null) {
+            goalValue = DataHandler.getDoubleFromTime(goalModel.getGoalMax());
+            goalValue += goalModel.getTranslation(1);
+        }
 
         return Math.max(goalValue, maxValue) + 1;
     }

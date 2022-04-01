@@ -12,8 +12,12 @@
             android:title="Wake-up time"
             android:icon="@drawable/sun_icon" />
         <item
-            android:id="@+id/bedTimeGraphFragment"
+            android:id="@+id/bedtimeGraphFragment"
             android:title="Bedtime"
             android:icon="@drawable/moon_icon" />
+        <item
+            android:id="@+id/technologyUseGraphFragment"
+            android:title="Technology"
+            android:icon="@drawable/technology_icon" />
     </group>
 </menu>
