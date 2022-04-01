@@ -86,7 +86,7 @@ public class OnSwipeTouchListener implements View.OnTouchListener{
 
     private void onSwipeDown() {}
 
-    private void onClick() {}
+    public void onClick() {}
 
     private void onDoubleClick() {}
 

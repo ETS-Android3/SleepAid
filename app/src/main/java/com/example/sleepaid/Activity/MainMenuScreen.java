@@ -1,9 +1,12 @@
 package com.example.sleepaid.Activity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
@@ -13,12 +16,24 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.sleepaid.R;
+import com.example.sleepaid.Service.BlueLightFilterService;
 import com.google.android.material.navigation.NavigationView;
 
 @SuppressLint("RestrictedApi")
 public class MainMenuScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //TODO add nice message here
+        //TODO only turn this on in the evening?
+        if (!Settings.canDrawOverlays(this)) {
+            Intent myIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+            startActivity(myIntent);
+        } else {
+            Intent intent = new Intent(this, BlueLightFilterService.class);
+            startService(intent);
+        }
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu_screen_host);
 

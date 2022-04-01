@@ -57,7 +57,7 @@ public class DataHandler {
             if (minutes == 0) {
                 return "0h";
             } else {
-                return minutes + "m";
+                return "0h" + minutes + "m";
             }
         } else {
             if (minutes == 0) {

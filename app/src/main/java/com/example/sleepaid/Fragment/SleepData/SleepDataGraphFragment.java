@@ -1,19 +1,26 @@
 package com.example.sleepaid.Fragment.SleepData;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.sleepaid.Activity.MainMenuScreen;
 import com.example.sleepaid.App;
 import com.example.sleepaid.Component.CircleBox;
 import com.example.sleepaid.Database.AppDatabase;
@@ -24,6 +31,12 @@ import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.DataPointInterface;
+import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.OnDataPointTapListener;
+import com.jjoe64.graphview.series.PointsGraphSeries;
+import com.jjoe64.graphview.series.Series;
 
 import java.time.YearMonth;
 import java.time.ZonedDateTime;
@@ -37,7 +50,7 @@ import java.util.stream.Collectors;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-
+@SuppressLint("ClickableViewAccessibility")
 public class SleepDataGraphFragment extends Fragment {
     protected SleepDataFragment sleepDataFragment;
 
@@ -83,8 +96,6 @@ public class SleepDataGraphFragment extends Fragment {
         graph.getViewport().setXAxisBoundsManual(true);
         graph.getViewport().setYAxisBoundsManual(true);
 
-        //graph.getViewport().setDrawBorder(true);
-        //graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.HORIZONTAL);
         graph.setOnTouchListener(new OnSwipeTouchListener(App.getContext()) {
             @Override
             public void onSwipeLeft() {
@@ -102,6 +113,7 @@ public class SleepDataGraphFragment extends Fragment {
         });
 
         loadGraph(sleepDataFragment.rangeMin, sleepDataFragment.rangeMax);
+        loadTodayData();
     }
 
     protected void loadGraph(ZonedDateTime min, ZonedDateTime max) {
@@ -246,8 +258,9 @@ public class SleepDataGraphFragment extends Fragment {
                                 graph.getViewport().setMaxY(model.getMaxY(this.fieldName, periodStart, periodEnd));
 
                                 graph.addSeries(model.getLineSeries(this.fieldName, periodStart, periodEnd));
+
                                 //TODO add click on point and popup with value
-                                //graph.addSeries(model.getPointsSeries(name, periodStart, periodEnd));
+                                graph.addSeries(model.getPointsSeries(this.fieldName, periodStart, periodEnd));
                             },
                             Throwable::printStackTrace
                     );
@@ -255,7 +268,7 @@ public class SleepDataGraphFragment extends Fragment {
             graph.getViewport().setMaxY(model.getMaxY(this.fieldName, periodStart, periodEnd));
 
             graph.addSeries(model.getLineSeries(this.fieldName, periodStart, periodEnd));
-            //graph.addSeries(model.getPointsSeries(name, periodStart, periodEnd));
+            graph.addSeries(model.getPointsSeries(this.fieldName, periodStart, periodEnd));
         }
     }
 
@@ -340,9 +353,6 @@ public class SleepDataGraphFragment extends Fragment {
         ZonedDateTime end = weekStart.withDayOfMonth(YearMonth.of(weekStart.getYear(), weekStart.getMonthValue()).lengthOfMonth());
 
         while (!weekStart.isAfter(end)) {
-            System.out.println("Week start: " + weekStart);
-            System.out.println("Week end: " + weekEnd);
-
             String startDate = DataHandler.getSQLiteDate(weekStart);
             String endDate = DataHandler.getSQLiteDate(weekEnd);
 

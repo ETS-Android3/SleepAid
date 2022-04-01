@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -26,8 +25,8 @@ import java.util.stream.Collectors;
 public class SharedViewModel extends ViewModel {
     private String userId;
 
-    private int[] questionnaireIds = new int[]{1, 2, 3, 6};
-    private HashMap<Integer, Integer> firstQuestionsIds = new HashMap<>(ImmutableMap.of(
+    private final int[] questionnaireIds = new int[]{1, 2, 3, 6};
+    private final HashMap<Integer, Integer> firstQuestionsIds = new HashMap<>(ImmutableMap.of(
             1, 1,
             2, 7,
             3, 9,
@@ -37,7 +36,6 @@ public class SharedViewModel extends ViewModel {
     private List<QuestionnaireModel> questionnaires = new ArrayList<>();
     private List<SleepDiaryModel> sleepDiaries = new ArrayList<>();
 
-    private int currentQuestionnaireId;
     private int currentQuestionId;
 
     private String graphViewType;
@@ -167,10 +165,6 @@ public class SharedViewModel extends ViewModel {
             this.sleepDiaries.add(new SleepDiaryModel(questionnaireId));
             this.sleepDiaries.get(this.sleepDiaries.size() - 1).setAnswers(answers);
         }
-    }
-
-    public void setCurrentQuestionnaireId(int currentQuestionnaireId) {
-        this.currentQuestionnaireId = currentQuestionnaireId;
     }
 
     public void setCurrentQuestionId(int currentQuestionId) {
@@ -315,11 +309,8 @@ public class SharedViewModel extends ViewModel {
                 .filter(q -> q.getQuestionnaireId() == questionnaireId)
                 .findFirst();
 
-        if (questionnaire.isPresent()) {
-            return questionnaire.get();
-        }
+        return questionnaire.orElse(null);
 
-        return null;
     }
 
     public List<Questionnaire> getQuestionnaires() {
@@ -341,11 +332,8 @@ public class SharedViewModel extends ViewModel {
                 .filter(q -> q.getQuestionnaireId() == questionnaireId)
                 .findFirst();
 
-        if (questionnaire.isPresent()) {
-            return questionnaire.get().getQuestionnaire();
-        }
+        return questionnaire.map(QuestionnaireModel::getQuestionnaire).orElse(null);
 
-        return null;
     }
 
     public List<Question> getQuestionnaireQuestions() {
@@ -367,11 +355,8 @@ public class SharedViewModel extends ViewModel {
                 .filter(q -> q.getQuestionnaireId() == questionnaireId)
                 .findFirst();
 
-        if (questionnaire.isPresent()) {
-            return questionnaire.get().getQuestions();
-        }
+        return questionnaire.map(QuestionnaireModel::getQuestions).orElse(null);
 
-        return null;
     }
 
     public List<Option> getQuestionnaireOptions() {
@@ -382,18 +367,6 @@ public class SharedViewModel extends ViewModel {
         }
 
         return options;
-    }
-
-    public List<Option> getQuestionnaireOptions(int questionnaireId) {
-        Optional<QuestionnaireModel> questionnaire = this.questionnaires.stream()
-                .filter(q -> q.getQuestionnaireId() == questionnaireId)
-                .findFirst();
-
-        if (questionnaire.isPresent()) {
-            return questionnaire.get().getOptions();
-        }
-
-        return null;
     }
 
     public List<Answer> getQuestionnaireAnswers() {
@@ -415,11 +388,8 @@ public class SharedViewModel extends ViewModel {
                 .filter(q -> q.getQuestionnaireId() == questionnaireId)
                 .findFirst();
 
-        if (questionnaire.isPresent()) {
-            return questionnaire.get().getAnswers();
-        }
+        return questionnaire.map(QuestionnaireModel::getAnswers).orElse(null);
 
-        return null;
     }
 
     public SleepDiaryModel getSleepDiaryModel(int questionnaireId) {
@@ -427,11 +397,8 @@ public class SharedViewModel extends ViewModel {
                 .filter(s -> s.getQuestionnaireId() == questionnaireId)
                 .findFirst();
 
-        if (sleepDiary.isPresent()) {
-            return sleepDiary.get();
-        }
+        return sleepDiary.orElse(null);
 
-        return null;
     }
 
     public List<Question> getSleepDiaryQuestions(int questionnaireId) {
@@ -439,11 +406,8 @@ public class SharedViewModel extends ViewModel {
                 .filter(s -> s.getQuestionnaireId() == questionnaireId)
                 .findFirst();
 
-        if (sleepDiary.isPresent()) {
-            return sleepDiary.get().getQuestions();
-        }
+        return sleepDiary.map(SleepDiaryModel::getQuestions).orElse(null);
 
-        return null;
     }
 
     public boolean hasOptions(int questionnaireId) {
@@ -451,11 +415,8 @@ public class SharedViewModel extends ViewModel {
                 .filter(s -> s.getQuestionnaireId() == questionnaireId)
                 .findFirst();
 
-        if (sleepDiary.isPresent()) {
-            return sleepDiary.get().hasOptions();
-        }
+        return sleepDiary.map(SleepDiaryModel::hasOptions).orElse(false);
 
-        return false;
     }
 
     public List<Option> getSleepDiaryOptions(int questionnaireId) {
@@ -463,11 +424,8 @@ public class SharedViewModel extends ViewModel {
                 .filter(s -> s.getQuestionnaireId() == questionnaireId)
                 .findFirst();
 
-        if (sleepDiary.isPresent()) {
-            return sleepDiary.get().getOptions();
-        }
+        return sleepDiary.map(SleepDiaryModel::getOptions).orElse(null);
 
-        return null;
     }
 
     public List<Answer> getSleepDiaryAnswers(int questionnaireId) {
@@ -475,15 +433,8 @@ public class SharedViewModel extends ViewModel {
                 .filter(s -> s.getQuestionnaireId() == questionnaireId)
                 .findFirst();
 
-        if (sleepDiary.isPresent()) {
-            return sleepDiary.get().getAnswers();
-        }
+        return sleepDiary.map(SleepDiaryModel::getAnswers).orElse(null);
 
-        return null;
-    }
-
-    public int getCurrentQuestionnaireId() {
-        return this.currentQuestionnaireId;
     }
 
     public int getCurrentQuestionId() {
@@ -529,11 +480,8 @@ public class SharedViewModel extends ViewModel {
                 .filter(s -> s.getField().equals(field))
                 .findFirst();
 
-        if (sleepData.isPresent()) {
-            return sleepData.get();
-        }
+        return sleepData.orElse(null);
 
-        return null;
     }
 
     public List<SleepData> getTodaySleepData() {
@@ -554,11 +502,8 @@ public class SharedViewModel extends ViewModel {
                         g.getPeriod().equals(periodStart + "-" + periodEnd))
                 .findFirst();
 
-        if (graphSeries.isPresent()) {
-            return graphSeries.get();
-        }
+        return graphSeries.orElse(null);
 
-        return null;
     }
 
     public LineGraphSeries<DataPoint> getLineSeries(String dataType,
@@ -590,11 +535,8 @@ public class SharedViewModel extends ViewModel {
                 .filter(g -> g.getGoalName().equals(goalName))
                 .findFirst();
 
-        if (goal.isPresent()) {
-            return goal.get();
-        }
+        return goal.orElse(null);
 
-        return null;
     }
 
     public String getGoalMin(String goalName) {
@@ -681,11 +623,8 @@ public class SharedViewModel extends ViewModel {
                 .filter(a -> a.getAlarmType() == alarmType)
                 .findFirst();
 
-        if (alarm.isPresent()) {
-            return alarm.get();
-        }
+        return alarm.orElse(null);
 
-        return null;
     }
 
     public List<Alarm> getAlarmList(int alarmType) {

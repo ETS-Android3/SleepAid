@@ -144,13 +144,9 @@ public class SleepDataFragment extends MainMenuFragment {
                                 if (!sleepData.isEmpty()) {
                                     model.setTodaySleepData(sleepData);
                                 }
-
-                                graphFragment.loadTodayData();
                             },
                             Throwable::printStackTrace
                     );
-        } else {
-            graphFragment.loadTodayData();
         }
     }
 

@@ -587,10 +587,19 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                                     }
                                 } else {
                                     if (sleepDataAnswers.get(0).getQuestionId() == 31) {
+                                        List<Integer> times = DataHandler.getIntsFromString(sleepDataAnswers.get(0).getValue());
+
+                                        int hours = times.size() >= 1 ?
+                                                times.get(0) :
+                                                0;
+                                        int minutes = times.size() >= 2 ?
+                                                times.get(1) :
+                                                0;
+
                                         sleepData.add(new SleepData(
                                                 fieldNames.get(3),
                                                 sleepDataAnswers.get(0).getDate(),
-                                                sleepDataAnswers.get(0).getValue()
+                                                DataHandler.getFormattedDuration(hours, minutes)
                                         ));
                                     }
                                 }

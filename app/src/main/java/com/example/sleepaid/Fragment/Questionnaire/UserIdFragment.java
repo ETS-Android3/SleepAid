@@ -113,7 +113,6 @@ public class UserIdFragment extends QuestionnaireFragment implements View.OnClic
                 this.model.setQuestionnaireAnswers(i, null);
             }
 
-            this.model.setCurrentQuestionnaireId(1);
             this.model.setCurrentQuestionId(1);
 
             NavHostFragment.findNavController(this).navigate(R.id.startQuestionnairesAction);

@@ -1,13 +1,12 @@
 package com.example.sleepaid.Model;
 
-import android.graphics.Canvas;
-import android.graphics.Paint;
-
 import com.example.sleepaid.Handler.DataHandler;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.OnDataPointTapListener;
 import com.jjoe64.graphview.series.PointsGraphSeries;
+import com.jjoe64.graphview.series.Series;
 
 import java.util.List;
 import java.util.Optional;
@@ -97,10 +96,6 @@ public class GraphSeriesModel {
         return this.data;
     }
 
-    public int getTranslation(int i) {
-        return this.translation[i];
-    }
-
     public LineGraphSeries<DataPoint> getLineSeries() {
         return this.lineSeries;
     }
@@ -160,36 +155,36 @@ public class GraphSeriesModel {
 
     private void stylePointsSeries(PointsGraphSeries<DataPoint> pointsSeries,
                                    int pointsColor) {
-        pointsSeries.setCustomShape(new PointsGraphSeries.CustomShape() {
-            @Override
-            public void draw(Canvas canvas, Paint paint, float x, float y, DataPointInterface dataPoint) {
-                paint.setColor(pointsColor);
-                paint.setTextSize(38);
+        pointsSeries.setCustomShape((canvas, paint, x, y, dataPoint) -> {
+            paint.setColor(pointsColor);
+            paint.setTextSize(38);
 
-                Optional<Double> point = data.stream()
-                        .filter(d -> Math.max(0, d) == dataPoint.getY())
-                        .findFirst();
+            Optional<Double> point = data.stream()
+                    .filter(d -> Math.max(0, d) == dataPoint.getY())
+                    .findFirst();
 
-                int index = data.indexOf(point.get());
+            int index = data.indexOf(point.get());
 
-                int hours = (int)(dataPoint.getY() + translation[index]);
-                int minutes = (int) (((dataPoint.getY() + translation[index]) - hours) * 60);
+            int hours = (int)(dataPoint.getY() + translation[index]);
+            int minutes = (int) (((dataPoint.getY() + translation[index]) - hours) * 60);
 
-                String text = getPointText(hours, minutes);
+            String text = getPointText(hours, minutes);
 
-                canvas.drawText(text, x, y, paint);
-            }
+            canvas.drawText(text, x, y, paint);
         });
     }
 
     private String getPointText(int hours, int minutes) {
+        if (hours == 0 && minutes == 0) {
+            return "";
+        }
+
         String text;
 
         switch (this.dataType) {
             case "Sleep duration":
-                text = minutes == 0 ?
-                        hours + "h" :
-                        hours + "h" + minutes + "m";
+            case "Technology use":
+                text = DataHandler.getFormattedDuration(hours, minutes);
                 break;
 
             //"Wake-up time" or "Bedtime
