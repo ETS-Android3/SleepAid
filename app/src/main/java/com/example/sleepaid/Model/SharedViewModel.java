@@ -217,6 +217,16 @@ public class SharedViewModel extends ViewModel {
         }
     }
 
+    public void setLineSeries(String dataType, LineGraphSeries lineGraphSeries) {
+        List<GraphSeriesModel> graphSeries = this.getSeriesModel(dataType);
+
+        if (!graphSeries.isEmpty()) {
+            for (GraphSeriesModel m : graphSeries) {
+                m.setLineSeries(lineGraphSeries);
+            }
+        }
+    }
+
     public void setSeries(String dataType,
                           List<Double> data,
                           String periodStart,
@@ -528,6 +538,12 @@ public class SharedViewModel extends ViewModel {
 
     public List<SleepData> getTodaySleepData() {
         return this.todaySleepData;
+    }
+
+    private List<GraphSeriesModel> getSeriesModel(String dataType) {
+        return this.graphSeries.stream()
+                .filter(g -> g.getDataType().equals(dataType))
+                .collect(Collectors.toList());
     }
 
     private GraphSeriesModel getSeriesModel(String dataType,

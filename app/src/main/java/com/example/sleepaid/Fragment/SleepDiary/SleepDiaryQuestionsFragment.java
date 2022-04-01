@@ -40,6 +40,7 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -524,6 +525,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
 
         if (!sleepDataAnswers.isEmpty()) {
             List<SleepData> sleepData = new ArrayList<>();
+            List<String> fieldNames = Arrays.asList(new String[]{"Sleep duration", "Wake-up time", "Bedtime"});
 
             ZonedDateTime wakeupTime = ZonedDateTime.now();
             ZonedDateTime bedtime = ZonedDateTime.now();
@@ -532,7 +534,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
             for (Answer a : sleepDataAnswers) {
                 if (a.getQuestionId() == 32) {
                     sleepData.add(new SleepData(
-                            "Bedtime",
+                            fieldNames.get(2),
                             a.getDate(),
                             a.getValue()
                     ));
@@ -545,7 +547,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                             .truncatedTo(ChronoUnit.MINUTES);
                 } else {
                     sleepData.add(new SleepData(
-                            "Wake-up time",
+                            fieldNames.get(1),
                             a.getDate(),
                             a.getValue()
                     ));
@@ -567,7 +569,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                     0;
 
             sleepData.add(new SleepData(
-               "Sleep duration",
+               fieldNames.get(0),
                     date,
                     DataHandler.getFormattedDuration(hours, minutes)
             ));
@@ -577,7 +579,11 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
-                            () -> {},
+                            () -> {
+                                for (String n : fieldNames) {
+                                    model.setLineSeries(n, null);
+                                }
+                            },
                             Throwable::printStackTrace
                     );
 

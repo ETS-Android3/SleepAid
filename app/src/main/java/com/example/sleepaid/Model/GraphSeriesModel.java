@@ -74,6 +74,10 @@ public class GraphSeriesModel {
         }
     }
 
+    public void setLineSeries(LineGraphSeries lineGraphSeries) {
+        this.lineSeries = lineGraphSeries;
+    }
+
     private void setLineSeries(List<Double> data,
                               int backgroundColor,
                               int lineColor) {
