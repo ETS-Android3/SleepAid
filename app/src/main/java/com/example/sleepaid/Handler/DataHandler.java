@@ -52,6 +52,12 @@ public class DataHandler {
         return newHour + ":" + newMinute;
     }
 
+    public static String getFormattedDuration(int hours, int minutes) {
+        return minutes != 0 ?
+                hours + "h" + minutes + "m" :
+                hours + "h";
+    }
+
     public static String getFormattedDate(ZonedDateTime date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
         return date.format(formatter);

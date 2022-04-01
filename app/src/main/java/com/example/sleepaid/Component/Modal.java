@@ -19,7 +19,7 @@ public class Modal {
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
         alert.setTitle(title);
 
-        //@TODO fix the styling for the buttons in dark mode
+        //TODO fix the styling for the buttons in dark mode
         if (positiveButton != null) {
             alert.setPositiveButton(positiveButton, positiveAction);
         }

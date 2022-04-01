@@ -350,7 +350,10 @@ public class SleepDataGraphFragment extends Fragment {
         ZonedDateTime weekEnd = sleepDataFragment.rangeMin.plusDays(6);
         ZonedDateTime end = weekStart.withDayOfMonth(YearMonth.of(weekStart.getYear(), weekStart.getMonthValue()).lengthOfMonth());
 
-        while (!weekEnd.isAfter(end)) {
+        while (!weekStart.isAfter(end)) {
+            System.out.println("Week start: " + weekStart);
+            System.out.println("Week end: " + weekEnd);
+
             String startDate = DataHandler.getSQLiteDate(weekStart);
             String endDate = DataHandler.getSQLiteDate(weekEnd);
 
@@ -379,7 +382,9 @@ public class SleepDataGraphFragment extends Fragment {
             }
 
             weekStart = weekStart.plusDays(7);
-            weekEnd = weekEnd.plusDays(7);
+            weekEnd = weekEnd.plusDays(7).isAfter(end) ?
+                    end :
+                    weekEnd.plusDays(7);
         }
 
         return processedSleepData;

@@ -27,6 +27,7 @@ import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.Option.Option;
 import com.example.sleepaid.Database.Question.Question;
 import com.example.sleepaid.Database.Questionnaire.Questionnaire;
+import com.example.sleepaid.Database.SleepData.SleepData;
 import com.example.sleepaid.Handler.ComponentHandler;
 import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Model.SharedViewModel;
@@ -35,7 +36,9 @@ import com.example.sleepaid.Service.RemoteDatabaseTransferService;
 import com.example.sleepaid.Service.ValidationService;
 import com.google.gson.Gson;
 
+import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -494,6 +497,10 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                                         Integer.toString(this.questionnaireId),
                                         new Gson().toJson(answers)
                                 );
+
+                                if (this.questionnaireId == 4) {
+                                    this.generateSleepData(answers);
+                                }
                             },
                             Throwable::printStackTrace
                     );
@@ -503,6 +510,77 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                     Integer.toString(this.questionnaireId),
                     new Gson().toJson(answers)
             );
+
+            if (this.questionnaireId == 4) {
+                this.generateSleepData(answers);
+            }
+        }
+    }
+
+    private void generateSleepData(List<Answer> answers) {
+        List<Answer> sleepDataAnswers = answers.stream()
+                .filter(a -> a.getQuestionId() == 32 || a.getQuestionId() == 35)
+                .collect(Collectors.toList());
+
+        if (!sleepDataAnswers.isEmpty()) {
+            List<SleepData> sleepData = new ArrayList<>();
+
+            ZonedDateTime wakeupTime = ZonedDateTime.now();
+            ZonedDateTime bedtime = ZonedDateTime.now();
+            String date = sleepDataAnswers.get(0).getDate();
+
+            for (Answer a : sleepDataAnswers) {
+                if (a.getQuestionId() == 32) {
+                    sleepData.add(new SleepData(
+                            "Bedtime",
+                            a.getDate(),
+                            a.getValue()
+                    ));
+
+                    List<Integer> times = DataHandler.getIntsFromString(a.getValue());
+                    bedtime = bedtime
+                            .withHour(times.get(0))
+                            .withMinute(times.get(1))
+                            .minusDays(1)
+                            .truncatedTo(ChronoUnit.MINUTES);
+                } else {
+                    sleepData.add(new SleepData(
+                            "Wake-up time",
+                            a.getDate(),
+                            a.getValue()
+                    ));
+
+                    List<Integer> times = DataHandler.getIntsFromString(a.getValue());
+                    wakeupTime = wakeupTime
+                            .withHour(times.get(0))
+                            .withMinute(times.get(1))
+                            .truncatedTo(ChronoUnit.MINUTES);
+                }
+            }
+
+            List<Integer> differenceTimes = DataHandler.getIntsFromString(Duration.between(wakeupTime, bedtime).toString());
+            int hours = differenceTimes.size() >= 1 ?
+                    differenceTimes.get(0) :
+                    0;
+            int minutes = differenceTimes.size() >= 2 ?
+                    differenceTimes.get(1) :
+                    0;
+
+            sleepData.add(new SleepData(
+               "Sleep duration",
+                    date,
+                    DataHandler.getFormattedDuration(hours, minutes)
+            ));
+
+            this.db.sleepDataDao()
+                    .insert(sleepData)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            () -> {},
+                            Throwable::printStackTrace
+                    );
+
         }
     }
 
