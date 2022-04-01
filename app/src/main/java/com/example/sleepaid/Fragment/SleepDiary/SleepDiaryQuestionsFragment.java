@@ -61,7 +61,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
     protected List<Option> options;
     protected ArrayAdapter<String>[][] answerSuggestions;
     protected String[][] emptyErrors;
-    
+
     //TODO make plus work for exercise
     //TODO make nap section add boxes for time based on answer
     public void onViewCreated(@NonNull View view,
@@ -106,8 +106,16 @@ public class SleepDiaryQuestionsFragment extends Fragment {
         TextView diaryTitle = this.view.findViewById(R.id.diaryTitle);
         diaryTitle.setText(questionnaire.getName());
 
+        // Allow them to fill in the bedtime sleep diary until noon the next day
+        String date = ZonedDateTime.now().getHour() <= 12 && this.questionnaireId == 5 ?
+                DataHandler.getFullDate(ZonedDateTime.now().minusDays(1)) :
+                DataHandler.getFullDate(ZonedDateTime.now());
+
         TextView diaryInformation = this.view.findViewById(R.id.diaryInformation);
-        diaryInformation.setText(questionnaire.getInformation());
+        diaryInformation.setText("You're filling this diary in for " + date + ".\n\n" + questionnaire.getInformation());
+
+        TextView diaryCopyright = this.view.findViewById(R.id.diaryCopyright);
+        diaryCopyright.setText(questionnaire.getCopyright());
     }
 
     private void loadQuestions() {
@@ -441,9 +449,8 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                     answer = radioGroupAnswerComponent.getCheckedRadioButtonText();
                 }
 
-                //TODO change this to sometime the next day?
-                //TODO add some info to let them know what day they're filling it in for
-                String date = ZonedDateTime.now().getHour() <= 12 ?
+                // Allow them to fill in the bedtime sleep diary until noon the next day
+                String date = ZonedDateTime.now().getHour() <= 12 && this.questionnaireId == 5 ?
                         DataHandler.getSQLiteDate(ZonedDateTime.now().minusDays(1)) :
                         DataHandler.getSQLiteDate(ZonedDateTime.now());
 

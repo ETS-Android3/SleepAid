@@ -112,21 +112,24 @@ public class QuestionFragment extends QuestionnaireFragment {
                 1, "time",
                 2, "float",
                 3, "time",
-                4, "float"
+                4, "float",
+                25, "time"
         ));
 
         this.answerHints = new HashMap<>(ImmutableMap.of(
                 1, "e.g. 22:30",
                 2, "e.g. 30",
                 3, "e.g. 06:30",
-                4, "e.g. 8"
+                4, "e.g. 8",
+                25, "e.g. 15:00"
         ));
 
         this.answerMaxLengths = new HashMap<>(ImmutableMap.of(
                 1, 5,
                 2, 5,
                 3, 5,
-                4, 5
+                4, 5,
+                25, 5
         ));
 
         Button backButton = this.view.findViewById(R.id.backButton);
@@ -559,7 +562,6 @@ public class QuestionFragment extends QuestionnaireFragment {
         if (previousAnswer.isPresent()) {
             RadioGroupAnswerComponent radioGroupAnswerComponent = (RadioGroupAnswerComponent) this.answerContainer.getChildAt(0);
             int optionId = previousAnswer.get().getOptionId() + numberOfOptions;
-            System.out.println(optionId);
 
             TextBox information = this.view.findViewById(R.id.questionInformation);
             String currentText = information.getText().toString();

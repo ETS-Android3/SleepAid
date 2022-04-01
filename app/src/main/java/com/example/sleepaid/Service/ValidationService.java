@@ -39,8 +39,8 @@ public class ValidationService {
         } else if (!isEmptyAndHasError && component.getInputType() == (InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_TIME)) {
             List<Integer> times = DataHandler.getIntsFromString(component.getText().toString());
 
-            boolean isHourValid = times.size() == 2 && times.get(0) >= 0 && times.get(0) <= 23;
-            boolean isMinuteValid = times.size() == 2 && times.get(1) >= 0 && times.get(1) <= 59;
+            boolean isHourValid = (times.size() == 2 && times.get(0) >= 0 && times.get(0) <= 23) || times.get(0) == 0;
+            boolean isMinuteValid = (times.size() == 2 && times.get(1) >= 0 && times.get(1) <= 59) || times.get(0) == 0;
 
             if (!isHourValid && isMinuteValid) {
                 component.setError(App.getContext().getString(R.string.hour_validation));

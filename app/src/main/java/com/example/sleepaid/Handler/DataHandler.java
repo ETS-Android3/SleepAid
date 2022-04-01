@@ -57,6 +57,11 @@ public class DataHandler {
         return date.format(formatter);
     }
 
+    public static String getFullDate(ZonedDateTime date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return date.format(formatter);
+    }
+
     public static String getSQLiteDate(ZonedDateTime date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return date.format(formatter);
