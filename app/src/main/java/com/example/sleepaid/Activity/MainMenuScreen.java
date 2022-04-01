@@ -1,6 +1,8 @@
 package com.example.sleepaid.Activity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -9,12 +11,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.NavGraph;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.sleepaid.Component.Modal;
 import com.example.sleepaid.R;
 import com.example.sleepaid.Service.BlueLightFilterService;
 import com.google.android.material.navigation.NavigationView;
@@ -23,19 +27,31 @@ import com.google.android.material.navigation.NavigationView;
 public class MainMenuScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //TODO add nice message here
-        //TODO only turn this on in the evening?
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_main_menu_screen_host);
+
+        //TODO only turn this on in the evening
         if (!Settings.canDrawOverlays(this)) {
-            Intent myIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-            startActivity(myIntent);
+            DialogInterface.OnClickListener yesAction = (dialog, whichButton) -> {
+                Intent myIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                startActivity(myIntent);
+            };
+
+            DialogInterface.OnClickListener noAction = (dialog, whichButton) -> {};
+
+            Modal.show(
+                    this,
+                    getString(R.string.blue_light_filter_permission),
+                    getString(R.string.yes_modal),
+                    yesAction,
+                    getString(R.string.no_modal),
+                    noAction
+            );
         } else {
             Intent intent = new Intent(this, BlueLightFilterService.class);
             startService(intent);
         }
-
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_menu_screen_host);
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.content);
         NavController navController = navHostFragment.getNavController();
@@ -77,5 +93,14 @@ public class MainMenuScreen extends AppCompatActivity {
 
         NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        if (Settings.canDrawOverlays(this)) {
+            Intent intent = new Intent(this, BlueLightFilterService.class);
+            startService(intent);
+        }
     }
 }

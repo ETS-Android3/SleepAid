@@ -3,23 +3,24 @@ package com.example.sleepaid.Component;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 public class Modal {
     public Modal() {}
 
     public static void show(
             Context context,
-            String title,
+            String message,
             String positiveButton,
             DialogInterface.OnClickListener positiveAction,
             String negativeButton,
             DialogInterface.OnClickListener negativeAction)
     {
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
-        alert.setTitle(title);
+        alert.setMessage(message);
 
-        //TODO fix the styling for the buttons in dark mode
         if (positiveButton != null) {
             alert.setPositiveButton(positiveButton, positiveAction);
         }
@@ -30,7 +31,7 @@ public class Modal {
 
         AlertDialog alertDialog = alert.create();
 
-        alertDialog.getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        alertDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         alertDialog.show();
     }
 }

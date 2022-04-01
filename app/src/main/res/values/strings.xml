@@ -18,8 +18,11 @@
 
     <string name="wakeup_time">Based on this information and your previous choice, your recommended wake up time is&#160;</string>
 
+    <string name="blue_light_filter_permission">In order to use the blue light filter functionality you need to allow this app to run over other apps.\nYou can change this in your phone\'s settings at any time.\n\nWould you like to grant this permission?</string>
+
     <string name="yes_modal">Yes</string>
     <string name="ok_modal">Ok</string>
+    <string name="no_modal">No</string>
     <string name="cancel_modal">Cancel</string>
     <string name="save_modal">Save</string>
     <string name="discard_modal">Discard</string>
