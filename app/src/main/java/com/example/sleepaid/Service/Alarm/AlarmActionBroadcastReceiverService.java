@@ -40,12 +40,12 @@ public class AlarmActionBroadcastReceiverService extends BroadcastReceiver {
 
         alarm.schedule(context);
 
-        Intent intentService = new Intent(context, AlarmService.class);
-        context.stopService(intentService);
+        Intent serviceIntent = new Intent(context, AlarmService.class);
+        context.stopService(serviceIntent);
     }
 
     private void dismissAlarm(Context context) {
-        Intent intentService = new Intent(context, AlarmService.class);
-        context.stopService(intentService);
+        Intent serviceIntent = new Intent(context, AlarmService.class);
+        context.stopService(serviceIntent);
     }
 }

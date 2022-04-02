@@ -63,7 +63,7 @@
 
         <service android:name=".Service.Notification.RescheduleNotificationsService" />
 
-        <service android:name=".Service.BlueLightFilterService" />
+        <service android:name=".Service.BlueLightFilter.BlueLightFilterService" />
 
         <meta-data
             android:name="preloaded_fonts"

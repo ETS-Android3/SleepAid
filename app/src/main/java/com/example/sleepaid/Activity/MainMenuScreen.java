@@ -1,17 +1,18 @@
 package com.example.sleepaid.Activity;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.NavGraph;
 import androidx.navigation.fragment.NavHostFragment;
@@ -20,8 +21,11 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.sleepaid.Component.Modal;
 import com.example.sleepaid.R;
-import com.example.sleepaid.Service.BlueLightFilterService;
+import com.example.sleepaid.Service.BlueLightFilter.BlueLightFilterBroadcastReceiverService;
+import com.example.sleepaid.Service.BlueLightFilter.BlueLightFilterService;
 import com.google.android.material.navigation.NavigationView;
+
+import java.time.ZonedDateTime;
 
 @SuppressLint("RestrictedApi")
 public class MainMenuScreen extends AppCompatActivity {
@@ -31,27 +35,7 @@ public class MainMenuScreen extends AppCompatActivity {
 
         setContentView(R.layout.activity_main_menu_screen_host);
 
-        //TODO only turn this on in the evening
-        if (!Settings.canDrawOverlays(this)) {
-            DialogInterface.OnClickListener yesAction = (dialog, whichButton) -> {
-                Intent myIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-                startActivity(myIntent);
-            };
-
-            DialogInterface.OnClickListener noAction = (dialog, whichButton) -> {};
-
-            Modal.show(
-                    this,
-                    getString(R.string.blue_light_filter_permission),
-                    getString(R.string.yes_modal),
-                    yesAction,
-                    getString(R.string.no_modal),
-                    noAction
-            );
-        } else {
-            Intent intent = new Intent(this, BlueLightFilterService.class);
-            startService(intent);
-        }
+        this.setupBlueLightFilter();
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.content);
         NavController navController = navHostFragment.getNavController();
@@ -101,6 +85,81 @@ public class MainMenuScreen extends AppCompatActivity {
         if (Settings.canDrawOverlays(this)) {
             Intent intent = new Intent(this, BlueLightFilterService.class);
             startService(intent);
+        }
+    }
+
+    private void setupBlueLightFilter() {
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        boolean haveAskedForPermission = sharedPref.getBoolean("asked_blue_light_filter_permission", false);
+
+        if (!Settings.canDrawOverlays(this)) {
+            if (!haveAskedForPermission) {
+                sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putBoolean("asked_blue_light_filter_permission", true);
+                editor.apply();
+
+                DialogInterface.OnClickListener yesAction = (dialog, whichButton) -> {
+                    Intent myIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                    startActivity(myIntent);
+                };
+
+                DialogInterface.OnClickListener noAction = (dialog, whichButton) -> {
+                };
+
+                Modal.show(
+                        this,
+                        getString(R.string.blue_light_filter_permission),
+                        getString(R.string.yes_modal),
+                        yesAction,
+                        getString(R.string.no_modal),
+                        noAction
+                );
+            }
+        } else {
+            AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+
+            Intent startIntent = new Intent(this, BlueLightFilterBroadcastReceiverService.class);
+
+            long startTime = ZonedDateTime.now()
+                    .withHour(19)
+                    .withMinute(30)
+                    .toInstant()
+                    .toEpochMilli();
+
+            startIntent.putExtra("HOUR", 19);
+            startIntent.putExtra("MINUTE", 30);
+
+            PendingIntent startPendingIntent = PendingIntent.getBroadcast(this, (int) startTime, startIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
+            alarmManager.setAlarmClock(
+                    new AlarmManager.AlarmClockInfo(
+                            Math.max(startTime, System.currentTimeMillis()),
+                            startPendingIntent
+                    ),
+                    startPendingIntent
+            );
+
+            Intent stopIntent = new Intent(this, BlueLightFilterBroadcastReceiverService.class);
+
+            long stopTime = ZonedDateTime.now()
+                    .withHour(7)
+                    .withMinute(30)
+                    .plusDays(1)
+                    .toInstant()
+                    .toEpochMilli();
+
+            stopIntent.setAction("STOP");
+
+            PendingIntent stopPendingIntent = PendingIntent.getBroadcast(this, (int) stopTime, stopIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
+            alarmManager.setAlarmClock(
+                    new AlarmManager.AlarmClockInfo(
+                            Math.max(stopTime, System.currentTimeMillis()),
+                            stopPendingIntent
+                    ),
+                    stopPendingIntent
+            );
         }
     }
 }
