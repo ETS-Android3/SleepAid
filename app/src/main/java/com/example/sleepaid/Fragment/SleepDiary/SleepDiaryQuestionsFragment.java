@@ -219,7 +219,8 @@ public class SleepDiaryQuestionsFragment extends Fragment {
 
                 List<String> suggestionsForQuestionAndSection = answers.stream()
                         .filter(s -> s.getQuestionId() == questionId &&
-                                s.getSection() == section)
+                                s.getSection() == section &&
+                                !s.getValue().isEmpty())
                         .map(Answer::getValue)
                         .collect(Collectors.toList());
 
