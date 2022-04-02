@@ -1,9 +1,13 @@
 package com.example.sleepaid.Database.Alarm;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.provider.Settings;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
@@ -11,8 +15,12 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
+import com.example.sleepaid.Activity.MainMenuScreen;
+import com.example.sleepaid.App;
+import com.example.sleepaid.Component.Modal;
 import com.example.sleepaid.Database.AlarmType.AlarmType;
 import com.example.sleepaid.Handler.DataHandler;
+import com.example.sleepaid.R;
 import com.example.sleepaid.Service.Alarm.AlarmBroadcastReceiverService;
 
 import java.time.ZonedDateTime;
@@ -149,105 +157,153 @@ public class Alarm implements Comparable<Alarm> {
                 this.vibrate == newAlarm.getVibrate();
     }
 
+    @SuppressLint("NewApi")
     public void schedule(Context context) {
-        boolean recurring = this.days.contains("1");
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        if (recurring && this.days.charAt(ZonedDateTime.now().getDayOfWeek().getValue() - 1) != '1') {
-            this.scheduleRecurring(context);
-            return;
-        }
+        if (alarmManager.canScheduleExactAlarms()) {
+            boolean recurring = this.days.contains("1");
 
-        List<Integer> time = DataHandler.getIntsFromString(this.time);
-        ZonedDateTime date = ZonedDateTime.now()
-                .withHour(time.get(0))
-                .withMinute(time.get(1))
-                .truncatedTo(ChronoUnit.MINUTES);
-
-        // If alarm time has already passed and it's not a recurring alarm, increment day by 1 and schedule it.
-        // If it is recurring, schedule it for the next recurring day
-        if (date.toInstant().toEpochMilli() <= System.currentTimeMillis()) {
-            if (!recurring) {
-                date = date.plusDays(1);
-            } else {
+            if (recurring && this.days.charAt(ZonedDateTime.now().getDayOfWeek().getValue() - 1) != '1') {
                 this.scheduleRecurring(context);
                 return;
             }
+
+            List<Integer> time = DataHandler.getIntsFromString(this.time);
+            ZonedDateTime date = ZonedDateTime.now()
+                    .withHour(time.get(0))
+                    .withMinute(time.get(1))
+                    .truncatedTo(ChronoUnit.MINUTES);
+
+            // If alarm time has already passed and it's not a recurring alarm, increment day by 1 and schedule it.
+            // If it is recurring, schedule it for the next recurring day
+            if (date.toInstant().toEpochMilli() <= System.currentTimeMillis()) {
+                if (!recurring) {
+                    date = date.plusDays(1);
+                } else {
+                    this.scheduleRecurring(context);
+                    return;
+                }
+            }
+
+            Intent intent = new Intent(context, AlarmBroadcastReceiverService.class);
+
+            intent.putExtra("ID", this.id);
+            intent.putExtra("TYPE", this.type);
+            intent.putExtra("NAME", this.name);
+            intent.putExtra("TIME", this.time);
+            intent.putExtra("SOUND", this.sound);
+            intent.putExtra("VIBRATE", this.vibrate);
+            intent.putExtra("RECURRING", recurring);
+
+            PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
+            alarmManager.setAlarmClock(
+                    new AlarmManager.AlarmClockInfo(date.toInstant().toEpochMilli(), alarmPendingIntent),
+                    alarmPendingIntent
+            );
+
+            this.isOn = 1;
+
+            Toast.makeText(context, "Alarm scheduled successfully!", Toast.LENGTH_SHORT).show();
+        } else {
+            DialogInterface.OnClickListener yesAction = (dialog, whichButton) -> {
+                Intent alarmPermissionIntent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                alarmPermissionIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                context.startActivity(alarmPermissionIntent);
+            };
+
+            DialogInterface.OnClickListener noAction = (dialog, whichButton) -> { };
+
+            Modal.show(
+                    context,
+                    context.getString(R.string.alarm_permission),
+                    context.getString(R.string.yes_modal),
+                    yesAction,
+                    context.getString(R.string.no_modal),
+                    noAction
+            );
         }
-
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
-        Intent intent = new Intent(context, AlarmBroadcastReceiverService.class);
-
-        intent.putExtra("ID", this.id);
-        intent.putExtra("TYPE", this.type);
-        intent.putExtra("NAME", this.name);
-        intent.putExtra("TIME", this.time);
-        intent.putExtra("SOUND", this.sound);
-        intent.putExtra("VIBRATE", this.vibrate);
-        intent.putExtra("RECURRING", recurring);
-
-        PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-
-        alarmManager.setAlarmClock(
-                new AlarmManager.AlarmClockInfo(date.toInstant().toEpochMilli(), alarmPendingIntent),
-                alarmPendingIntent
-        );
-
-        this.isOn = 1;
     }
 
+    @SuppressLint("NewApi")
     public void scheduleRecurring(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        Intent intent = new Intent(context, AlarmBroadcastReceiverService.class);
+        if (alarmManager.canScheduleExactAlarms()) {
+            Intent intent = new Intent(context, AlarmBroadcastReceiverService.class);
 
-        intent.putExtra("ID", this.id);
-        intent.putExtra("TYPE", this.type);
-        intent.putExtra("NAME", this.name);
-        intent.putExtra("TIME", this.time);
-        intent.putExtra("SOUND", this.sound);
-        intent.putExtra("VIBRATE", this.vibrate);
-        intent.putExtra("RECURRING", true);
+            intent.putExtra("ID", this.id);
+            intent.putExtra("TYPE", this.type);
+            intent.putExtra("NAME", this.name);
+            intent.putExtra("TIME", this.time);
+            intent.putExtra("SOUND", this.sound);
+            intent.putExtra("VIBRATE", this.vibrate);
+            intent.putExtra("RECURRING", true);
 
-        PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
-        List<Integer> time = DataHandler.getIntsFromString(this.time);
-        ZonedDateTime date = ZonedDateTime.now()
-                .withHour(time.get(0))
-                .withMinute(time.get(1))
-                .truncatedTo(ChronoUnit.MINUTES);
+            List<Integer> time = DataHandler.getIntsFromString(this.time);
+            ZonedDateTime date = ZonedDateTime.now()
+                    .withHour(time.get(0))
+                    .withMinute(time.get(1))
+                    .truncatedTo(ChronoUnit.MINUTES);
 
-        int today = ZonedDateTime.now().getDayOfWeek().getValue() - 1;
-        int nextDay;
+            int today = ZonedDateTime.now().getDayOfWeek().getValue() - 1;
+            int nextDay;
 
-        // Try and find a recurring day after today.
-        // If there isn't one, there must be one up to and including today
-        if (this.days.substring(today + 1).contains("1")) {
-            nextDay = today + 1 + this.days.substring(today + 1).indexOf("1");
+            // Try and find a recurring day after today.
+            // If there isn't one, there must be one up to and including today
+            if (this.days.substring(today + 1).contains("1")) {
+                nextDay = today + 1 + this.days.substring(today + 1).indexOf("1");
+            } else {
+                nextDay = this.days.indexOf("1");
+            }
+
+            date = date.minusDays(today).plusDays(nextDay);
+
+            // If alarm time has already passed, increment week by 1
+            if (date.toInstant().toEpochMilli() <= System.currentTimeMillis()) {
+                date = date.plusDays(7);
+            }
+
+            alarmManager.setAlarmClock(
+                    new AlarmManager.AlarmClockInfo(date.toInstant().toEpochMilli(), alarmPendingIntent),
+                    alarmPendingIntent
+            );
+
+            this.isOn = 1;
         } else {
-            nextDay = this.days.indexOf("1");
+            DialogInterface.OnClickListener yesAction = (dialog, whichButton) -> {
+                Intent alarmPermissionIntent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                alarmPermissionIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                context.startActivity(alarmPermissionIntent);
+            };
+
+            DialogInterface.OnClickListener noAction = (dialog, whichButton) -> {};
+
+            Modal.show(
+                    context,
+                    context.getString(R.string.alarm_permission),
+                    context.getString(R.string.yes_modal),
+                    yesAction,
+                    context.getString(R.string.no_modal),
+                    noAction
+            );
         }
-
-        date = date.minusDays(today).plusDays(nextDay);
-
-        // If alarm time has already passed, increment week by 1
-        if (date.toInstant().toEpochMilli() <= System.currentTimeMillis()) {
-            date = date.plusDays(7);
-        }
-
-        alarmManager.setAlarmClock(
-                new AlarmManager.AlarmClockInfo(date.toInstant().toEpochMilli(), alarmPendingIntent),
-                alarmPendingIntent
-        );
-
-        this.isOn = 1;
     }
 
     public void cancel(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
         Intent intent = new Intent(context, AlarmBroadcastReceiverService.class);
         PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
         alarmManager.cancel(alarmPendingIntent);
         this.isOn = 0;
+
+        Toast.makeText(context, "Alarm cancelled.", Toast.LENGTH_SHORT).show();
     }
 }

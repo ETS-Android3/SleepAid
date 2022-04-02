@@ -151,8 +151,7 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
                     .subscribe(
                             alarmId -> {
                                 alarm.setId(alarmId.get(0).intValue());
-                                alarm.schedule(App.getContext());
-                                Toast.makeText(getActivity(), "Alarm scheduled successfully!", Toast.LENGTH_SHORT).show();
+                                alarm.schedule(requireActivity());
 
                                 List<Alarm> newAlarmList = new ArrayList<>(this.model.getAlarmList(currentAlarmType));
                                 newAlarmList.add(alarm);
@@ -175,8 +174,7 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             () -> {
-                                this.model.getSelectedAlarm().schedule(App.getContext());
-                                Toast.makeText(getActivity(), "Alarm scheduled successfully!", Toast.LENGTH_SHORT).show();
+                                this.model.getSelectedAlarm().schedule(requireActivity());
 
                                 List<Alarm> newAlarmList = new ArrayList<>(this.model.getAlarmList(currentAlarmType));
                                 Collections.sort(newAlarmList);

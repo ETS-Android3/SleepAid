@@ -134,8 +134,7 @@ public class AlarmListFragment extends Fragment implements AdapterView.OnItemCli
         for (Alarm a : alarmsToSwitch) {
             if (isOn == 1) {
                 if (a.getIsOn() == 0) {
-                    a.schedule(App.getContext());
-                    Toast.makeText(getActivity(), "Alarm scheduled successfully!", Toast.LENGTH_SHORT).show();
+                    a.schedule(requireActivity());
                 }
             } else {
                 if (a.getIsOn() == 1) {

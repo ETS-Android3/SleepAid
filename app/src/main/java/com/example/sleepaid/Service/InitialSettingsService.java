@@ -6,6 +6,7 @@ import android.provider.ContactsContract;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.sleepaid.Activity.QuestionnaireScreen;
 import com.example.sleepaid.App;
 import com.example.sleepaid.Database.Alarm.Alarm;
 import com.example.sleepaid.Database.AppDatabase;
@@ -263,12 +264,12 @@ public class InitialSettingsService {
                 .subscribe(
                         notificationIds -> {
                             for (Alarm a : alarmList) {
-                                a.schedule(App.getContext());
+                                a.schedule(this.fragment.requireActivity());
                             }
 
                             for (int i = 0; i < notificationIds.size(); i++) {
                                 notificationList.get(i).setId(notificationIds.get(i).intValue());
-                                notificationList.get(i).schedule(App.getContext());
+                                notificationList.get(i).schedule(this.fragment.requireActivity());
                             }
 
                             Intent intent = new Intent(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));

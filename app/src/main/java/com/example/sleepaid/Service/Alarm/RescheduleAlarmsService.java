@@ -25,13 +25,10 @@ public class RescheduleAlarmsService extends LifecycleService {
 
         AppDatabase db = AppDatabase.getDatabase(App.getContext());
 
-        db.alarmDao().getAll().observe(this, new Observer<List<Alarm>>() {
-            @Override
-            public void onChanged(List<Alarm> alarms) {
-                for (Alarm a : alarms) {
-                    if (a.getIsOn() == 1) {
-                        a.schedule(getApplicationContext());
-                    }
+        db.alarmDao().getAll().observe(this, alarms -> {
+            for (Alarm a : alarms) {
+                if (a.getIsOn() == 1) {
+                    a.schedule(getApplicationContext());
                 }
             }
         });

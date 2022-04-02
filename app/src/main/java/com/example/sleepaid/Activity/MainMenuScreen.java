@@ -88,6 +88,7 @@ public class MainMenuScreen extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("NewApi")
     private void setupBlueLightFilter() {
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         boolean haveAskedForPermission = sharedPref.getBoolean("asked_blue_light_filter_permission", false);
@@ -100,8 +101,8 @@ public class MainMenuScreen extends AppCompatActivity {
                 editor.apply();
 
                 DialogInterface.OnClickListener yesAction = (dialog, whichButton) -> {
-                    Intent myIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-                    startActivity(myIntent);
+                    Intent overlayPermissionIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                    startActivity(overlayPermissionIntent);
                 };
 
                 DialogInterface.OnClickListener noAction = (dialog, whichButton) -> {
@@ -119,47 +120,49 @@ public class MainMenuScreen extends AppCompatActivity {
         } else {
             AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
 
-            Intent startIntent = new Intent(this, BlueLightFilterBroadcastReceiverService.class);
+            if (alarmManager.canScheduleExactAlarms()) {
+                Intent startIntent = new Intent(this, BlueLightFilterBroadcastReceiverService.class);
 
-            long startTime = ZonedDateTime.now()
-                    .withHour(19)
-                    .withMinute(30)
-                    .toInstant()
-                    .toEpochMilli();
+                long startTime = ZonedDateTime.now()
+                        .withHour(19)
+                        .withMinute(30)
+                        .toInstant()
+                        .toEpochMilli();
 
-            startIntent.putExtra("HOUR", 19);
-            startIntent.putExtra("MINUTE", 30);
+                startIntent.putExtra("HOUR", 19);
+                startIntent.putExtra("MINUTE", 30);
 
-            PendingIntent startPendingIntent = PendingIntent.getBroadcast(this, (int) startTime, startIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent startPendingIntent = PendingIntent.getBroadcast(this, (int) startTime, startIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
-            alarmManager.setAlarmClock(
-                    new AlarmManager.AlarmClockInfo(
-                            Math.max(startTime, System.currentTimeMillis()),
-                            startPendingIntent
-                    ),
-                    startPendingIntent
-            );
+                alarmManager.setAlarmClock(
+                        new AlarmManager.AlarmClockInfo(
+                                Math.max(startTime, System.currentTimeMillis()),
+                                startPendingIntent
+                        ),
+                        startPendingIntent
+                );
 
-            Intent stopIntent = new Intent(this, BlueLightFilterBroadcastReceiverService.class);
+                Intent stopIntent = new Intent(this, BlueLightFilterBroadcastReceiverService.class);
 
-            long stopTime = ZonedDateTime.now()
-                    .withHour(7)
-                    .withMinute(30)
-                    .plusDays(1)
-                    .toInstant()
-                    .toEpochMilli();
+                long stopTime = ZonedDateTime.now()
+                        .withHour(7)
+                        .withMinute(30)
+                        .plusDays(1)
+                        .toInstant()
+                        .toEpochMilli();
 
-            stopIntent.setAction("STOP");
+                stopIntent.setAction("STOP");
 
-            PendingIntent stopPendingIntent = PendingIntent.getBroadcast(this, (int) stopTime, stopIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent stopPendingIntent = PendingIntent.getBroadcast(this, (int) stopTime, stopIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
-            alarmManager.setAlarmClock(
-                    new AlarmManager.AlarmClockInfo(
-                            Math.max(stopTime, System.currentTimeMillis()),
-                            stopPendingIntent
-                    ),
-                    stopPendingIntent
-            );
+                alarmManager.setAlarmClock(
+                        new AlarmManager.AlarmClockInfo(
+                                Math.max(stopTime, System.currentTimeMillis()),
+                                stopPendingIntent
+                        ),
+                        stopPendingIntent
+                );
+            }
         }
     }
 }

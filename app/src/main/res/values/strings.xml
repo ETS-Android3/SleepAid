@@ -19,6 +19,7 @@
     <string name="wakeup_time">Based on this information and your previous choice, your recommended wake up time is&#160;</string>
 
     <string name="blue_light_filter_permission">In order to use the blue light filter functionality you need to allow this app to run over other apps.\nYou can change this in your phone\'s settings at any time.\n\nWould you like to grant this permission?</string>
+    <string name="alarm_permission">It seems Sleep Aid doesn\'t have permission to schedule alarms. Until you grant this permission, any alarms you have won\'t go off.\n\nWould you like to grant this permission now?</string>
 
     <string name="yes_modal">Yes</string>
     <string name="ok_modal">Ok</string>

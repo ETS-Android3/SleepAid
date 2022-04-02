@@ -1,5 +1,6 @@
 package com.example.sleepaid.Service.Alarm;
 
+import android.app.AlarmManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +9,9 @@ import android.content.Intent;
 public class AlarmBroadcastReceiverService extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
+        if (intent.getAction() != null &&
+                (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED) ||
+                intent.getAction().equals(AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED))) {
             startRescheduleAlarmsService(context);
         }
         else {
@@ -39,6 +42,6 @@ public class AlarmBroadcastReceiverService extends BroadcastReceiver {
 
     private void startRescheduleAlarmsService(Context context) {
         Intent intentService = new Intent(context, RescheduleAlarmsService.class);
-        context.startForegroundService(intentService);
+        context.startService(intentService);
     }
 }
