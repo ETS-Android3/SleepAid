@@ -5,7 +5,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
+
+import com.example.sleepaid.App;
+import com.example.sleepaid.R;
 
 public class Modal {
     public Modal() {}
@@ -30,8 +37,20 @@ public class Modal {
         }
 
         AlertDialog alertDialog = alert.create();
+        alertDialog.show();
 
         alertDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        alertDialog.show();
+
+        TextView messageComponent = alertDialog.findViewById(android.R.id.message);
+        messageComponent.setTextSize(18);
+
+        Button negButton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(0,0,20,0);
+        negButton.setLayoutParams(params);
     }
 }
