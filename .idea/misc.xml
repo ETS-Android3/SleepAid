@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable-mdpi/expand_less.xml" value="0.1" />
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable-mdpi/expand_more.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/add_icon_small.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/circle_shape.xml" value="0.107" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/close_icon.xml" value="0.145" />
@@ -10,9 +12,15 @@
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/dropdown_item_shape.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/dropdown_shape.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/error_message_box.xml" value="0.1" />
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/expand_less.xml" value="0.1" />
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/expand_less_24.xml" value="0.1" />
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/expand_more.xml" value="0.1" />
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/expandable_icon.xml" value="0.1" />
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/expandable_shape.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/ic_launcher_background.xml" value="0.13974358974358975" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/purple_button.xml" value="0.1515" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/rounded_shape.xml" value="0.1703125" />
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/rounded_shape_purple.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/technology_icon.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/activity_alarms_screen.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/activity_goals_screen.xml" value="0.1" />
@@ -66,6 +74,7 @@
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/fragment_unique_identifier.xml" value="0.144017094017094" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/fragment_user_id.xml" value="0.144017094017094" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/fragment_wakeup_time_graph.xml" value="0.1" />
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/goal_options_row.xml" value="0.12564102564102564" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/goal_row.xml" value="0.1311965811965812" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/information_box.xml" value="0.1264957264957265" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/radio_button.xml" value="0.1" />

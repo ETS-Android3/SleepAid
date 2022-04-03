@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.SleepAid" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/darker_purple_sleep</item>
+        <item name="colorPrimary">@color/purple_sleep_2</item>
         <item name="colorPrimaryVariant">@color/purple_sleep</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
@@ -47,7 +47,7 @@
     </style>
 
     <style name="BottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView">
-        <item name="backgroundTint">@color/darker_purple_sleep</item>
+        <item name="backgroundTint">@color/purple_sleep_2</item>
         <item name="itemBackground">@color/bottom_navigation_style_background</item>
         <item name="itemIconTint">@color/bottom_navigation_style</item>
         <item name="itemTextColor">@color/bottom_navigation_style</item>
@@ -85,7 +85,7 @@
     </style>
 
     <style name="ActionModeStyle" parent="Widget.AppCompat.ActionMode">
-        <item name="android:backgroundTint">@color/darker_purple_sleep</item>
+        <item name="android:backgroundTint">@color/purple_sleep_2</item>
         <item name="android:textColor">@color/white</item>
     </style>
 

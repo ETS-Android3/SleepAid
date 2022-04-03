@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ListView
+<ExpandableListView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/goalsList"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="20dp"
+    android:groupIndicator="@drawable/expandable_icon"
     android:divider="@android:color/transparent"
-    android:dividerHeight="20dp" />
+    android:dividerHeight="10dp"
+    android:childDivider="@android:color/transparent" />

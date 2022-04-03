@@ -24,7 +24,7 @@
         android:layout_marginEnd="15dp"
         android:backgroundTint="@color/white"
         app:borderWidth="0dp"
-        app:tint="@color/darker_purple_sleep"
+        app:tint="@color/purple_sleep_2"
         app:maxImageSize="50dp"
         android:src="@drawable/add_icon"
         app:layout_constraintEnd_toEndOf="parent"

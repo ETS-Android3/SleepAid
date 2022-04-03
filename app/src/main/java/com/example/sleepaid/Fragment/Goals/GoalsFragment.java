@@ -4,10 +4,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.ExpandableListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.sleepaid.Adapter.GoalAdapter;
 import com.example.sleepaid.App;
@@ -15,22 +18,28 @@ import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.Goal.Goal;
 import com.example.sleepaid.Database.SleepData.SleepData;
 import com.example.sleepaid.Fragment.MainMenuFragment;
+import com.example.sleepaid.Fragment.SleepData.SleepDataFragment;
 import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.R;
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-
 public class GoalsFragment extends MainMenuFragment {
     AppDatabase db;
 
     List<Goal> goalList;
     List<SleepData> sleepDataList;
+
+    List<String> options;
+    HashMap<String, List<String>> goalOptions = new HashMap<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -42,7 +51,12 @@ public class GoalsFragment extends MainMenuFragment {
 
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
-        db = AppDatabase.getDatabase(App.getContext());
+        this.db = AppDatabase.getDatabase(App.getContext());
+
+        this.options = Arrays.asList(
+                "View graph breakdown",
+                "Edit goal"
+        );
 
         loadGoals();
     }
@@ -55,6 +69,11 @@ public class GoalsFragment extends MainMenuFragment {
                 .subscribe(
                         goalData -> {
                             this.goalList = goalData;
+
+                            for (Goal g : goalData) {
+                                this.goalOptions.put(g.getName(), this.options);
+                            }
+
                             loadPercentages();
                         },
                         Throwable::printStackTrace
@@ -62,7 +81,7 @@ public class GoalsFragment extends MainMenuFragment {
     }
 
     private void loadPercentages() {
-        db.sleepDataDao()
+        this.db.sleepDataDao()
                 .getAll()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -76,16 +95,16 @@ public class GoalsFragment extends MainMenuFragment {
     }
 
     protected void loadGoalList() {
-        ListView list = getView().findViewById(R.id.goalsList);
+        ExpandableListView list = getView().findViewById(R.id.goalsList);
 
-        if (goalList.size() != 0) {
+        if (this.goalList.size() != 0) {
             list.setVisibility(View.VISIBLE);
 
             List<String> goalTexts = new ArrayList<>();
             List<String> percentages = new ArrayList<>();
 
             for (Goal g : goalList) {
-                if (g.getValueMin() != g.getValueMax()) {
+                if (!g.getValueMin().equals(g.getValueMax())) {
                     goalTexts.add(g.getValueMin() + " - " + g.getValueMax());
                 } else {
                         goalTexts.add(g.getValueMin());
@@ -110,14 +129,28 @@ public class GoalsFragment extends MainMenuFragment {
                 percentages.add(String.format("%.2f", percent));
             }
 
+            List<String> names = this.goalList.stream().map(Goal::getName).collect(Collectors.toList());
+
             GoalAdapter goalAdapter = new GoalAdapter(
                     App.getContext(),
-                    goalList.stream().map(Goal::getName).collect(Collectors.toList()),
+                    names,
                     goalTexts,
-                    percentages
+                    percentages,
+                    this.goalOptions
             );
 
             list.setAdapter(goalAdapter);
+
+            list.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
+                String option = this.goalOptions.get(names.get(groupPosition)).get(childPosition);
+                if (option.equals("View graph breakdown")) {
+                    NavHostFragment.findNavController(this).navigate(R.id.sleepDataFragment);
+                } else if (option.equals("Edit goal")){
+                    NavHostFragment.findNavController(this).navigate(R.id.openSettingsAction);
+                }
+
+                return false;
+            });
         } else {
             list.setVisibility(View.INVISIBLE);
         }

@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            android:background="@color/darker_purple_sleep"
+            android:background="@color/purple_sleep_2"
             android:elevation="10dp" />
 
         <androidx.fragment.app.FragmentContainerView

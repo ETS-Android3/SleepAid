@@ -4,16 +4,17 @@
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
 
-    <color name="lighter_purple_sleep">#846EAB</color>
+    <color name="purple_sleep_1">#846EAB</color>
     <color name="purple_sleep">#3e236e</color>
-    <color name="darker_purple_sleep">#291749</color>
-    <color name="darkest_purple_sleep">#1A0F2F</color>
+    <color name="purple_sleep_2">#291749</color>
+    <color name="purple_sleep_3">#1A0F2F</color>
 
-    <color name="lavender_sleep_transparent">#CCf1edf9</color>
-    <color name="lightest_purple_sleep_transparent">#4Dcab9e8</color>
+    <color name="purple_sleep_0_transparent">#CCf1edf9</color>
+    <color name="purple_sleep_05_transparent">#4Dcab9e8</color>
     <color name="blue_sleep_transparent">#4D8095FF</color>
-    <color name="purple_sleep_transparent">#4D9674d2</color>
-    <color name="darkest_purple_sleep_transparent">#4D1A0F2F</color>
+    <color name="purple_sleep_15_transparent">#4D9674d2</color>
+    <color name="purple_sleep_transparent">#B53E236E</color>
+    <color name="purple_sleep_3_transparent">#4D1A0F2F</color>
 
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>

@@ -23,4 +23,7 @@
         android:id="@+id/settingsFragment"
         android:name="com.example.sleepaid.Fragment.Settings.SettingsFragment"
         android:label="Settings" />
+
+    <action android:id="@+id/openSettingsAction"
+        app:destination="@id/settingsFragment"/>
 </navigation>

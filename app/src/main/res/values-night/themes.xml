@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.SleepAid" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/lighter_purple_sleep</item>
+        <item name="colorPrimary">@color/purple_sleep_1</item>
         <item name="colorPrimaryVariant">@color/purple_sleep</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->

@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -95,7 +94,7 @@ public class AlarmListFragment extends Fragment implements AdapterView.OnItemCli
                     alarmList.stream().map(Alarm::getTime).collect(Collectors.toList()),
                     alarmList.stream().map(Alarm::getDays).collect(Collectors.toList()),
                     alarmList.stream().map(Alarm::getIsOn).collect(Collectors.toList()),
-                    ContextCompat.getColor(App.getContext(), R.color.lavender_sleep_transparent),
+                    ContextCompat.getColor(App.getContext(), R.color.purple_sleep_0_transparent),
                     ContextCompat.getColor(App.getContext(), R.color.purple_sleep),
                     ContextCompat.getColor(App.getContext(), R.color.black_transparent)
             );
