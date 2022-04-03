@@ -131,8 +131,8 @@ public class Alarm implements Comparable<Alarm> {
 
     @Override
     public int compareTo(Alarm newAlarm) {
-        double newAlarmTime = DataHandler.getDoubleFromTime(newAlarm.getTime());
-        double currentAlarmTime = DataHandler.getDoubleFromTime(this.time);
+        float newAlarmTime = DataHandler.getFloatFromTime(newAlarm.getTime());
+        float currentAlarmTime = DataHandler.getFloatFromTime(this.time);
 
         int result;
 

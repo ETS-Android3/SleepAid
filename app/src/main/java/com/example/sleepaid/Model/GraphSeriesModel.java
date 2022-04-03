@@ -12,7 +12,7 @@ import java.util.Optional;
 public class GraphSeriesModel {
     private String dataType;
 
-    private List<Double> data;
+    private List<Float> data;
     private int[] translation;
 
     private LineGraphSeries<DataPoint> lineSeries;
@@ -22,7 +22,7 @@ public class GraphSeriesModel {
     private String periodEnd;
 
     public GraphSeriesModel(String dataType,
-                            List<Double> data,
+                            List<Float> data,
                             String periodStart,
                             String periodEnd,
                             int backgroundColor,
@@ -40,7 +40,7 @@ public class GraphSeriesModel {
         this.setPointsSeries(data, pointsColor);
     }
 
-    public void update(List<Double> data,
+    public void update(List<Float> data,
                        String periodStart,
                        String periodEnd,
                        int backgroundColor,
@@ -56,7 +56,7 @@ public class GraphSeriesModel {
         this.setPointsSeries(data, pointsColor);
     }
 
-    private void setTranslation(List<Double> data) {
+    private void setTranslation(List<Float> data) {
         this.translation = new int[data.size()];
 
         if (this.dataType.equals("Bedtime")) {
@@ -74,14 +74,13 @@ public class GraphSeriesModel {
         this.lineSeries = lineGraphSeries;
     }
 
-    private void setLineSeries(List<Double> data,
+    private void setLineSeries(List<Float> data,
                               int backgroundColor,
                               int lineColor) {
         this.lineSeries = this.createLineSeries(data, backgroundColor, lineColor);
     }
 
-    private void setPointsSeries(List<Double> data,
-                                int pointsColor) {
+    private void setPointsSeries(List<Float> data, int pointsColor) {
         this.pointsSeries = this.createPointsSeries(data, pointsColor);
     }
 
@@ -89,7 +88,7 @@ public class GraphSeriesModel {
         return this.dataType;
     }
 
-    public List<Double> getData() {
+    public List<Float> getData() {
         return this.data;
     }
 
@@ -105,7 +104,7 @@ public class GraphSeriesModel {
         return this.periodStart + "-" + this.periodEnd;
     }
 
-    private LineGraphSeries<DataPoint> createLineSeries(List<Double> data,
+    private LineGraphSeries<DataPoint> createLineSeries(List<Float> data,
                                                         int backgroundColor,
                                                         int lineColor) {
         LineGraphSeries<DataPoint> lineSeries = new LineGraphSeries<>();
@@ -133,8 +132,7 @@ public class GraphSeriesModel {
         lineSeries.setColor(lineColor);
     }
 
-    private PointsGraphSeries<DataPoint> createPointsSeries(List<Double> data,
-                                                           int pointsColor) {
+    private PointsGraphSeries<DataPoint> createPointsSeries(List<Float> data, int pointsColor) {
         PointsGraphSeries<DataPoint> pointsSeries = new PointsGraphSeries<>();
 
         for (int i = 0; i < data.size(); i++) {
@@ -156,7 +154,7 @@ public class GraphSeriesModel {
             paint.setColor(pointsColor);
             paint.setTextSize(38);
 
-            Optional<Double> point = data.stream()
+            Optional<Float> point = data.stream()
                     .filter(d -> Math.max(0, d) == dataPoint.getY())
                     .findFirst();
 

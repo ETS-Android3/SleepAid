@@ -50,8 +50,8 @@ public class GoalModel {
     private void setTranslation(String goalValueMin, String goalValueMax) {
         this.translation = new int[2];
 
-        double goalValueMinNumber = DataHandler.getDoubleFromTime(goalValueMin);
-        double goalValueMaxNumber = DataHandler.getDoubleFromTime(goalValueMax);
+        float goalValueMinNumber = DataHandler.getFloatFromTime(goalValueMin);
+        float goalValueMaxNumber = DataHandler.getFloatFromTime(goalValueMax);
 
         if (this.goalName.equals("Bedtime")) {
             if (goalValueMinNumber > 12 && goalValueMinNumber < 24) {
@@ -74,10 +74,10 @@ public class GoalModel {
                             int pointColor) {
         this.goalMin = goalValue;
 
-        double goalValueNumber = DataHandler.getDoubleFromTime(goalValue);
+        float goalValueNumber = DataHandler.getFloatFromTime(goalValue);
 
         this.goalMinLine = this.createGoalLine(goalValueNumber, 0, lineColor, lineLength);
-        this.goalMinPoint = this.createGoalPoint(goalValue, goalValueNumber, 0, -0.5, pointColor);
+        this.goalMinPoint = this.createGoalPoint(goalValue, goalValueNumber, 0, -0.5f, pointColor);
     }
 
     private void setGoalMax(String goalValue,
@@ -86,10 +86,10 @@ public class GoalModel {
                             int pointColor) {
         this.goalMax = goalValue;
 
-        double goalValueNumber = DataHandler.getDoubleFromTime(goalValue);
+        float goalValueNumber = DataHandler.getFloatFromTime(goalValue);
 
         this.goalMaxLine = this.createGoalLine(goalValueNumber, 1, lineColor, lineLength);
-        this.goalMaxPoint = this.createGoalPoint(goalValue, goalValueNumber, 1, 0.25, pointColor);
+        this.goalMaxPoint = this.createGoalPoint(goalValue, goalValueNumber, 1, 0.25f, pointColor);
     }
 
     public String getGoalName() {
@@ -124,7 +124,7 @@ public class GoalModel {
         return this.goalMaxPoint;
     }
 
-    private LineGraphSeries<DataPoint> createGoalLine(double goalValue,
+    private LineGraphSeries<DataPoint> createGoalLine(float goalValue,
                                                       int goalType,
                                                       int lineColor,
                                                       int lineLength) {
@@ -157,16 +157,17 @@ public class GoalModel {
     }
 
     private PointsGraphSeries<DataPoint> createGoalPoint(String goalText,
-                                                         double goalValue,
+                                                         float goalValue,
                                                          int goalType,
-                                                         double ratio,
+                                                         float ratio,
                                                          int pointColor) {
         PointsGraphSeries<DataPoint> goalPoint = new PointsGraphSeries<>();
 
         goalPoint.appendData(
                 new DataPoint(0, goalValue + this.translation[goalType] + ratio),
                 true,
-                1);
+                1
+        );
 
         this.styleGoalPoint(goalText, goalPoint, pointColor);
 

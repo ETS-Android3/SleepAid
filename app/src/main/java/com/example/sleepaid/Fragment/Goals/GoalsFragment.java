@@ -113,27 +113,27 @@ public class GoalsFragment extends MainMenuFragment {
                         .filter(s -> s.getField().equals(g.getName()))
                         .collect(Collectors.toList());
 
-                double percent = 0;
+                float percent = 0;
 
                 for (SleepData s : goalData) {
-                    double goalMax;
-                    double goalMin;
+                    float goalMax;
+                    float goalMin;
 
                     if (g.getName().equals("Bedtime")) {
-                        goalMax = DataHandler.getDoubleFromTime(g.getValueMax()) > 12 ?
-                                DataHandler.getDoubleFromTime(g.getValueMax()) :
-                                DataHandler.getDoubleFromTime(g.getValueMax()) + 24;
+                        goalMax = DataHandler.getFloatFromTime(g.getValueMax()) > 12 ?
+                                DataHandler.getFloatFromTime(g.getValueMax()) :
+                                DataHandler.getFloatFromTime(g.getValueMax()) + 24;
 
-                        goalMin = DataHandler.getDoubleFromTime(g.getValueMin()) > 12 ?
-                                DataHandler.getDoubleFromTime(g.getValueMin()) :
-                                DataHandler.getDoubleFromTime(g.getValueMin()) + 24;
+                        goalMin = DataHandler.getFloatFromTime(g.getValueMin()) > 12 ?
+                                DataHandler.getFloatFromTime(g.getValueMin()) :
+                                DataHandler.getFloatFromTime(g.getValueMin()) + 24;
                     } else {
-                        goalMax = DataHandler.getDoubleFromTime(g.getValueMax());
-                        goalMin = DataHandler.getDoubleFromTime(g.getValueMin());
+                        goalMax = DataHandler.getFloatFromTime(g.getValueMax());
+                        goalMin = DataHandler.getFloatFromTime(g.getValueMin());
                     }
 
-                    if (DataHandler.getDoubleFromTime(s.getValue()) <= goalMax &&
-                            DataHandler.getDoubleFromTime(s.getValue()) >= goalMin) {
+                    if (DataHandler.getFloatFromTime(s.getValue()) <= goalMax &&
+                            DataHandler.getFloatFromTime(s.getValue()) >= goalMin) {
                         percent++;
                     }
                 }

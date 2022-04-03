@@ -98,20 +98,20 @@ public class DataHandler {
         return date.format(formatter);
     }
 
-    public static double getDoubleFromTime(String time) {
+    public static float getFloatFromTime(String time) {
         List<Integer> times = DataHandler.getIntsFromString(time);
 
         int hours = times.get(0);
-        double minutes = times.size() > 1 ? times.get(1) / 60.0 : 0;
+        float minutes = times.size() > 1 ? times.get(1) / 60.0f : 0.f;
 
         return hours + minutes;
     }
 
-    public static List<Double> getDoublesFromTimes(List<String> times) {
-        List<Double> processedValues = new ArrayList<>();
+    public static List<Float> getFloatsFromTimes(List<String> times) {
+        List<Float> processedValues = new ArrayList<>();
 
         for (String t : times) {
-            processedValues.add(getDoubleFromTime(t));
+            processedValues.add(getFloatFromTime(t));
         }
 
         return processedValues;

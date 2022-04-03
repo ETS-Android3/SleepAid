@@ -231,7 +231,7 @@ public class SleepDataGraphFragment extends Fragment {
                             sleepData -> {
                                 this.setTranslation(sleepData);
 
-                                List<Double> processedSleepData = this.processFromDatabase(sleepData);
+                                List<Float> processedSleepData = this.processFromDatabase(sleepData);
 
                                 model.setSeries(
                                         this.fieldName,
@@ -269,7 +269,7 @@ public class SleepDataGraphFragment extends Fragment {
                     .map(s -> s.getValue())
                     .collect(Collectors.toList());
 
-            List<Double> sleepDataNumberValues = DataHandler.getDoublesFromTimes(sleepDataValues);
+            List<Float> sleepDataNumberValues = DataHandler.getFloatsFromTimes(sleepDataValues);
 
             this.translation = new int[sleepDataNumberValues.size()];
 
@@ -285,10 +285,10 @@ public class SleepDataGraphFragment extends Fragment {
         }
     }
 
-    private List<Double> processFromDatabase(List<SleepData> sleepData) {
+    private List<Float> processFromDatabase(List<SleepData> sleepData) {
         if (sleepData.isEmpty()) {
-            List<Double> processedSleepData = new ArrayList(Arrays.asList(new Double[model.getGraphPeriodLength()]));
-            Collections.fill(processedSleepData, -1.0);
+            List<Float> processedSleepData = new ArrayList(Arrays.asList(new Float[model.getGraphPeriodLength()]));
+            Collections.fill(processedSleepData, -1.0f);
 
             return processedSleepData;
         }
@@ -306,8 +306,8 @@ public class SleepDataGraphFragment extends Fragment {
         }
     }
 
-    private List<Double> processWeekData(List<SleepData> sleepData) {
-        List<Double> processedSleepData = new ArrayList<>();
+    private List<Float> processWeekData(List<SleepData> sleepData) {
+        List<Float> processedSleepData = new ArrayList<>();
 
         ZonedDateTime day = sleepDataFragment.rangeMin;
         ZonedDateTime end = day.plusDays(6);
@@ -321,12 +321,12 @@ public class SleepDataGraphFragment extends Fragment {
                     .findAny();
 
             if (sleepDataForDay.isPresent()) {
-                double value = DataHandler.getDoubleFromTime(sleepDataForDay.get().getValue());
+                float value = DataHandler.getFloatFromTime(sleepDataForDay.get().getValue());
                 value += translation[sleepData.indexOf(sleepDataForDay.get())];
 
                 processedSleepData.add(value);
             } else {
-                processedSleepData.add(-1.0);
+                processedSleepData.add(-1.0f);
             }
 
             day = day.plusDays(1);
@@ -335,8 +335,8 @@ public class SleepDataGraphFragment extends Fragment {
         return processedSleepData;
     }
 
-    private List<Double> processMonthData(List<SleepData> sleepData) {
-        List<Double> processedSleepData = new ArrayList<>();
+    private List<Float> processMonthData(List<SleepData> sleepData) {
+        List<Float> processedSleepData = new ArrayList<>();
 
         ZonedDateTime weekStart = sleepDataFragment.rangeMin;
         ZonedDateTime weekEnd = sleepDataFragment.rangeMin.plusDays(6);
@@ -353,13 +353,13 @@ public class SleepDataGraphFragment extends Fragment {
                     .collect(Collectors.toList());
 
             if (!sleepDataForWeek.isEmpty()) {
-                List<Double> valuesForWeek = sleepDataForWeek
+                List<Float> valuesForWeek = sleepDataForWeek
                         .stream()
-                        .map(s -> DataHandler.getDoubleFromTime(s.getValue()) +
+                        .map(s -> DataHandler.getFloatFromTime(s.getValue()) +
                                 translation[sleepData.indexOf(s)])
                         .collect(Collectors.toList());
 
-                double weeklyAverage = valuesForWeek
+                float weeklyAverage = (float) valuesForWeek
                         .stream()
                         .mapToDouble(v -> v)
                         .average()
@@ -367,7 +367,7 @@ public class SleepDataGraphFragment extends Fragment {
 
                 processedSleepData.add(weeklyAverage);
             } else {
-                processedSleepData.add(-1.0);
+                processedSleepData.add(-1.0f);
             }
 
             weekStart = weekStart.plusDays(7);
@@ -379,8 +379,8 @@ public class SleepDataGraphFragment extends Fragment {
         return processedSleepData;
     }
 
-    private List<Double> processYearData(List<SleepData> sleepData) {
-        List<Double> processedSleepData = new ArrayList<>();
+    private List<Float> processYearData(List<SleepData> sleepData) {
+        List<Float> processedSleepData = new ArrayList<>();
 
         String[] months = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"};
 
@@ -391,26 +391,26 @@ public class SleepDataGraphFragment extends Fragment {
                     .collect(Collectors.toList());
 
             if (!sleepDataForMonth.isEmpty()) {
-                List<Double> valuesForMonth = sleepDataForMonth
+                List<Float> valuesForMonth = sleepDataForMonth
                         .stream()
-                        .map(s -> DataHandler.getDoubleFromTime(s.getValue()) +
+                        .map(s -> DataHandler.getFloatFromTime(s.getValue()) +
                                 translation[sleepData.indexOf(s)])
                         .collect(Collectors.toList());
 
-                double monthlyAverage = valuesForMonth
+                float monthlyAverage = valuesForMonth
                         .stream()
                         .mapToDouble(v -> v)
                         .average()
-                        .isPresent() ? valuesForMonth
+                        .isPresent() ? (float) valuesForMonth
                         .stream()
                         .mapToDouble(v -> v)
                         .average()
                         .getAsDouble() :
-                        0.0;
+                        0.0f;
 
                 processedSleepData.add(monthlyAverage);
             } else {
-                processedSleepData.add(-1.0);
+                processedSleepData.add(-1.0f);
             }
         }
 
@@ -434,23 +434,23 @@ public class SleepDataGraphFragment extends Fragment {
     }
 
     private void checkProgress(String value) {
-        double goalMax;
-        double goalMin;
+        float goalMax;
+        float goalMin;
 
         if (this.fieldName.equals("Bedtime")) {
-            goalMax = DataHandler.getDoubleFromTime(this.model.getGoalMax(this.fieldName)) > 12 ?
-                    DataHandler.getDoubleFromTime(this.model.getGoalMax(this.fieldName)) :
-                    DataHandler.getDoubleFromTime(this.model.getGoalMax(this.fieldName)) + 24;
+            goalMax = DataHandler.getFloatFromTime(this.model.getGoalMax(this.fieldName)) > 12 ?
+                    DataHandler.getFloatFromTime(this.model.getGoalMax(this.fieldName)) :
+                    DataHandler.getFloatFromTime(this.model.getGoalMax(this.fieldName)) + 24;
 
-            goalMin = DataHandler.getDoubleFromTime(this.model.getGoalMin(this.fieldName)) > 12 ?
-                    DataHandler.getDoubleFromTime(this.model.getGoalMin(this.fieldName)) :
-                    DataHandler.getDoubleFromTime(this.model.getGoalMin(this.fieldName)) + 24;
+            goalMin = DataHandler.getFloatFromTime(this.model.getGoalMin(this.fieldName)) > 12 ?
+                    DataHandler.getFloatFromTime(this.model.getGoalMin(this.fieldName)) :
+                    DataHandler.getFloatFromTime(this.model.getGoalMin(this.fieldName)) + 24;
         } else {
-            goalMax = DataHandler.getDoubleFromTime(this.model.getGoalMax(this.fieldName));
-            goalMin = DataHandler.getDoubleFromTime(this.model.getGoalMin(this.fieldName));
+            goalMax = DataHandler.getFloatFromTime(this.model.getGoalMax(this.fieldName));
+            goalMin = DataHandler.getFloatFromTime(this.model.getGoalMin(this.fieldName));
         }
 
-        if (DataHandler.getDoubleFromTime(value) <= goalMax && DataHandler.getDoubleFromTime(value) >= goalMin) {
+        if (DataHandler.getFloatFromTime(value) <= goalMax && DataHandler.getFloatFromTime(value) >= goalMin) {
             Notification progressNotification = new Notification(
                     "Congratulations!",
                     "You\'ve achieved your " + this.fieldName.toLowerCase() + " goal today.\nYou're doing amazingly!",

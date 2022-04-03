@@ -222,7 +222,7 @@ public class SharedViewModel extends ViewModel {
     }
 
     public void setSeries(String dataType,
-                          List<Double> data,
+                          List<Float> data,
                           String periodStart,
                           String periodEnd,
                           int backgroundColor,
@@ -623,19 +623,19 @@ public class SharedViewModel extends ViewModel {
         return null;
     }
 
-    public double getMaxY(String dataType,
+    public float getMaxY(String dataType,
                           String periodStart,
                           String periodEnd) {
         GraphSeriesModel graphSeriesModel = this.getSeriesModel(dataType, periodStart, periodEnd);
-        List<Double> data = graphSeriesModel.getData();
+        List<Float> data = graphSeriesModel.getData();
 
-        double maxValue = Collections.max(data);
-        double goalValue = 0;
+        float maxValue = Collections.max(data);
+        float goalValue = 0.f;
 
         GoalModel goalModel = this.getGoalModel(dataType);
 
         if (goalModel != null) {
-            goalValue = DataHandler.getDoubleFromTime(goalModel.getGoalMax());
+            goalValue = DataHandler.getFloatFromTime(goalModel.getGoalMax());
             goalValue += goalModel.getTranslation(1);
         }
 
