@@ -25,5 +25,5 @@ public interface GoalDao {
     Completable insert(List<Goal> goals);
 
     @Update
-    Completable update(Goal goal);
+    Completable update(List<Goal> goals);
 }

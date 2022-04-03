@@ -2,7 +2,6 @@ package com.example.sleepaid.Adapter;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -10,13 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.sleepaid.App;
 import com.example.sleepaid.Component.Modal;
@@ -30,11 +25,10 @@ import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
 import com.example.sleepaid.Service.AlarmAndNotificationService;
 
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -223,15 +217,59 @@ public class SettingsAdapter extends BaseAdapter {
                     );
         } else {
             this.db.goalDao()
-                    .loadAllByNames(new String[]{setting})
+                    .getAll()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
-                            goal -> {
-                                goal.get(0).setValueMin(value.substring(0, 5));
-                                goal.get(0).setValueMax(value.substring(8));
+                            goalData -> {
+                                Goal settingGoal = goalData.stream()
+                                        .filter(g -> g.getName().equals(setting))
+                                        .findFirst()
+                                        .get();
+                                settingGoal.setValueMin(value.substring(0, 5));
+                                settingGoal.setValueMax(value.substring(8));
 
-                                this.updateGoal(goal.get(0));
+                                Goal otherGoal = goalData.stream()
+                                        .filter(g -> !g.getName().equals(setting) &&
+                                                !g.getName().equals("Sleep duration"))
+                                        .findFirst()
+                                        .get();
+
+                                List<Integer> wakeupTimes = settingGoal.getName().equals("Wake-up time") ?
+                                        DataHandler.getIntsFromString(settingGoal.getValueMin()) :
+                                        DataHandler.getIntsFromString(otherGoal.getValueMin());
+
+                                List<Integer> bedtimes = settingGoal.getName().equals("Bedtime") ?
+                                        DataHandler.getIntsFromString(settingGoal.getValueMin()) :
+                                        DataHandler.getIntsFromString(otherGoal.getValueMin());
+
+                                ZonedDateTime wakeupTime = ZonedDateTime.now()
+                                        .withHour(wakeupTimes.get(0))
+                                        .withMinute(wakeupTimes.get(1))
+                                        .plusDays(1);
+
+                                ZonedDateTime bedtime = ZonedDateTime.now()
+                                        .withHour(bedtimes.get(0))
+                                        .withMinute(bedtimes.get(1));
+
+                                List<Integer> differenceTimes = DataHandler.getIntsFromString(Duration.between(wakeupTime, bedtime).toString());
+
+                                int hours = differenceTimes.size() >= 1 ?
+                                        differenceTimes.get(0) :
+                                        0;
+                                int minutes = differenceTimes.size() >= 2 ?
+                                        differenceTimes.get(1) :
+                                        0;
+                                String duration = DataHandler.getFormattedDuration(hours, minutes);
+
+                                Goal durationGoal = goalData.stream()
+                                        .filter(g -> g.getName().equals("Sleep duration"))
+                                        .findFirst()
+                                        .get();
+                                durationGoal.setValueMin(duration);
+                                durationGoal.setValueMax(duration);
+
+                                this.updateGoals(new ArrayList<>(Arrays.asList(settingGoal, durationGoal)));
                             },
                             Throwable::printStackTrace
                     );
@@ -253,13 +291,13 @@ public class SettingsAdapter extends BaseAdapter {
                 );
     }
 
-    private void updateGoal(Goal goal) {
+    private void updateGoals(List<Goal> goalList) {
         this.db.goalDao()
-                .update(goal)
+                .update(goalList)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        () -> cancelAlarms(goal, goal.getName().equals("Bedtime") ? 3 : 1),
+                        () -> cancelAlarms(goalList.get(0), goalList.get(0).getName().equals("Bedtime") ? 3 : 1),
                         Throwable::printStackTrace
                 );
     }
@@ -296,6 +334,7 @@ public class SettingsAdapter extends BaseAdapter {
                         () -> {
                             if (alarmType != 2) {
                                 this.model.setGoalModel(goalName, null);
+                                this.model.setGoalModel("Sleep duration", null);
 
                                 this.saveAlarms(AlarmAndNotificationService.createAlarms(alarmType, this.time));
                             }

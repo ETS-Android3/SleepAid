@@ -179,7 +179,7 @@ public class AlarmAndNotificationService {
 
         Notification unwindNotification = new Notification(
                 "It's almost bedtime!",
-                "There are 2 hours left until your bedtime. How about you take some time to unwind? Tap here for suggestions.",
+                "There are 2 hours left until your bedtime. How about you take some time to unwind?\n\nTap here for suggestions.",
                 DataHandler.getFormattedTime(unwindHour.getHour(), unwindHour.getMinute()),
                 1,
                 R.id.relaxingActivitiesSuggestionsFragment

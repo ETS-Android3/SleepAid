@@ -1,14 +1,13 @@
 package com.example.sleepaid.Service;
 
 import android.content.Intent;
-import android.provider.ContactsContract;
 
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.sleepaid.Activity.QuestionnaireScreen;
 import com.example.sleepaid.App;
 import com.example.sleepaid.Database.Alarm.Alarm;
+import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.Configuration.Configuration;
 import com.example.sleepaid.Database.Goal.Goal;
@@ -16,10 +15,10 @@ import com.example.sleepaid.Database.Notification.Notification;
 import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.R;
 
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -162,6 +161,103 @@ public class InitialSettingsService {
     private void getNotificationList(String wakeupTime, String bedtime) {
         this.notificationList = AlarmAndNotificationService.createNotifications(1, wakeupTime);
         this.notificationList.addAll(AlarmAndNotificationService.createNotifications(3, bedtime));
+
+        this.scoreSHAPS();
+    }
+
+    private void scoreSHAPS() {
+        AtomicInteger sleepHygieneScore = new AtomicInteger();
+        AtomicInteger caffeineAnswered = new AtomicInteger();
+        AtomicInteger caffeineScore = new AtomicInteger();
+
+        List<Integer> section1 = Arrays.asList(1, 2, 3, 4, 5, 6, 9, 13);
+        List<Integer> section2 = Arrays.asList(1, 4, 7, 8, 16, 18);
+
+        this.db.answerDao()
+                .loadAllByQuestionnaireIds(new int[]{2})
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        answerData -> {
+                            for (Answer a : answerData) {
+                                if (a.getQuestionId() == 7) {
+                                    if (section1.contains(a.getSection())) {
+                                        if (a.getValue().contains("disruptive")) {
+                                            sleepHygieneScore.set(sleepHygieneScore.get() + 3);
+                                        } else {
+                                            sleepHygieneScore.set(sleepHygieneScore.get() + 1);
+                                        }
+                                    } else {
+                                        if (a.getValue().contains("beneficial")) {
+                                            sleepHygieneScore.set(sleepHygieneScore.get() + 1);
+                                        } else {
+                                            sleepHygieneScore.set(sleepHygieneScore.get() + 3);
+                                        }
+                                    }
+                                } else {
+                                    if (section2.contains(a.getSection())) {
+                                        if (a.getValue().contains("Yes")) {
+                                            caffeineAnswered.getAndIncrement();
+                                        } else if (a.getValue().contains("No")){
+                                            caffeineAnswered.getAndIncrement();
+                                            caffeineScore.getAndIncrement();
+                                        }
+                                    } else {
+                                        if (a.getValue().contains("No")) {
+                                            caffeineAnswered.getAndIncrement();
+                                        } else if (a.getValue().contains("Yes")){
+                                            caffeineAnswered.getAndIncrement();
+                                            caffeineScore.getAndIncrement();
+                                        }
+                                    }
+                                }
+                            }
+
+                            caffeineScore.set(caffeineScore.get() / caffeineAnswered.get() * 100);
+
+                            createInformationNotifications(sleepHygieneScore.get(), caffeineScore.get());
+                        },
+                        Throwable::printStackTrace
+                );
+    }
+
+    private void createInformationNotifications(int sleepHygieneScore, int caffeineScore) {
+        int frequency;
+
+        if (sleepHygieneScore <= 21 && caffeineScore >= 66) {
+            frequency = 5;
+        } else if (sleepHygieneScore <= 29 && caffeineScore >= 33) {
+            frequency = 3;
+        } else {
+            frequency = 1;
+        }
+
+        Notification dinnerNotification = new Notification(
+                "Don't leave your dinner too late.",
+                App.getContext().getString(R.string.dinner_notification),
+                "18:00",
+                frequency,
+                0
+        );
+        this.notificationList.add(dinnerNotification);
+
+        Notification exerciseNotification = new Notification(
+                "Physical activity can improve your sleep quality.",
+                App.getContext().getString(R.string.exercise_notification),
+                "13:00",
+                frequency,
+                0
+        );
+        this.notificationList.add(exerciseNotification);
+
+        Notification caffeineNotification = new Notification(
+                "Having caffeine in the evening may disrupt your sleep.",
+                App.getContext().getString(R.string.caffeine_notification),
+                "11:00",
+                frequency,
+                0
+        );
+        this.notificationList.add(caffeineNotification);
 
         createSettings();
     }

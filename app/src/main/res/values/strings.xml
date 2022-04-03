@@ -39,6 +39,10 @@
 
     <string name="review">Your answers</string>
 
+    <string name="dinner_notification">Eating late means your muscles have to work on digesting instead of resting.\nThis can prevent you from falling asleep and getting the deep sleep you need.\n\nTry and leave a couple of hours between your last meal of the day and your bedtime.</string>
+    <string name="exercise_notification">The benefits of exercising can include a reduced risk of disease and a higher quality of life.\nExercising during the day can also help alleviate daytime sleepiness and reduce the amount of time you lie awake at night.\n\nMake some time to move around to stay healthy and sleep better!</string>
+    <string name="caffeine_notification">The effects of caffeine can last between 4 to 6 hours. This can impact your bed hour.\nAlthough caffeine is most often consumed in coffee, it can also be found in tea, sodas, and medications.\n\nBe mindful of how much caffeine you consume in the afternoon and evening, and remember, just because it\'s not coffee doesn\'t mean it\'s not caffeine!</string>
+
     <string-array name="calendarOptions">
         <item>Week</item>
         <item>Month</item>

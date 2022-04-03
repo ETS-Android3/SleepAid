@@ -37,7 +37,7 @@ public class NotificationService extends Service {
                     break;
 
                 default:
-                    parentDestination = R.id.sleepDataFragment;
+                    parentDestination = destination;
                     break;
             }
 

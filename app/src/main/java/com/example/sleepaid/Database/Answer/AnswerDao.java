@@ -21,6 +21,9 @@ public interface AnswerDao {
     @Query("SELECT value FROM Answer WHERE Answer.questionId IN (:questionIds) ORDER BY date, questionId")
     Single<List<String>> loadValuesByQuestionIds(int[] questionIds);
 
+    @Query("SELECT * FROM Answer INNER JOIN Question ON Answer.questionId = Question.questionId WHERE Question.questionnaireId IN (:questionnaireIds) ORDER BY date, questionId")
+    Single<List<Answer>> loadAllByQuestionnaireIds(int[] questionnaireIds);
+
     @Insert(onConflict = OnConflictStrategy.ABORT)
     Completable insert(List<Answer> answers);
 }

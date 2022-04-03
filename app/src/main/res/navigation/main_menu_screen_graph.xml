@@ -22,7 +22,7 @@
     <fragment
         android:id="@+id/relaxingActivitiesSuggestionsFragment"
         android:name="com.example.sleepaid.Fragment.RelaxingActivitiesSuggestions.RelaxingActivitiesSuggestionsFragment"
-        android:label="Relaxing activities" />
+        android:label="Unwind" />
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.sleepaid.Fragment.Settings.SettingsFragment"
