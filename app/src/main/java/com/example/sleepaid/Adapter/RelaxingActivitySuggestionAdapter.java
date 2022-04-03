@@ -1,6 +1,8 @@
 package com.example.sleepaid.Adapter;
 
 import android.content.Context;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +58,7 @@ public class RelaxingActivitySuggestionAdapter extends BaseExpandableListAdapter
 
         TextView expandedListTextView = (TextView) childRow.findViewById(R.id.expandedActivity);
         expandedListTextView.setText(expandedListText);
+        expandedListTextView.setMovementMethod(LinkMovementMethod.getInstance());
 
         return childRow;
     }
