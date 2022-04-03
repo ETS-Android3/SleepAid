@@ -8,12 +8,10 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.sleepaid.Fragment.QuestionnaireFragment;
-import com.example.sleepaid.Listener.OnSwipeTouchListener;
 import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
 
@@ -37,14 +35,6 @@ public class GreetingFragment extends QuestionnaireFragment implements View.OnCl
 
         Button startButton = view.findViewById(R.id.startButton);
         startButton.setOnClickListener(this);
-//
-//        view.findViewById(R.id.scrollView).setOnTouchListener(new OnSwipeTouchListener(requireActivity()) {
-//            @Override
-//            public void onSwipeLeft() {
-//                super.onSwipeLeft();
-//                startButton.performClick();
-//            }
-//        });
     }
 
     public void onClick(View view) {

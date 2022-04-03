@@ -6,8 +6,6 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.example.sleepaid.Database.Configuration.Configuration;
-
 import java.util.List;
 
 import io.reactivex.rxjava3.core.Completable;

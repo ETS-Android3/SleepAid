@@ -49,7 +49,7 @@ public class NotificationService extends Service {
 
             notificationBuilder.setContentIntent(pendingIntent).setOngoing(true);
         } else {
-            notificationBuilder.setOngoing(false);
+            notificationBuilder.setAutoCancel(false).setOngoing(false);
         }
 
         Notification notification = notificationBuilder.build();

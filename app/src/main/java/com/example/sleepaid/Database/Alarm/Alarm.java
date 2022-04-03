@@ -15,8 +15,6 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-import com.example.sleepaid.Activity.MainMenuScreen;
-import com.example.sleepaid.App;
 import com.example.sleepaid.Component.Modal;
 import com.example.sleepaid.Database.AlarmType.AlarmType;
 import com.example.sleepaid.Handler.DataHandler;

@@ -1,7 +1,6 @@
 package com.example.sleepaid.Service.BlueLightFilter;
 
 import android.app.Notification;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -11,15 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 
-import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
-import com.example.sleepaid.Activity.MainMenuScreen;
 import com.example.sleepaid.App;
 import com.example.sleepaid.R;
 
 public class BlueLightFilterService extends Service {
     private View mOverlayView;
+    private static boolean isRunning;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -54,7 +52,20 @@ public class BlueLightFilterService extends Service {
 
         wm.addView(mOverlayView, params);
 
-        return START_REDELIVER_INTENT;
+        Notification notification = new NotificationCompat.Builder(this, App.NOTIFICATION_CHANNEL_ID)
+                .setContentTitle("Blue light filter is on")
+                .setContentText("It will remain on until the morning.")
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setSmallIcon(R.drawable.sleep_aid_circle)
+                .setAutoCancel(false)
+                .setOngoing(true)
+                .build();
+
+        startForeground((int) System.currentTimeMillis(), notification);
+        isRunning = true;
+
+        return START_STICKY;
     }
 
     @Override
@@ -63,5 +74,10 @@ public class BlueLightFilterService extends Service {
 
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         wm.removeView(mOverlayView);
+        isRunning = false;
+    }
+
+    public static boolean isRunning() {
+        return isRunning;
     }
 }

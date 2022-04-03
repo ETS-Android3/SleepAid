@@ -1,7 +1,6 @@
 package com.example.sleepaid.Adapter;
 
 import android.content.Context;
-import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +10,6 @@ import android.widget.TextView;
 
 import com.example.sleepaid.R;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 

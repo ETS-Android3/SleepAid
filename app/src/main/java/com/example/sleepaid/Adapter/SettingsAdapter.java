@@ -319,7 +319,7 @@ public class SettingsAdapter extends BaseAdapter {
                                 this.time = goal.getValueMin();
                             }
 
-                            this.deleteAlarms(alarmData, goal.getName(), alarmType);
+                            this.deleteAlarms(alarmData, goal != null ? goal.getName() : null, alarmType);
                         },
                         Throwable::printStackTrace
                 );

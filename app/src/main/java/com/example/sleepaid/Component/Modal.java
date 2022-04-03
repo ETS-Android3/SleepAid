@@ -4,15 +4,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import androidx.core.content.ContextCompat;
-
-import com.example.sleepaid.App;
-import com.example.sleepaid.R;
 
 public class Modal {
     public Modal() {}

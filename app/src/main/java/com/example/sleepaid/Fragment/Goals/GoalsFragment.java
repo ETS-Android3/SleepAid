@@ -1,6 +1,5 @@
 package com.example.sleepaid.Fragment.Goals;
 
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,21 +9,17 @@ import android.widget.ExpandableListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.sleepaid.Activity.MainMenuScreen;
 import com.example.sleepaid.Adapter.GoalAdapter;
 import com.example.sleepaid.App;
 import com.example.sleepaid.Database.AppDatabase;
 import com.example.sleepaid.Database.Goal.Goal;
+import com.example.sleepaid.Database.Notification.Notification;
 import com.example.sleepaid.Database.SleepData.SleepData;
 import com.example.sleepaid.Fragment.MainMenuFragment;
-import com.example.sleepaid.Fragment.SleepData.SleepDataFragment;
 import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.R;
-import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -110,7 +105,7 @@ public class GoalsFragment extends MainMenuFragment {
                 if (!g.getValueMin().equals(g.getValueMax())) {
                     goalTexts.add(g.getValueMin() + " - " + g.getValueMax());
                 } else {
-                        goalTexts.add(g.getValueMin());
+                    goalTexts.add(g.getValueMin());
                 }
 
                 List<SleepData> goalData = sleepDataList
@@ -121,8 +116,24 @@ public class GoalsFragment extends MainMenuFragment {
                 double percent = 0;
 
                 for (SleepData s : goalData) {
-                    if (DataHandler.getDoubleFromTime(s.getValue()) <= DataHandler.getDoubleFromTime(g.getValueMax()) &&
-                            DataHandler.getDoubleFromTime(s.getValue()) >= DataHandler.getDoubleFromTime(g.getValueMin())) {
+                    double goalMax;
+                    double goalMin;
+
+                    if (g.getName().equals("Bedtime")) {
+                        goalMax = DataHandler.getDoubleFromTime(g.getValueMax()) > 12 ?
+                                DataHandler.getDoubleFromTime(g.getValueMax()) :
+                                DataHandler.getDoubleFromTime(g.getValueMax()) + 24;
+
+                        goalMin = DataHandler.getDoubleFromTime(g.getValueMin()) > 12 ?
+                                DataHandler.getDoubleFromTime(g.getValueMin()) :
+                                DataHandler.getDoubleFromTime(g.getValueMin()) + 24;
+                    } else {
+                        goalMax = DataHandler.getDoubleFromTime(g.getValueMax());
+                        goalMin = DataHandler.getDoubleFromTime(g.getValueMin());
+                    }
+
+                    if (DataHandler.getDoubleFromTime(s.getValue()) <= goalMax &&
+                            DataHandler.getDoubleFromTime(s.getValue()) >= goalMin) {
                         percent++;
                     }
                 }
@@ -130,6 +141,17 @@ public class GoalsFragment extends MainMenuFragment {
                 percent = goalData.size() == 0 ? 0 : percent / goalData.size() * 100;
 
                 percentages.add(String.format("%.2f", percent));
+                if (percent > 75) {
+                    Notification progressNotification = new Notification(
+                            "You're doing great!",
+                            "You\'ve achieved " + String.format("%.2f", percent) + "% of your " + g.getName().toLowerCase() + " goal.\nKeep doing what you're doing!",
+                            DataHandler.getFormattedTime(16, 0),
+                            0,
+                            0
+                    );
+                    progressNotification.setId((int) System.currentTimeMillis());
+                    progressNotification.schedule(requireActivity());
+                }
             }
 
             List<String> names = this.goalList.stream().map(Goal::getName).collect(Collectors.toList());

@@ -1,30 +1,24 @@
 package com.example.sleepaid.Fragment.SleepData;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.sleepaid.Activity.MainMenuScreen;
 import com.example.sleepaid.App;
 import com.example.sleepaid.Component.CircleBox;
 import com.example.sleepaid.Database.AppDatabase;
+import com.example.sleepaid.Database.Notification.Notification;
 import com.example.sleepaid.Database.SleepData.SleepData;
 import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.Listener.OnSwipeTouchListener;
@@ -32,12 +26,6 @@ import com.example.sleepaid.Model.SharedViewModel;
 import com.example.sleepaid.R;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.DataPointInterface;
-import com.jjoe64.graphview.series.LineGraphSeries;
-import com.jjoe64.graphview.series.OnDataPointTapListener;
-import com.jjoe64.graphview.series.PointsGraphSeries;
-import com.jjoe64.graphview.series.Series;
 
 import java.time.YearMonth;
 import java.time.ZonedDateTime;
@@ -114,7 +102,6 @@ public class SleepDataGraphFragment extends Fragment {
         });
 
         loadGraph(sleepDataFragment.rangeMin, sleepDataFragment.rangeMax);
-        loadTodayData();
     }
 
     protected void loadGraph(ZonedDateTime min, ZonedDateTime max) {
@@ -259,9 +246,9 @@ public class SleepDataGraphFragment extends Fragment {
                                 graph.getViewport().setMaxY(model.getMaxY(this.fieldName, periodStart, periodEnd));
 
                                 graph.addSeries(model.getLineSeries(this.fieldName, periodStart, periodEnd));
-
-                                //TODO add click on point and popup with value
                                 graph.addSeries(model.getPointsSeries(this.fieldName, periodStart, periodEnd));
+
+                                loadTodayData();
                             },
                             Throwable::printStackTrace
                     );
@@ -270,6 +257,8 @@ public class SleepDataGraphFragment extends Fragment {
 
             graph.addSeries(model.getLineSeries(this.fieldName, periodStart, periodEnd));
             graph.addSeries(model.getPointsSeries(this.fieldName, periodStart, periodEnd));
+
+            loadTodayData();
         }
     }
 
@@ -438,5 +427,40 @@ public class SleepDataGraphFragment extends Fragment {
                 this.model.getTodaySleepData(this.fieldName).getValue();
 
         todayDataBox.setText(todayData);
+
+        if (!todayData.equals("-")) {
+            this.checkProgress(todayData);
+        }
+    }
+
+    private void checkProgress(String value) {
+        double goalMax;
+        double goalMin;
+
+        if (this.fieldName.equals("Bedtime")) {
+            goalMax = DataHandler.getDoubleFromTime(this.model.getGoalMax(this.fieldName)) > 12 ?
+                    DataHandler.getDoubleFromTime(this.model.getGoalMax(this.fieldName)) :
+                    DataHandler.getDoubleFromTime(this.model.getGoalMax(this.fieldName)) + 24;
+
+            goalMin = DataHandler.getDoubleFromTime(this.model.getGoalMin(this.fieldName)) > 12 ?
+                    DataHandler.getDoubleFromTime(this.model.getGoalMin(this.fieldName)) :
+                    DataHandler.getDoubleFromTime(this.model.getGoalMin(this.fieldName)) + 24;
+        } else {
+            goalMax = DataHandler.getDoubleFromTime(this.model.getGoalMax(this.fieldName));
+            goalMin = DataHandler.getDoubleFromTime(this.model.getGoalMin(this.fieldName));
+        }
+
+        if (DataHandler.getDoubleFromTime(value) <= goalMax && DataHandler.getDoubleFromTime(value) >= goalMin) {
+            Notification progressNotification = new Notification(
+                    "Congratulations!",
+                    "You\'ve achieved your " + this.fieldName.toLowerCase() + " goal today.\nYou're doing amazingly!",
+                    DataHandler.getFormattedTime(12, 00),
+                    0,
+                    0
+            );
+
+            progressNotification.setId((int) System.currentTimeMillis());
+            progressNotification.schedule(requireActivity());
+        }
     }
 }

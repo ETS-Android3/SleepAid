@@ -15,7 +15,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -248,20 +247,36 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
     }
 
     private void presetAlarm(int alarmType, TimePicker alarmTimePicker) {
+        //"nap"
         if (alarmType == 2) {
-            //"nap"
-            alarmTimePicker.setHour(12);
-            alarmTimePicker.setMinute(0);
+            this.db.answerDao()
+                    .loadAllByQuestionIds(new int[]{25})
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            answer -> {
+                                if (!answer.isEmpty()) {
+                                    List<Integer> napTimes = DataHandler.getIntsFromString(answer.get(0).getValue());
 
-            this.model.setSelectedConfiguration(new Alarm(
-                            alarmType,
-                            "",
-                            "12:00",
-                            "1111111",
-                            "Default",
-                            1,
-                            1
-                    ));
+                                    alarmTimePicker.setHour(napTimes.get(0));
+                                    alarmTimePicker.setMinute(napTimes.get(1));
+                                } else {
+                                    alarmTimePicker.setHour(12);
+                                    alarmTimePicker.setMinute(0);
+                                }
+
+                                this.model.setSelectedConfiguration(new Alarm(
+                                        alarmType,
+                                        "",
+                                        "12:00",
+                                        "1111111",
+                                        "Default",
+                                        1,
+                                        1
+                                ));
+                            },
+                            Throwable::printStackTrace
+                    );
         } else {
             //"morning" or "bedtime"
             String goalName = alarmType == 1 ?

@@ -1,12 +1,10 @@
 package com.example.sleepaid.Model;
 
-import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 
 import com.example.sleepaid.Handler.DataHandler;
 import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
@@ -178,19 +176,11 @@ public class GoalModel {
     private void styleGoalPoint(String goalText,
                                 PointsGraphSeries<DataPoint> goalPoint,
                                 int pointColor) {
-        goalPoint.setCustomShape(new PointsGraphSeries.CustomShape() {
-            @Override
-            public void draw(Canvas canvas, Paint paint, float x, float y, DataPointInterface dataPoint) {
-                paint.setColor(pointColor);
-                paint.setTextSize(38);
+        goalPoint.setCustomShape((canvas, paint, x, y, dataPoint) -> {
+            paint.setColor(pointColor);
+            paint.setTextSize(38);
 
-                //TODO make goal icon work
-                //float left = (float) dataPoint.getX() - 0.25f;
-                //float top = y * 0.75f * (float) dataPoint.getY();
-
-                //canvas.drawBitmap(icon, left, top, null);
-                canvas.drawText("Goal: " + goalText, x, y, paint);
-            }
+            canvas.drawText("Goal: " + goalText, x, y, paint);
         });
     }
 }

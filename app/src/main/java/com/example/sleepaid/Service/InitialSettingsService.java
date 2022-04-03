@@ -233,7 +233,7 @@ public class InitialSettingsService {
         }
 
         Notification dinnerNotification = new Notification(
-                "Don't leave your dinner too late.",
+                "Don't leave your dinner too late",
                 App.getContext().getString(R.string.dinner_notification),
                 "18:00",
                 frequency,
@@ -242,7 +242,7 @@ public class InitialSettingsService {
         this.notificationList.add(dinnerNotification);
 
         Notification exerciseNotification = new Notification(
-                "Physical activity can improve your sleep quality.",
+                "Physical activity can improve your sleep quality",
                 App.getContext().getString(R.string.exercise_notification),
                 "13:00",
                 frequency,
@@ -251,7 +251,7 @@ public class InitialSettingsService {
         this.notificationList.add(exerciseNotification);
 
         Notification caffeineNotification = new Notification(
-                "Having caffeine in the evening may disrupt your sleep.",
+                "Having caffeine in the evening may disrupt your sleep",
                 App.getContext().getString(R.string.caffeine_notification),
                 "11:00",
                 frequency,

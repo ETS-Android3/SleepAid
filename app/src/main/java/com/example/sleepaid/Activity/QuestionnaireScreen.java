@@ -2,13 +2,10 @@ package com.example.sleepaid.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.sleepaid.App;
 import com.example.sleepaid.Database.AppDatabase;
-import com.example.sleepaid.Listener.OnSwipeTouchListener;
 import com.example.sleepaid.R;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;

@@ -2,11 +2,8 @@ package com.example.sleepaid.Model;
 
 import com.example.sleepaid.Handler.DataHandler;
 import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
-import com.jjoe64.graphview.series.OnDataPointTapListener;
 import com.jjoe64.graphview.series.PointsGraphSeries;
-import com.jjoe64.graphview.series.Series;
 
 import java.util.List;
 import java.util.Optional;

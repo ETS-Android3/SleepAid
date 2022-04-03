@@ -5,13 +5,10 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleService;
-import androidx.lifecycle.Observer;
 
 import com.example.sleepaid.App;
 import com.example.sleepaid.Database.Alarm.Alarm;
 import com.example.sleepaid.Database.AppDatabase;
-
-import java.util.List;
 
 public class RescheduleAlarmsService extends LifecycleService {
     @Override

@@ -5,8 +5,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 
-import com.google.common.collect.ImmutableMap;
-
 import java.util.HashMap;
 
 public class App extends Application {
@@ -26,9 +24,6 @@ public class App extends Application {
         createAlarmChannel();
         createNotificationChannel();
         createAlarmSounds();
-
-//        this.notificationSound = R.raw.default_notification_sound;
-//        this.notificationVibrate = true;
     }
 
     public static Context getContext() {

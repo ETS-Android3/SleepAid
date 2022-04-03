@@ -20,7 +20,7 @@ public class BlueLightFilterBroadcastReceiverService extends BroadcastReceiver {
 
         this.scheduleNext(context, intent);
 
-        context.startService(serviceIntent);
+        context.startForegroundService(serviceIntent);
     }
 
     private void scheduleNext(Context context, Intent intent) {

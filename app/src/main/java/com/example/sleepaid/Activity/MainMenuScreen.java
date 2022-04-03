@@ -9,15 +9,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.NavGraph;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -115,7 +112,7 @@ public class MainMenuScreen extends AppCompatActivity {
         } else {
             AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
 
-            if (alarmManager.canScheduleExactAlarms()) {
+            if (alarmManager.canScheduleExactAlarms() && !BlueLightFilterService.isRunning()) {
                 Intent startIntent = new Intent(this, BlueLightFilterBroadcastReceiverService.class);
 
                 long startTime = ZonedDateTime.now()
