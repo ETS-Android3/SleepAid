@@ -18,6 +18,7 @@ import com.example.sleepaid.R;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -84,12 +85,10 @@ public class InitialSettingsService {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         answerData -> {
-                            //List<Integer> bedTimes = DataHandler.getIntsFromString(answerData.get(0));
                             List<String> bedtimes = DataHandler.getGoalsFromString(answerData.get(0));
                             Goal bedtime = new Goal("Bedtime", bedtimes.get(0), bedtimes.get(1));
                             goalList.add(bedtime);
 
-                            //List<Integer> wakeupTimes = DataHandler.getIntsFromString(answerData.get(1));
                             List<String> wakeupTimes = DataHandler.getGoalsFromString(answerData.get(1));
                             Goal wakeupTime = new Goal("Wake-up time", wakeupTimes.get(0), wakeupTimes.get(1));
                             goalList.add(wakeupTime);
@@ -103,7 +102,7 @@ public class InitialSettingsService {
                             Goal sleepDuration = new Goal("Sleep duration", duration + "h", duration + "h");
                             goalList.add(sleepDuration);
 
-                            getAlarmList(minWakeupHour, minBedHour);
+                            getAlarmList(wakeupTimes.get(0), bedtimes.get(0));
                         },
                         Throwable::printStackTrace
                 );
@@ -120,43 +119,9 @@ public class InitialSettingsService {
                 );
     }
 
-    private void getAlarmList(int wakeupHour, int bedHour) {
-        for (int i = 0; i < 4; i++) {
-            Alarm morningAlarm = new Alarm(
-                    1,
-                    "It's time to wake up!",
-                    DataHandler.getFormattedTime(wakeupHour, i * 10),
-                    "1111111",
-                    "Default",
-                    1,
-                    1
-            );
-            alarmList.add(morningAlarm);
-        }
-
-        ZonedDateTime bedHourBefore = ZonedDateTime.now().withHour(bedHour).withMinute(0).minusHours(1);
-
-        Alarm bedtimeAlarmBefore = new Alarm(
-                3,
-                "It's almost bedtime!",
-                DataHandler.getFormattedTime(bedHourBefore.getHour(), 30),
-                "1111111",
-                "Default",
-                1,
-                1
-        );
-        alarmList.add(bedtimeAlarmBefore);
-
-        Alarm bedtimeAlarm = new Alarm(
-                3,
-                "It's bedtime!",
-                DataHandler.getFormattedTime(bedHour, 0),
-                "1111111",
-                "Default",
-                1,
-                1
-        );
-        alarmList.add(bedtimeAlarm);
+    private void getAlarmList(String wakeupTime, String bedtime) {
+        this.alarmList = AlarmAndNotificationService.createAlarms(1, wakeupTime);
+        this.alarmList.addAll(AlarmAndNotificationService.createAlarms(3, bedtime));
 
         if (configurationList.get(0).getValue().equals("Yes.")) {
             db.answerDao()
@@ -165,39 +130,15 @@ public class InitialSettingsService {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             answerData -> {
-                                List<Integer> napTimes = DataHandler.getIntsFromString(answerData.get(0));
+                                this.alarmList.addAll(AlarmAndNotificationService.createAlarms(3, answerData.get(0)));
 
-                                Alarm napAlarmBefore = new Alarm(
-                                        2,
-                                        "It's time for your nap!",
-                                        DataHandler.getFormattedTime(napTimes.get(0), napTimes.get(1)),
-                                        "1111111",
-                                        "Default",
-                                        1,
-                                        1
-                                );
-                                alarmList.add(napAlarmBefore);
-
-                                ZonedDateTime napWakeupTime = ZonedDateTime.now().withHour(napTimes.get(0)).withMinute(napTimes.get(1)).plusMinutes(30);
-
-                                Alarm napAlarmAfter = new Alarm(
-                                        2,
-                                        "It's time to wake up from your nap!",
-                                        DataHandler.getFormattedTime(napWakeupTime.getHour(), napWakeupTime.getMinute()),
-                                        "1111111",
-                                        "Default",
-                                        1,
-                                        1
-                                );
-                                alarmList.add(napAlarmAfter);
-
-                                getNotificationList(wakeupHour, bedHour);
+                                getNotificationList(wakeupTime, bedtime);
                             },
                             Throwable::printStackTrace
                     );
         }
         else {
-            getNotificationList(wakeupHour, bedHour);
+            getNotificationList(wakeupTime, bedtime);
         }
     }
 
@@ -218,62 +159,9 @@ public class InitialSettingsService {
                 );
     }
 
-    private void getNotificationList(int wakeupHour, int bedHour) {
-        ZonedDateTime unwindHour = ZonedDateTime.now().withHour(bedHour).withMinute(0).minusHours(2);
-
-        Notification unwindNotification = new Notification(
-                "It's almost bedtime!",
-                "There are 2 hours left until your bedtime. How about you take some time to unwind? Tap here for suggestions.",
-                DataHandler.getFormattedTime(unwindHour.getHour(), 0),
-                1,
-                R.id.relaxingActivitiesSuggestionsFragment
-        );
-
-        this.notificationList.add(unwindNotification);
-
-        Notification sleepDiaryWakeupTimeNotification = new Notification(
-                "It's time to fill in your morning sleep diary!",
-                "Tap here to open it.",
-                DataHandler.getFormattedTime(wakeupHour, 45),
-                1,
-                R.id.morningSleepDiaryFragment
-        );
-
-        this.notificationList.add(sleepDiaryWakeupTimeNotification);
-
-        ZonedDateTime sleepDiaryWakeupTimeReminder = ZonedDateTime.now().withHour(wakeupHour).withMinute(0).plusHours(2);
-
-        Notification sleepDiaryWakeupTimeReminderNotification = new Notification(
-                "You still haven't filled in your morning sleep diary.",
-                "Tap here to open it.",
-                DataHandler.getFormattedTime(sleepDiaryWakeupTimeReminder.getHour(), 0),
-                1,
-                R.id.morningSleepDiaryFragment
-        );
-
-        this.notificationList.add(sleepDiaryWakeupTimeReminderNotification);
-
-        ZonedDateTime sleepDiaryBedtime = ZonedDateTime.now().withHour(bedHour).withMinute(0).minusHours(1);
-
-        Notification sleepDiaryBedtimeNotification = new Notification(
-                "It's time to fill in your bedtime sleep diary!",
-                "Tap here to open it.",
-                DataHandler.getFormattedTime(sleepDiaryBedtime.getHour(), 45),
-                1,
-                R.id.bedtimeSleepDiaryFragment
-        );
-
-        this.notificationList.add(sleepDiaryBedtimeNotification);
-
-        Notification sleepDiaryBedtimeReminderNotification = new Notification(
-                "You still haven't filled in your bedtime sleep diary.",
-                "Tap here to open it.",
-                DataHandler.getFormattedTime(wakeupHour, 45),
-                1,
-                R.id.bedtimeSleepDiaryFragment
-        );
-
-        this.notificationList.add(sleepDiaryBedtimeReminderNotification);
+    private void getNotificationList(String wakeupTime, String bedtime) {
+        this.notificationList = AlarmAndNotificationService.createNotifications(1, wakeupTime);
+        this.notificationList.addAll(AlarmAndNotificationService.createNotifications(3, bedtime));
 
         createSettings();
     }

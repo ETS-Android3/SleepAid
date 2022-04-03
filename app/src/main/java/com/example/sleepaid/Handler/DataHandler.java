@@ -117,7 +117,7 @@ public class DataHandler {
         return processedValues;
     }
 
-    static public void playAlarmSound(MediaPlayer mediaPlayer, Context context, int resourceId, boolean loop) {
+     public static void playAlarmSound(MediaPlayer mediaPlayer, Context context, int resourceId, boolean loop) {
         Executors.newSingleThreadExecutor().execute(() -> {
                 try {
                     mediaPlayer.setOnCompletionListener(mp -> {

@@ -45,4 +45,12 @@ public class Goal {
     public String getValueMax() {
         return this.valueMax;
     }
+
+    public void setValueMin(String valueMin) {
+        this.valueMin = valueMin;
+    }
+
+    public void setValueMax(String valueMax) {
+        this.valueMax = valueMax;
+    }
 }

@@ -9,8 +9,10 @@
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/circle_shape.xml" value="0.107" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/close_icon.xml" value="0.145" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/cursor.xml" value="0.1" />
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/done_icon.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/dropdown_item_shape.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/dropdown_shape.xml" value="0.1" />
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/edit_icon.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/error_message_box.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/expand_less.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/drawable/expand_less_24.xml" value="0.1" />
@@ -84,6 +86,7 @@
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/relaxing_activity_information_row.xml" value="0.1311965811965812" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/relaxing_activity_row.xml" value="0.1311965811965812" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/screen_filter.xml" value="0.1311965811965812" />
+        <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/settings_row.xml" value="0.1311965811965812" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/sleep_diary_answer.xml" value="0.144017094017094" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/sleep_diary_answer_component.xml" value="0.1" />
         <entry key="..\:/Aurelia/Uni/Year 4/Dissertation/App/app/src/main/res/layout/sleep_diary_question_component.xml" value="0.1311965811965812" />

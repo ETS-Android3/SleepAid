@@ -13,10 +13,7 @@ import androidx.room.PrimaryKey;
         )
 })
 public class Configuration {
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "configurationId")
-    public int id;
-
+    @PrimaryKey
     @NonNull
     public String name;
     @NonNull
@@ -25,10 +22,6 @@ public class Configuration {
     public Configuration(String name, String value) {
         this.name = name;
         this.value = value;
-    }
-
-    public int getId() {
-        return this.id;
     }
 
     public String getName() {

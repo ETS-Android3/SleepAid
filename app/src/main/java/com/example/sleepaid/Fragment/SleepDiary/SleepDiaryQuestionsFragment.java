@@ -629,11 +629,11 @@ public class SleepDiaryQuestionsFragment extends Fragment {
 
     private void cancelReminder() {
         String notificationName = this.questionnaireId == 4 ?
-                "You still haven't filled in your morning sleep diary." :
-                "You still haven't filled in your bedtime sleep diary.";
+                "You still haven't filled in your morning sleep diary. You can do it until 00:00." :
+                "You still haven't filled in your bedtime sleep diary. You can do it until 12:00.";
 
         this.db.notificationDao()
-                .loadByName(notificationName)
+                .loadAllByNames(new String[]{notificationName})
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

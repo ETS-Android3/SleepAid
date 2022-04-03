@@ -39,7 +39,6 @@ public class AlarmListScreenFragment extends MainMenuFragment implements View.On
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
         this.db = AppDatabase.getDatabase(App.getContext());
-
         this.model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
         FloatingActionButton addAlarmButton = view.findViewById(R.id.addAlarmButton);

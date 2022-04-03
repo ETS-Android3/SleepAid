@@ -59,8 +59,17 @@ public class NotificationBroadcastReceiverService extends BroadcastReceiver {
                 "morning" :
                 "bedtime";
 
+        String time = intent.getStringExtra("NAME").contains("morning") ?
+                "00:00" :
+                "12:00";
+
+        String name = "You still haven't filled in your " +
+                sleepDiary +
+                " sleep diary. You can do it until " +
+                time + ".";
+
         AppDatabase.getDatabase(App.getContext()).notificationDao()
-                .loadByName("You still haven't filled in your " + sleepDiary + " sleep diary.")
+                .loadAllByNames(new String[]{name})
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

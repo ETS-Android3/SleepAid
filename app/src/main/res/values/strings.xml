@@ -13,6 +13,10 @@
     <string name="minute_validation">Please enter a valid minute (between \"00\" and \"59\").</string>
     <string name="time_validation">Please enter a valid time (between \"00:00\" and \"23:59\").</string>
 
+    <string name="goal_setting_validation">Invalid value.\nThis setting has to match the format \"hh:mm - hh:mm\".</string>
+    <string name="nap_setting_validation">Invalid value.\nThis setting has to be either \"Yes.\" or \"No.\".</string>
+    <string name="save_setting">Changing this setting may remove any alarms you currently have or/and create new ones.\n\nDo you still wish to continue?</string>
+
     <string name="exit_alarm_configuration">Save your changes or discard them?</string>
     <string name="exit_alarm_sound">Save your choice or discard it?</string>
 

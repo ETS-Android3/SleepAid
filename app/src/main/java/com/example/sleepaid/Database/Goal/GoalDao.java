@@ -4,6 +4,9 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
+
+import com.example.sleepaid.Database.Configuration.Configuration;
 
 import java.util.List;
 
@@ -20,4 +23,7 @@ public interface GoalDao {
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     Completable insert(List<Goal> goals);
+
+    @Update
+    Completable update(Goal goal);
 }

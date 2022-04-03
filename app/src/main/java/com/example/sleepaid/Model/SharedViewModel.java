@@ -279,6 +279,18 @@ public class SharedViewModel extends ViewModel {
         }
     }
 
+    public void setGoalModel(String goalName, GoalModel model) {
+        GoalModel goal = this.getGoalModel(goalName);
+
+        if (goal != null) {
+            if (model == null) {
+                this.goals.remove(this.goals.indexOf(goal));
+            } else {
+                this.goals.set(this.goals.indexOf(goal), model);
+            }
+        }
+    }
+
     public void setAlarms(int alarmType, List<Alarm> alarmList) {
         AlarmListModel alarm = this.getAlarmListModel(alarmType);
 
@@ -289,6 +301,18 @@ public class SharedViewModel extends ViewModel {
                     alarmType,
                     alarmList
             ));
+        }
+    }
+
+    public void setAlarmListModel(int alarmType, AlarmListModel model) {
+        AlarmListModel alarm = this.getAlarmListModel(alarmType);
+
+        if (alarm != null) {
+            if (model == null) {
+                this.alarms.remove(this.alarms.indexOf(alarm));
+            } else {
+                this.alarms.set(this.alarms.indexOf(alarm), model);
+            }
         }
     }
 
@@ -624,7 +648,6 @@ public class SharedViewModel extends ViewModel {
                 .findFirst();
 
         return alarm.orElse(null);
-
     }
 
     public List<Alarm> getAlarmList(int alarmType) {

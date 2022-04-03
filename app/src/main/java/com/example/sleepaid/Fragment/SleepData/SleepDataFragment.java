@@ -68,23 +68,6 @@ public class SleepDataFragment extends MainMenuFragment {
 
         if (getArguments() != null && getArguments().containsKey("DESTINATION")) {
             navGraph.setStartDestination(getArguments().getInt("DESTINATION", R.id.sleepDurationGraphFragment));
-//            switch (getArguments().getString("DESTINATION")) {
-//                case "Wake-up time":
-//                    navGraph.setStartDestination(R.id.wakeupTimeGraphFragment);
-//                    break;
-//
-//                case "Bedtime":
-//                    navGraph.setStartDestination(R.id.bedtimeGraphFragment);
-//                    break;
-//
-//                case "Technology use":
-//                    navGraph.setStartDestination(R.id.technologyUseGraphFragment);
-//                    break;
-//
-//                default:
-//                    navGraph.setStartDestination(R.id.sleepDurationGraphFragment);
-//                    break;
-//            }
         } else {
             navGraph.setStartDestination(R.id.sleepDurationGraphFragment);
         }
