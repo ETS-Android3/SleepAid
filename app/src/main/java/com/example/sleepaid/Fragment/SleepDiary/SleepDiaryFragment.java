@@ -41,7 +41,6 @@ public class SleepDiaryFragment extends MainMenuFragment {
         }
 
         navController.setGraph(navGraph);
-
         NavigationUI.setupWithNavController(bottomMenu, navController);
     }
 }

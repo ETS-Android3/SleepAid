@@ -5,6 +5,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.example.sleepaid.App;
+import com.example.sleepaid.Database.AppDatabase;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+
 
 public class NotificationBroadcastReceiverService extends BroadcastReceiver {
     @Override
@@ -17,8 +23,12 @@ public class NotificationBroadcastReceiverService extends BroadcastReceiver {
         else {
             startNotificationService(context, intent);
 
-            if (intent.getBooleanExtra("DAILY", false)) {
+            if (intent.getBooleanExtra("RECURRING", false)) {
                 startRepeatNotificationService(intent);
+            }
+
+            if (intent.getStringExtra("NAME").contains("It's time to fill in")) {
+                scheduleReminder(intent);
             }
         }
     }
@@ -42,5 +52,24 @@ public class NotificationBroadcastReceiverService extends BroadcastReceiver {
     private void startRescheduleNotificationsService(Context context) {
         Intent intentService = new Intent(context, RescheduleNotificationsService.class);
         context.startService(intentService);
+    }
+
+    private void scheduleReminder(Intent intent) {
+        String sleepDiary = intent.getStringExtra("NAME").contains("morning") ?
+                "morning" :
+                "bedtime";
+
+        AppDatabase.getDatabase(App.getContext()).notificationDao()
+                .loadByName("You still haven't filled in your " + sleepDiary + " sleep diary.")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        notification -> {
+                            if (!notification.isEmpty()) {
+                                notification.get(0).schedule(App.getContext());
+                            }
+                        },
+                        Throwable::printStackTrace
+                );
     }
 }

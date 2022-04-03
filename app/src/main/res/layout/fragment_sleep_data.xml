@@ -74,7 +74,6 @@
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/graph"
                 android:name="androidx.navigation.fragment.NavHostFragment"
-                app:navGraph="@navigation/sleep_data_graph_graph"
                 android:theme="@style/Theme.SleepAid"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"

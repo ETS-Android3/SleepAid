@@ -140,10 +140,6 @@ public class EditTextAnswerComponent extends FrameLayout {
     public void setTextSize(float textSize) {
         this.answerText.setTextSize(textSize);
     }
-    
-    public void setAllCaps(boolean allCaps) {
-        this.answerText.setAllCaps(allCaps);
-    }
 
     public void setHint(CharSequence hint) {
         this.answerText.setHint(hint);
@@ -160,6 +156,10 @@ public class EditTextAnswerComponent extends FrameLayout {
 
     public void setInputType(CharSequence inputType) {
         switch (inputType.toString()) {
+            case "text":
+                this.answerText.setInputType(InputType.TYPE_CLASS_TEXT);
+                break;
+
             case "textShortMessage":
                 this.answerText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE);
                 break;

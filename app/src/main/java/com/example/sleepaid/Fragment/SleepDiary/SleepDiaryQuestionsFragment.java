@@ -67,8 +67,6 @@ public class SleepDiaryQuestionsFragment extends Fragment {
     protected ArrayAdapter<String>[][] answerSuggestions;
     protected String[][] emptyErrors;
 
-    //TODO make plus work for exercise
-    //TODO make nap section add boxes for time based on answer
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
         this.view = view;
@@ -395,8 +393,8 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                                     () -> {
                                         Toast.makeText(getActivity(), "Diary saved successfully!", Toast.LENGTH_SHORT).show();
                                         model.setSleepDiaryAnswers(questionnaireId, answers);
-                                        clearAnswers();
 
+                                        clearAnswers();
                                         transferToRemoteDatabase(answers);
                                     },
                                     Throwable::printStackTrace
@@ -621,6 +619,27 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                         () -> {
                             for (String n : fieldNames) {
                                 model.setLineSeries(n, null);
+                            }
+
+                            this.cancelReminder();
+                        },
+                        Throwable::printStackTrace
+                );
+    }
+
+    private void cancelReminder() {
+        String notificationName = this.questionnaireId == 4 ?
+                "You still haven't filled in your morning sleep diary." :
+                "You still haven't filled in your bedtime sleep diary.";
+
+        this.db.notificationDao()
+                .loadByName(notificationName)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        notification -> {
+                            if (!notification.isEmpty()) {
+                                notification.get(0).cancel(requireActivity());
                             }
                         },
                         Throwable::printStackTrace

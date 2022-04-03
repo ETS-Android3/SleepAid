@@ -20,6 +20,10 @@
             android:title="Sleep diary"
             android:icon="@drawable/diary_icon" />
         <item
+            android:id="@+id/relaxingActivitiesSuggestionsFragment"
+            android:title="Relaxing activities"
+            android:icon="@drawable/relax_icon" />
+        <item
             android:id="@+id/settingsFragment"
             android:title="Settings"
             android:icon="@drawable/settings_icon" />

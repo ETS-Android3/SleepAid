@@ -1,5 +1,7 @@
 package com.example.sleepaid.Service.BlueLightFilter;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+
+import com.example.sleepaid.Activity.MainMenuScreen;
+import com.example.sleepaid.App;
 import com.example.sleepaid.R;
 
 public class BlueLightFilterService extends Service {
@@ -20,9 +27,7 @@ public class BlueLightFilterService extends Service {
     }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-
+    public int onStartCommand(Intent intent, int flags, int startId) {
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.MATCH_PARENT,
@@ -48,6 +53,8 @@ public class BlueLightFilterService extends Service {
         mOverlayView = inflater.inflate(R.layout.blue_light_filter, null);
 
         wm.addView(mOverlayView, params);
+
+        return START_REDELIVER_INTENT;
     }
 
     @Override

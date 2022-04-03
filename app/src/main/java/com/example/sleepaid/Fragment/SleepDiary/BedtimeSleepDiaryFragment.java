@@ -37,8 +37,8 @@ public class BedtimeSleepDiaryFragment extends SleepDiaryQuestionsFragment {
                 {R.id.bedtimeAnswer1},
                 {R.id.bedtimeAnswer2},
                 {R.id.bedtimeAnswer3},
-                {R.id.bedtimeAnswer4Text, R.id.bedtimeAnswer4StartTime, R.id.bedtimeAnswer4EndTime},
-                {R.id.bedtimeAnswer5Text},
+                {R.id.bedtimeAnswer4Text, R.id.bedtimeAnswer4Time},
+                {R.id.bedtimeAnswer5Text, R.id.bedtimeAnswer5Time},
                 {R.id.bedtimeAnswer6}
         };
 
@@ -46,8 +46,8 @@ public class BedtimeSleepDiaryFragment extends SleepDiaryQuestionsFragment {
                 {1},
                 {1},
                 {1},
-                {1, 2, 3},
-                {1},
+                {1, 2},
+                {1, 2},
                 {1}
         };
 
@@ -55,8 +55,8 @@ public class BedtimeSleepDiaryFragment extends SleepDiaryQuestionsFragment {
                 {null},
                 {null},
                 {null},
-                {null, null, null},
-                {null, null, null},
+                {null, null},
+                {null, null},
                 {null}
         };
 
@@ -64,8 +64,8 @@ public class BedtimeSleepDiaryFragment extends SleepDiaryQuestionsFragment {
                 {"Please enter a time or \"0\" if you had none."},
                 {"Please enter a time or \"0\" if you had none."},
                 {"Please enter a time or \"0\" if you had none."},
-                {"Please enter an answer or \"none\" if you did none.", "Please enter a time.", "Please enter a time."},
-                {"Please enter a number.", "Please enter a time.", "Please enter a time."},
+                {"Please enter an answer or \"none\" if you did none.", "Please enter an interval of time."},
+                {"Please enter a number.", "Please enter an interval of time."},
                 {"Please enter a duration."}
         };
 

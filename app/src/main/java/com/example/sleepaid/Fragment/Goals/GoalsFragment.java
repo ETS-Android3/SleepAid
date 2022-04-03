@@ -1,5 +1,7 @@
 package com.example.sleepaid.Fragment.Goals;
 
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.sleepaid.Activity.MainMenuScreen;
 import com.example.sleepaid.Adapter.GoalAdapter;
 import com.example.sleepaid.App;
 import com.example.sleepaid.Database.AppDatabase;
@@ -144,9 +147,39 @@ public class GoalsFragment extends MainMenuFragment {
             list.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
                 String option = this.goalOptions.get(names.get(groupPosition)).get(childPosition);
                 if (option.equals("View graph breakdown")) {
-                    NavHostFragment.findNavController(this).navigate(R.id.sleepDataFragment);
-                } else if (option.equals("Edit goal")){
-                    NavHostFragment.findNavController(this).navigate(R.id.openSettingsAction);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("DESTINATION", names.get(groupPosition));
+
+                    Intent intent = new Intent(App.getContext(), MainMenuScreen.class);
+                    intent.putExtra("PARENT_DESTINATION", R.id.sleepDataFragment);
+
+                    switch (names.get(groupPosition)) {
+                        case "Wake-up time":
+                            intent.putExtra("DESTINATION", R.id.wakeupTimeGraphFragment);
+                            break;
+
+                        case "Bedtime":
+                            intent.putExtra("DESTINATION", R.id.bedtimeGraphFragment);
+                            break;
+
+                        case "Technology use":
+                            intent.putExtra("DESTINATION", R.id.technologyUseGraphFragment);
+                            break;
+
+                        default:
+                            intent.putExtra("DESTINATION", R.id.sleepDurationGraphFragment);
+                            break;
+                    }
+
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                    startActivity(intent);
+                } else if (option.equals("Edit goal")) {
+                    Intent intent = new Intent(App.getContext(), MainMenuScreen.class);
+                    intent.putExtra("PARENT_DESTINATION", R.id.settingsFragment);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                    startActivity(intent);
                 }
 
                 return false;

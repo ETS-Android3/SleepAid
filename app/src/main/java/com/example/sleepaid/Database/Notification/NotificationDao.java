@@ -21,6 +21,9 @@ public interface NotificationDao {
     @Query("SELECT * FROM Notification WHERE notificationId IN (:notificationIds) ORDER BY notificationId")
     Single<List<Notification>> loadAllByIds(int[] notificationIds);
 
+    @Query("SELECT * FROM Notification WHERE name = :notificationName")
+    Single<List<Notification>> loadByName(String notificationName);
+
     @Insert(onConflict = OnConflictStrategy.ABORT)
     Single<List<Long>> insert(List<Notification> notifications);
 

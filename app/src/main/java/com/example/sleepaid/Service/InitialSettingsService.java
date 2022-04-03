@@ -226,7 +226,7 @@ public class InitialSettingsService {
                 "There are 2 hours left until your bedtime. How about you take some time to unwind? Tap here for suggestions.",
                 DataHandler.getFormattedTime(unwindHour.getHour(), 0),
                 1,
-                0
+                R.id.relaxingActivitiesSuggestionsFragment
         );
 
         this.notificationList.add(unwindNotification);
@@ -241,6 +241,18 @@ public class InitialSettingsService {
 
         this.notificationList.add(sleepDiaryWakeupTimeNotification);
 
+        ZonedDateTime sleepDiaryWakeupTimeReminder = ZonedDateTime.now().withHour(wakeupHour).withMinute(0).plusHours(2);
+
+        Notification sleepDiaryWakeupTimeReminderNotification = new Notification(
+                "You still haven't filled in your morning sleep diary.",
+                "Tap here to open it.",
+                DataHandler.getFormattedTime(sleepDiaryWakeupTimeReminder.getHour(), 0),
+                1,
+                R.id.morningSleepDiaryFragment
+        );
+
+        this.notificationList.add(sleepDiaryWakeupTimeReminderNotification);
+
         ZonedDateTime sleepDiaryBedtime = ZonedDateTime.now().withHour(bedHour).withMinute(0).minusHours(1);
 
         Notification sleepDiaryBedtimeNotification = new Notification(
@@ -252,6 +264,16 @@ public class InitialSettingsService {
         );
 
         this.notificationList.add(sleepDiaryBedtimeNotification);
+
+        Notification sleepDiaryBedtimeReminderNotification = new Notification(
+                "You still haven't filled in your bedtime sleep diary.",
+                "Tap here to open it.",
+                DataHandler.getFormattedTime(wakeupHour, 45),
+                1,
+                R.id.bedtimeSleepDiaryFragment
+        );
+
+        this.notificationList.add(sleepDiaryBedtimeReminderNotification);
 
         createSettings();
     }

@@ -51,6 +51,7 @@ public class MainMenuScreen extends AppCompatActivity {
                 R.id.alarmsFragment,
                 R.id.goalsFragment,
                 R.id.sleepDiaryFragment,
+                R.id.relaxingActivitiesSuggestionsFragment,
                 R.id.settingsFragment
         )
                 .setOpenableLayout(drawerLayout)
@@ -82,21 +83,12 @@ public class MainMenuScreen extends AppCompatActivity {
         NavigationUI.setupWithNavController(navView, navController);
     }
 
-    @Override
-    public void onResume(){
-        super.onResume();
-        if (Settings.canDrawOverlays(this)) {
-            Intent intent = new Intent(this, BlueLightFilterService.class);
-            startService(intent);
-        }
-    }
-
     @SuppressLint("NewApi")
     private void setupBlueLightFilter() {
-        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        boolean haveAskedForPermission = sharedPref.getBoolean("asked_blue_light_filter_permission", false);
-
         if (!Settings.canDrawOverlays(this)) {
+            SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+            boolean haveAskedForPermission = sharedPref.getBoolean("asked_blue_light_filter_permission", false);
+
             if (!haveAskedForPermission) {
                 sharedPref = this.getPreferences(Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();

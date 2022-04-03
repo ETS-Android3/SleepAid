@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.NavGraph;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
@@ -63,6 +64,32 @@ public class SleepDataFragment extends MainMenuFragment {
         NavController navController = navHostFragment.getNavController();
         BottomNavigationView bottomMenu = view.findViewById(R.id.sleepDataBottomMenu);
 
+        NavGraph navGraph = navController.getNavInflater().inflate(R.navigation.sleep_data_graph_graph);
+
+        if (getArguments() != null && getArguments().containsKey("DESTINATION")) {
+            navGraph.setStartDestination(getArguments().getInt("DESTINATION", R.id.sleepDurationGraphFragment));
+//            switch (getArguments().getString("DESTINATION")) {
+//                case "Wake-up time":
+//                    navGraph.setStartDestination(R.id.wakeupTimeGraphFragment);
+//                    break;
+//
+//                case "Bedtime":
+//                    navGraph.setStartDestination(R.id.bedtimeGraphFragment);
+//                    break;
+//
+//                case "Technology use":
+//                    navGraph.setStartDestination(R.id.technologyUseGraphFragment);
+//                    break;
+//
+//                default:
+//                    navGraph.setStartDestination(R.id.sleepDurationGraphFragment);
+//                    break;
+//            }
+        } else {
+            navGraph.setStartDestination(R.id.sleepDurationGraphFragment);
+        }
+
+        navController.setGraph(navGraph);
         NavigationUI.setupWithNavController(bottomMenu, navController);
 
         this.model = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);

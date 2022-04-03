@@ -24,6 +24,7 @@ public class ValidationService {
              isEmptyAndHasErrorAndParentIsNotNoneOrEmpty = component.getText().toString().trim().isEmpty()
                 && emptyError != null
                 && !parent.getText().toString().trim().equalsIgnoreCase("none")
+                && !parent.getText().toString().trim().equalsIgnoreCase("0")
                 && !parent.getText().toString().trim().isEmpty();
         }
 

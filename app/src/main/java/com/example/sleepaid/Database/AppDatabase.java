@@ -24,6 +24,8 @@ import com.example.sleepaid.Database.Question.Question;
 import com.example.sleepaid.Database.Question.QuestionDao;
 import com.example.sleepaid.Database.Questionnaire.Questionnaire;
 import com.example.sleepaid.Database.Questionnaire.QuestionnaireDao;
+import com.example.sleepaid.Database.RelaxingActivitySuggestion.RelaxingActivitySuggestion;
+import com.example.sleepaid.Database.RelaxingActivitySuggestion.RelaxingActivitySuggestionDao;
 import com.example.sleepaid.Database.SleepData.SleepData;
 import com.example.sleepaid.Database.SleepData.SleepDataDao;
 import com.example.sleepaid.Database.SleepDataField.SleepDataField;
@@ -40,7 +42,8 @@ import com.example.sleepaid.Database.SleepDataField.SleepDataFieldDao;
         Goal.class,
         SleepData.class,
         SleepDataField.class,
-        Notification.class
+        Notification.class,
+        RelaxingActivitySuggestion.class
 },
         version = 1,
         exportSchema = false)
@@ -69,6 +72,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract SleepDataFieldDao sleepDataFieldDao();
 
     public abstract NotificationDao notificationDao();
+
+    public abstract RelaxingActivitySuggestionDao relaxingActivitySuggestionDao();
 
     public static AppDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {

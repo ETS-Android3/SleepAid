@@ -12,9 +12,9 @@ public class BlueLightFilterBroadcastReceiverService extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Intent serviceIntent = new Intent(context, BlueLightFilterService.class);
+        context.stopService(serviceIntent);
 
         if (intent.getAction() != null && intent.getAction().equals("STOP")) {
-            context.stopService(serviceIntent);
             return;
         }
 
