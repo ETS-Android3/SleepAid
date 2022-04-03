@@ -62,23 +62,17 @@ public class BlueLightFilterService extends Service {
                 .setOngoing(true)
                 .build();
 
-        startForeground((int) System.currentTimeMillis(), notification);
-        stopForeground(STOP_FOREGROUND_DETACH);
+        startForeground(1930, notification);
         isRunning = true;
 
-        return START_STICKY;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-        wm.removeView(mOverlayView);
-        isRunning = false;
+        return START_REDELIVER_INTENT;
     }
 
     public static boolean isRunning() {
         return isRunning;
+    }
+
+    public static void setIsRunning(boolean isRunning) {
+        BlueLightFilterService.isRunning = isRunning;
     }
 }
