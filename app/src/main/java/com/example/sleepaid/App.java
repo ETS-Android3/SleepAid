@@ -5,6 +5,8 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 
+import com.google.common.collect.ImmutableMap;
+
 import java.util.HashMap;
 
 public class App extends Application {
@@ -14,9 +16,6 @@ public class App extends Application {
     public static final String NOTIFICATION_CHANNEL_ID = "NOTIFICATION_CHANNEL";
 
     private static HashMap<String, Integer> alarmSounds;
-
-    private static int notificationSound;
-    private static boolean notificationVibrate;
 
     @Override
     public void onCreate() {
@@ -72,5 +71,10 @@ public class App extends Application {
 
         this.alarmSounds.put("Default", R.raw.default_ringtone);
         this.alarmSounds.put("Glory", R.raw.glory_ringtone);
+        this.alarmSounds.put("Beautiful", R.raw.beautiful_ringtone);
+        this.alarmSounds.put("Bright", R.raw.bright_ringtone);
+        this.alarmSounds.put("Buzzer", R.raw.buzzer_ringtone);
+        this.alarmSounds.put("Homecoming", R.raw.homecoming_ringtone);
+        this.alarmSounds.put("Smart", R.raw.smart_ringtone);
     }
 }
