@@ -63,6 +63,7 @@ public class BlueLightFilterService extends Service {
                 .build();
 
         startForeground((int) System.currentTimeMillis(), notification);
+        stopForeground(STOP_FOREGROUND_DETACH);
         isRunning = true;
 
         return START_STICKY;
