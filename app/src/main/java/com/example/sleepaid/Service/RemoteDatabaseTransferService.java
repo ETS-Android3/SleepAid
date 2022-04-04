@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 import com.example.sleepaid.Handler.ServiceHandler;
 
 public class RemoteDatabaseTransferService extends AsyncTask<String, Void, Void> {
-    private String url = "https://192.168.0.47/sleepaid.php";
+    private String url = "https://86.8.32.33/sleepaid.php";
 
     @Override
     protected void onPreExecute() {
