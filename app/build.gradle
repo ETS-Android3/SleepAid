@@ -8,6 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.sleepaid"
+        vectorDrawables.useSupportLibrary = true
         minSdk 26
         targetSdk 32
         versionCode 1
