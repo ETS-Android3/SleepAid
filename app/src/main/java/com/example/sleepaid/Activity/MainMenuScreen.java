@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 
@@ -27,7 +28,6 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.time.ZonedDateTime;
 
-@SuppressLint("RestrictedApi")
 public class MainMenuScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +80,6 @@ public class MainMenuScreen extends AppCompatActivity {
         NavigationUI.setupWithNavController(navView, navController);
     }
 
-    @SuppressLint("NewApi")
     private void setupBlueLightFilter() {
         if (!Settings.canDrawOverlays(this)) {
             SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
@@ -112,7 +111,7 @@ public class MainMenuScreen extends AppCompatActivity {
         } else {
             AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
 
-            if (alarmManager.canScheduleExactAlarms()) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()) {
                 if (!BlueLightFilterService.isRunning()) {
                     Intent startIntent = new Intent(this, BlueLightFilterBroadcastReceiverService.class);
 

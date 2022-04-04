@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.provider.Settings;
 import android.widget.Toast;
 
@@ -155,11 +156,10 @@ public class Alarm implements Comparable<Alarm> {
                 this.vibrate == newAlarm.getVibrate();
     }
 
-    @SuppressLint("NewApi")
     public void schedule(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        if (alarmManager.canScheduleExactAlarms()) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()) {
             boolean recurring = this.days.contains("1");
 
             if (recurring && this.days.charAt(ZonedDateTime.now().getDayOfWeek().getValue() - 1) != '1') {
@@ -225,11 +225,10 @@ public class Alarm implements Comparable<Alarm> {
         }
     }
 
-    @SuppressLint("NewApi")
     public void scheduleRecurring(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        if (alarmManager.canScheduleExactAlarms()) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()) {
             Intent intent = new Intent(context, AlarmBroadcastReceiverService.class);
 
             intent.putExtra("ID", this.id);

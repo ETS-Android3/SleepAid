@@ -129,7 +129,7 @@ public class InitialSettingsService {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             answerData -> {
-                                this.alarmList.addAll(AlarmAndNotificationService.createAlarms(3, answerData.get(0)));
+                                this.alarmList.addAll(AlarmAndNotificationService.createAlarms(2, answerData.get(0)));
 
                                 getNotificationList(wakeupTime, bedtime);
                             },

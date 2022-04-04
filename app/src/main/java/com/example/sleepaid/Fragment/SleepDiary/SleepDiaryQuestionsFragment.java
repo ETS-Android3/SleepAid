@@ -546,11 +546,16 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                                             ));
 
                                             List<Integer> times = DataHandler.getIntsFromString(a.getValue());
-                                            bedtime = ZonedDateTime.now()
+                                            bedtime = times.get(0) < 12 ?
+                                                    ZonedDateTime.now()
                                                     .withHour(times.get(0))
                                                     .withMinute(times.get(1))
-                                                    .minusDays(1)
-                                                    .truncatedTo(ChronoUnit.MINUTES);
+                                                    .truncatedTo(ChronoUnit.MINUTES) :
+                                                    ZonedDateTime.now()
+                                                            .withHour(times.get(0))
+                                                            .withMinute(times.get(1))
+                                                            .minusDays(1)
+                                                            .truncatedTo(ChronoUnit.MINUTES);
                                         } else {
                                             sleepData.add(new SleepData(
                                                     fieldNames.get(0),
