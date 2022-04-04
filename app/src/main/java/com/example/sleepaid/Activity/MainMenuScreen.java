@@ -112,27 +112,36 @@ public class MainMenuScreen extends AppCompatActivity {
         } else {
             AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
 
-            if (alarmManager.canScheduleExactAlarms() && !BlueLightFilterService.isRunning()) {
-                Intent startIntent = new Intent(this, BlueLightFilterBroadcastReceiverService.class);
+            if (alarmManager.canScheduleExactAlarms()) {
+                if (!BlueLightFilterService.isRunning()) {
+                    Intent startIntent = new Intent(this, BlueLightFilterBroadcastReceiverService.class);
 
-                long startTime = ZonedDateTime.now()
-                        .withHour(19)
-                        .withMinute(30)
-                        .toInstant()
-                        .toEpochMilli();
+                    long startTime = ZonedDateTime.now().getHour() < 7 ?
+                            ZonedDateTime.now()
+                                    .withHour(19)
+                                    .withMinute(30)
+                                    .minusDays(1)
+                                    .toInstant()
+                                    .toEpochMilli() :
+                            ZonedDateTime.now()
+                                    .withHour(19)
+                                    .withMinute(30)
+                                    .toInstant()
+                                    .toEpochMilli();
 
-                startIntent.putExtra("HOUR", 19);
-                startIntent.putExtra("MINUTE", 30);
+                    startIntent.putExtra("HOUR", 19);
+                    startIntent.putExtra("MINUTE", 30);
 
-                PendingIntent startPendingIntent = PendingIntent.getBroadcast(this, (int) startTime, startIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent startPendingIntent = PendingIntent.getBroadcast(this, (int) startTime, startIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
-                alarmManager.setAlarmClock(
-                        new AlarmManager.AlarmClockInfo(
-                                Math.max(startTime, System.currentTimeMillis()),
-                                startPendingIntent
-                        ),
-                        startPendingIntent
-                );
+                    alarmManager.setAlarmClock(
+                            new AlarmManager.AlarmClockInfo(
+                                    Math.max(startTime, System.currentTimeMillis()),
+                                    startPendingIntent
+                            ),
+                            startPendingIntent
+                    );
+                }
 
                 Intent stopIntent = new Intent(this, BlueLightFilterBroadcastReceiverService.class);
 
