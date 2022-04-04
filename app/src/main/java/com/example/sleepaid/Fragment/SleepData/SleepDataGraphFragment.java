@@ -428,7 +428,7 @@ public class SleepDataGraphFragment extends Fragment {
 
         todayDataBox.setText(todayData);
 
-        if (!todayData.equals("-")) {
+        if (!todayData.equals("-") && !this.fieldName.equals("Technology use")) {
             this.checkProgress(todayData);
         }
     }
