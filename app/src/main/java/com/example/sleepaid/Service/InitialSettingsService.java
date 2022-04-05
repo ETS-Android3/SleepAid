@@ -1,11 +1,19 @@
 package com.example.sleepaid.Service;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
+import android.provider.Settings;
 
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.sleepaid.App;
+import com.example.sleepaid.Component.Modal;
 import com.example.sleepaid.Database.Alarm.Alarm;
 import com.example.sleepaid.Database.Answer.Answer;
 import com.example.sleepaid.Database.AppDatabase;
@@ -14,7 +22,10 @@ import com.example.sleepaid.Database.Goal.Goal;
 import com.example.sleepaid.Database.Notification.Notification;
 import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.R;
+import com.example.sleepaid.Service.BlueLightFilter.BlueLightFilterBroadcastReceiverService;
+import com.example.sleepaid.Service.BlueLightFilter.BlueLightFilterService;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -278,6 +289,8 @@ public class InitialSettingsService {
                                 notificationList.get(i).schedule(this.fragment.requireActivity());
                             }
 
+                            this.setupBlueLightFilter();
+
                             Intent intent = new Intent(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
@@ -285,5 +298,63 @@ public class InitialSettingsService {
                         },
                         Throwable::printStackTrace
                 );
+    }
+
+    private void setupBlueLightFilter() {
+        if (!Settings.canDrawOverlays(App.getContext())) {
+            SharedPreferences sharedPref = this.fragment.getActivity().getPreferences(Context.MODE_PRIVATE);
+            boolean haveAskedForPermission = sharedPref.getBoolean("asked_blue_light_filter_permission", false);
+
+            if (!haveAskedForPermission) {
+                sharedPref = this.fragment.getActivity().getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putBoolean("asked_blue_light_filter_permission", true);
+                editor.apply();
+
+                DialogInterface.OnClickListener yesAction = (dialog, whichButton) -> {
+                    Intent overlayPermissionIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                    this.fragment.getActivity().startActivity(overlayPermissionIntent);
+                };
+
+                DialogInterface.OnClickListener noAction = (dialog, whichButton) -> {
+                };
+
+                Modal.show(
+                        this.fragment.requireActivity(),
+                        App.getContext().getString(R.string.blue_light_filter_permission),
+                        App.getContext().getString(R.string.yes_modal),
+                        yesAction,
+                        App.getContext().getString(R.string.no_modal),
+                        noAction
+                );
+            }
+        } else {
+            AlarmManager alarmManager = (AlarmManager) App.getContext().getSystemService(Context.ALARM_SERVICE);
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()) {
+                if (!BlueLightFilterService.isRunning()) {
+                    Intent startIntent = new Intent(App.getContext(), BlueLightFilterBroadcastReceiverService.class);
+
+                    long startTime = ZonedDateTime.now()
+                            .withHour(20)
+                            .withMinute(0)
+                            .toInstant()
+                            .toEpochMilli();
+
+                    startIntent.putExtra("HOUR", 20);
+                    startIntent.putExtra("MINUTE", 0);
+
+                    PendingIntent startPendingIntent = PendingIntent.getBroadcast(App.getContext(), (int) startTime, startIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
+                    alarmManager.setAlarmClock(
+                            new AlarmManager.AlarmClockInfo(
+                                    Math.max(startTime, System.currentTimeMillis()),
+                                    startPendingIntent
+                            ),
+                            startPendingIntent
+                    );
+                }
+            }
+        }
     }
 }

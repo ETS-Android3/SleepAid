@@ -24,7 +24,8 @@ public class NotificationService extends Service {
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setSmallIcon(R.drawable.sleep_aid_circle)
-                .setAutoCancel(true);
+                .setAutoCancel(true)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(intent.getStringExtra("CONTENT")));
 
         if (intent.hasExtra("DESTINATION")) {
             int destination = intent.getIntExtra("DESTINATION", 0);
@@ -49,10 +50,7 @@ public class NotificationService extends Service {
 
             notificationBuilder.setContentIntent(pendingIntent).setOngoing(true);
         } else {
-            notificationBuilder
-                    .setAutoCancel(false)
-                    .setOngoing(false)
-                    .setStyle(new NotificationCompat.BigTextStyle().bigText(intent.getStringExtra("CONTENT")));
+            notificationBuilder.setAutoCancel(false).setOngoing(false);
         }
 
         Notification notification = notificationBuilder.build();

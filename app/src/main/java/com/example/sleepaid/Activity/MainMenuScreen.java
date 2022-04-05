@@ -35,8 +35,6 @@ public class MainMenuScreen extends AppCompatActivity {
 
         setContentView(R.layout.activity_main_menu_screen_host);
 
-        this.setupBlueLightFilter();
-
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.content);
         NavController navController = navHostFragment.getNavController();
 
@@ -78,91 +76,5 @@ public class MainMenuScreen extends AppCompatActivity {
 
         NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
-    }
-
-    private void setupBlueLightFilter() {
-        if (!Settings.canDrawOverlays(this)) {
-            SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-            boolean haveAskedForPermission = sharedPref.getBoolean("asked_blue_light_filter_permission", false);
-
-            if (!haveAskedForPermission) {
-                sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putBoolean("asked_blue_light_filter_permission", true);
-                editor.apply();
-
-                DialogInterface.OnClickListener yesAction = (dialog, whichButton) -> {
-                    Intent overlayPermissionIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-                    startActivity(overlayPermissionIntent);
-                };
-
-                DialogInterface.OnClickListener noAction = (dialog, whichButton) -> {
-                };
-
-                Modal.show(
-                        this,
-                        getString(R.string.blue_light_filter_permission),
-                        getString(R.string.yes_modal),
-                        yesAction,
-                        getString(R.string.no_modal),
-                        noAction
-                );
-            }
-        } else {
-            AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()) {
-                if (!BlueLightFilterService.isRunning()) {
-                    Intent startIntent = new Intent(this, BlueLightFilterBroadcastReceiverService.class);
-
-                    long startTime = ZonedDateTime.now().getHour() < 7 ?
-                            ZonedDateTime.now()
-                                    .withHour(19)
-                                    .withMinute(30)
-                                    .minusDays(1)
-                                    .toInstant()
-                                    .toEpochMilli() :
-                            ZonedDateTime.now()
-                                    .withHour(19)
-                                    .withMinute(30)
-                                    .toInstant()
-                                    .toEpochMilli();
-
-                    startIntent.putExtra("HOUR", 19);
-                    startIntent.putExtra("MINUTE", 30);
-
-                    PendingIntent startPendingIntent = PendingIntent.getBroadcast(this, (int) startTime, startIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-
-                    alarmManager.setAlarmClock(
-                            new AlarmManager.AlarmClockInfo(
-                                    Math.max(startTime, System.currentTimeMillis()),
-                                    startPendingIntent
-                            ),
-                            startPendingIntent
-                    );
-                }
-
-                Intent stopIntent = new Intent(this, BlueLightFilterBroadcastReceiverService.class);
-
-                long stopTime = ZonedDateTime.now()
-                        .withHour(7)
-                        .withMinute(30)
-                        .plusDays(1)
-                        .toInstant()
-                        .toEpochMilli();
-
-                stopIntent.setAction("STOP");
-
-                PendingIntent stopPendingIntent = PendingIntent.getBroadcast(this, (int) stopTime, stopIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-
-                alarmManager.setAlarmClock(
-                        new AlarmManager.AlarmClockInfo(
-                                Math.max(stopTime, System.currentTimeMillis()),
-                                stopPendingIntent
-                        ),
-                        stopPendingIntent
-                );
-            }
-        }
     }
 }

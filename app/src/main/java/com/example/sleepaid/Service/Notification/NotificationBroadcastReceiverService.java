@@ -17,10 +17,10 @@ public class NotificationBroadcastReceiverService extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction() != null &&
                 (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED) ||
-                 intent.getAction().equals(AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED))) {
+                 intent.getAction().equals(AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED) ||
+                        intent.getAction().equals("android.intent.action.MY_PACKAGE_REPLACED"))) {
             startRescheduleNotificationsService(context);
-        }
-        else {
+        } else {
             startNotificationService(context, intent);
 
             if (intent.getBooleanExtra("RECURRING", false)) {
