@@ -109,7 +109,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
         diaryTitle.setText(questionnaire.getName());
 
         // Allow them to fill in the bedtime sleep diary until noon the next day
-        String date = ZonedDateTime.now().getHour() <= 12 && this.questionnaireId == 5 ?
+        String date = ZonedDateTime.now().getHour() < 12 && this.questionnaireId == 5 ?
                 DataHandler.getFullDate(ZonedDateTime.now().minusDays(1)) :
                 DataHandler.getFullDate(ZonedDateTime.now());
 
@@ -704,8 +704,12 @@ public class SleepDiaryQuestionsFragment extends Fragment {
 
     private Answer getAnswerForToday() {
         List<Answer> previousAnswers = model.getSleepDiaryAnswers(questionnaireId);
+        String today = this.questionnaireId == 5 && ZonedDateTime.now().getHour() < 12 ?
+                DataHandler.getSQLiteDate(ZonedDateTime.now().minusDays(1)) :
+                DataHandler.getSQLiteDate(ZonedDateTime.now());
+
         Optional<Answer> answerForToday = previousAnswers.stream()
-                .filter(a -> a.getDate().equals(DataHandler.getSQLiteDate(ZonedDateTime.now())))
+                .filter(a -> a.getDate().equals(today))
                 .findAny();
 
         if (answerForToday.isPresent()) {
