@@ -20,6 +20,7 @@ public class BlueLightFilterBroadcastReceiverService extends BroadcastReceiver {
         }
 
         this.scheduleNext(context, intent);
+        this.scheduleStop(context);
 
         context.startForegroundService(serviceIntent);
     }
@@ -29,8 +30,8 @@ public class BlueLightFilterBroadcastReceiverService extends BroadcastReceiver {
 
         Intent newStartIntent = new Intent(context, BlueLightFilterBroadcastReceiverService.class);
 
-        int startHour = intent.getIntExtra("HOUR", 19);
-        int startMinute = intent.getIntExtra("MINUTE", 30);
+        int startHour = intent.getIntExtra("HOUR", 20);
+        int startMinute = intent.getIntExtra("MINUTE", 0);
 
         long startTime = ZonedDateTime.now()
                 .withHour(startHour)
@@ -42,19 +43,23 @@ public class BlueLightFilterBroadcastReceiverService extends BroadcastReceiver {
         newStartIntent.putExtra("HOUR", startHour);
         newStartIntent.putExtra("MINUTE", startMinute);
 
-        PendingIntent startPendingIntent = PendingIntent.getBroadcast(context, (int) startTime, newStartIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent startPendingIntent = PendingIntent.getBroadcast(context, (int) startTime, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
         alarmManager.setAlarmClock(
                 new AlarmManager.AlarmClockInfo(startTime, startPendingIntent),
                 startPendingIntent
         );
+    }
+
+    private void scheduleStop(Context context) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         Intent stopIntent = new Intent(context, BlueLightFilterBroadcastReceiverService.class);
 
         long stopTime = ZonedDateTime.now()
                 .withHour(7)
                 .withMinute(30)
-                .plusDays(2)
+                .plusDays(1)
                 .toInstant()
                 .toEpochMilli();
 
