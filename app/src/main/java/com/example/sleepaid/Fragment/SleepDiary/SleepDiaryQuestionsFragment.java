@@ -235,6 +235,9 @@ public class SleepDiaryQuestionsFragment extends Fragment {
 
         if (answerForTodayExists) {
             this.view.findViewById(R.id.alreadySubmittedMessage).setVisibility(View.VISIBLE);
+            this.loadPreviousAnswers();
+        } else {
+            this.clearAnswers();
         }
 
         for (int i = 0; i < this.answerComponentIds.length; i++) {
@@ -393,7 +396,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                                         Toast.makeText(getActivity(), "Diary saved successfully!", Toast.LENGTH_SHORT).show();
                                         model.setSleepDiaryAnswers(questionnaireId, answers);
 
-                                        clearAnswers();
+                                        disableAnswers();
                                         transferToRemoteDatabase(answers);
                                     },
                                     Throwable::printStackTrace
@@ -482,6 +485,55 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                 }
             }
         }
+    }
+
+    private void disableAnswers() {
+        for (int i = 0; i < this.answerComponentIds.length; i++) {
+            for (int j = 0; j < this.answerComponentIds[i].length; j++) {
+                View answerComponent = this.view.findViewById(this.answerComponentIds[i][j]);
+                answerComponent.setEnabled(false);
+            }
+        }
+    }
+
+    private void loadPreviousAnswers() {
+        this.db.answerDao()
+                .loadAllByQuestionnaireIdsAndDate(new int[]{this.questionnaireId}, DataHandler.getSQLiteDate(ZonedDateTime.now()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        answers -> {
+                            if (!answers.isEmpty()) {
+                                List<Integer> questionIds = answers.stream()
+                                        .map(Answer::getQuestionId)
+                                        .distinct()
+                                        .collect(Collectors.toList());
+
+                                for (int i = 0; i < this.sections.length; i++) {
+                                    int finalI = i;
+
+                                    for (int j = 0; j < this.sections[i].length; j++) {
+                                        View answerComponent = this.view.findViewById(this.answerComponentIds[i][j]);
+                                        int finalJ = j;
+
+                                        Optional<Answer> answer = answers.stream()
+                                                .filter(a -> a.getQuestionId() == questionIds.get(finalI) &&
+                                                        a.getSection() == finalJ + 1)
+                                                .findFirst();
+
+                                        if (answer.isPresent()) {
+                                            if (answerComponent instanceof EditTextAnswerComponent) {
+                                                ((EditTextAnswerComponent) answerComponent).setText(answer.get().getValue());
+                                            } else if (answerComponent instanceof RadioGroupAnswerComponent) {
+                                                ((RadioGroupAnswerComponent) answerComponent).setChecked(answer.get().getOptionId(), true);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        Throwable::printStackTrace
+                );
     }
 
     private void transferToRemoteDatabase(List<Answer> answers) {
