@@ -25,12 +25,9 @@ public class RescheduleNotificationsService extends LifecycleService {
 
         AppDatabase db = AppDatabase.getDatabase(App.getContext());
 
-        db.notificationDao().getAll().observe(this, new Observer<List<Notification>>() {
-            @Override
-            public void onChanged(List<Notification> notifications) {
-                for (Notification n : notifications) {
-                    n.schedule(getApplicationContext());
-                }
+        db.notificationDao().getAll().observe(this, notifications -> {
+            for (Notification n : notifications) {
+                n.schedule(getApplicationContext());
             }
         });
 

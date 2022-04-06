@@ -456,7 +456,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                 }
 
                 // Allow them to fill in the bedtime sleep diary until noon the next day
-                String date = ZonedDateTime.now().getHour() <= 12 && this.questionnaireId == 5 ?
+                String date = ZonedDateTime.now().getHour() < 12 && this.questionnaireId == 5 ?
                         DataHandler.getSQLiteDate(ZonedDateTime.now().minusDays(1)) :
                         DataHandler.getSQLiteDate(ZonedDateTime.now());
 
@@ -497,8 +497,12 @@ public class SleepDiaryQuestionsFragment extends Fragment {
     }
 
     private void loadPreviousAnswers() {
+        String today = this.questionnaireId == 5 && ZonedDateTime.now().getHour() < 12 ?
+                DataHandler.getSQLiteDate(ZonedDateTime.now().minusDays(1)) :
+                DataHandler.getSQLiteDate(ZonedDateTime.now());
+
         this.db.answerDao()
-                .loadAllByQuestionnaireIdsAndDate(new int[]{this.questionnaireId}, DataHandler.getSQLiteDate(ZonedDateTime.now()))
+                .loadAllByQuestionnaireIdsAndDate(new int[]{this.questionnaireId}, today)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
