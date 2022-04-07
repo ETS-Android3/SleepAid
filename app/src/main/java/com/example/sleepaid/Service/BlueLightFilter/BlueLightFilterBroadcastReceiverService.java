@@ -26,11 +26,11 @@ public class BlueLightFilterBroadcastReceiverService extends BroadcastReceiver {
         }
 
         if (intent.getAction() != null && intent.getAction().equals("android.intent.action.MY_PACKAGE_REPLACED")) {
-            this.rescheduleFilter(context, intent);
+            this.rescheduleFilter(context);
             return;
         }
 
-        this.scheduleFilter(context, intent, 1);
+        this.scheduleFilter(context, 1);
         this.scheduleStop(context, 1);
 
         if (Settings.canDrawOverlays(App.getContext())) {
@@ -43,7 +43,7 @@ public class BlueLightFilterBroadcastReceiverService extends BroadcastReceiver {
         }
     }
 
-    private void rescheduleFilter(Context context, Intent intent) {
+    private void rescheduleFilter(Context context) {
         ZonedDateTime date = ZonedDateTime.now();
 
         if (date.getHour() >= 20 || date.getHour() < 7) {
@@ -60,11 +60,11 @@ public class BlueLightFilterBroadcastReceiverService extends BroadcastReceiver {
                 this.scheduleStop(context, days);
             }
         } else {
-            this.scheduleFilter(context, intent, 0);
+            this.scheduleFilter(context, 0);
         }
     }
 
-    private void scheduleFilter(Context context, Intent intent, int days) {
+    private void scheduleFilter(Context context, int days) {
         if (Settings.canDrawOverlays(App.getContext())) {
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
@@ -78,7 +78,9 @@ public class BlueLightFilterBroadcastReceiverService extends BroadcastReceiver {
                     .toInstant()
                     .toEpochMilli();
 
-            PendingIntent startPendingIntent = PendingIntent.getBroadcast(context, (int) startTime, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+            Intent newStartIntent = new Intent(context, BlueLightFilterBroadcastReceiverService.class);
+
+            PendingIntent startPendingIntent = PendingIntent.getBroadcast(context, (int) startTime, newStartIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
             alarmManager.setAlarmClock(
                     new AlarmManager.AlarmClockInfo(startTime, startPendingIntent),

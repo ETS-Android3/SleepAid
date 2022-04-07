@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
@@ -82,62 +83,66 @@ public class Notification {
     public void schedule(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        Intent intent = new Intent(context, NotificationBroadcastReceiverService.class);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()) {
+            Intent intent = new Intent(context, NotificationBroadcastReceiverService.class);
 
-        intent.putExtra("ID", this.id);
-        intent.putExtra("NAME", this.name);
-        intent.putExtra("CONTENT", this.content);
-        intent.putExtra("RECURRING", this.frequency > 0);
-        if (this.destination != 0) {
-            intent.putExtra("DESTINATION", this.destination);
+            intent.putExtra("ID", this.id);
+            intent.putExtra("NAME", this.name);
+            intent.putExtra("CONTENT", this.content);
+            intent.putExtra("RECURRING", this.frequency > 0);
+            if (this.destination != 0) {
+                intent.putExtra("DESTINATION", this.destination);
+            }
+
+            PendingIntent notificationPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
+            List<Integer> time = DataHandler.getIntsFromString(this.time);
+            ZonedDateTime date = ZonedDateTime.now()
+                    .withHour(time.get(0))
+                    .withMinute(time.get(1))
+                    .truncatedTo(ChronoUnit.MINUTES);
+
+            // If alarm time has already passed increment day by 1 and schedule it
+            if (date.toInstant().toEpochMilli() <= System.currentTimeMillis()) {
+                date = date.plusDays(1);
+            }
+
+            alarmManager.setAlarmClock(
+                    new AlarmManager.AlarmClockInfo(date.toInstant().toEpochMilli(), notificationPendingIntent),
+                    notificationPendingIntent
+            );
         }
-
-        PendingIntent notificationPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-
-        List<Integer> time = DataHandler.getIntsFromString(this.time);
-        ZonedDateTime date = ZonedDateTime.now()
-                .withHour(time.get(0))
-                .withMinute(time.get(1))
-                .truncatedTo(ChronoUnit.MINUTES);
-
-        // If alarm time has already passed increment day by 1 and schedule it
-        if (date.toInstant().toEpochMilli() <= System.currentTimeMillis()) {
-            date = date.plusDays(1);
-        }
-
-        alarmManager.setAlarmClock(
-                new AlarmManager.AlarmClockInfo(date.toInstant().toEpochMilli(), notificationPendingIntent),
-                notificationPendingIntent
-        );
     }
 
     public void scheduleRepeat(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        Intent intent = new Intent(context, NotificationBroadcastReceiverService.class);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()) {
+            Intent intent = new Intent(context, NotificationBroadcastReceiverService.class);
 
-        intent.putExtra("ID", this.id);
-        intent.putExtra("NAME", this.name);
-        intent.putExtra("CONTENT", this.content);
-        intent.putExtra("TIME", this.time);
-        intent.putExtra("RECURRING", this.frequency > 0);
-        if (this.destination != 0) {
-            intent.putExtra("DESTINATION", this.destination);
+            intent.putExtra("ID", this.id);
+            intent.putExtra("NAME", this.name);
+            intent.putExtra("CONTENT", this.content);
+            intent.putExtra("TIME", this.time);
+            intent.putExtra("RECURRING", this.frequency > 0);
+            if (this.destination != 0) {
+                intent.putExtra("DESTINATION", this.destination);
+            }
+
+            PendingIntent notificationPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
+            List<Integer> time = DataHandler.getIntsFromString(this.time);
+            ZonedDateTime date = ZonedDateTime.now()
+                    .withHour(time.get(0))
+                    .withMinute(time.get(1))
+                    .plusDays(this.frequency)
+                    .truncatedTo(ChronoUnit.MINUTES);
+
+            alarmManager.setAlarmClock(
+                    new AlarmManager.AlarmClockInfo(date.toInstant().toEpochMilli(), notificationPendingIntent),
+                    notificationPendingIntent
+            );
         }
-
-        PendingIntent notificationPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-
-        List<Integer> time = DataHandler.getIntsFromString(this.time);
-        ZonedDateTime date = ZonedDateTime.now()
-                .withHour(time.get(0))
-                .withMinute(time.get(1))
-                .plusDays(this.frequency)
-                .truncatedTo(ChronoUnit.MINUTES);
-
-        alarmManager.setAlarmClock(
-                new AlarmManager.AlarmClockInfo(date.toInstant().toEpochMilli(), notificationPendingIntent),
-                notificationPendingIntent
-        );
     }
 
     public void cancel(Context context) {
