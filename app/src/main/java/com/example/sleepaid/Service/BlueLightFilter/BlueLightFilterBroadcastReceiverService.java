@@ -22,7 +22,7 @@ public class BlueLightFilterBroadcastReceiverService extends BroadcastReceiver {
             return;
         }
 
-        if (intent.getAction().equals("android.intent.action.MY_PACKAGE_REPLACED")) {
+        if (intent.getAction() != null && intent.getAction().equals("android.intent.action.MY_PACKAGE_REPLACED")) {
             this.rescheduleFilter(context, intent);
             return;
         }
@@ -31,7 +31,11 @@ public class BlueLightFilterBroadcastReceiverService extends BroadcastReceiver {
         this.scheduleStop(context, 1);
 
         if (Settings.canDrawOverlays(App.getContext())) {
-            context.startForegroundService(serviceIntent);
+            if (ZonedDateTime.now().getHour() >= 20 && ZonedDateTime.now().getHour() < 7) {
+                context.startForegroundService(serviceIntent);
+            } else if (BlueLightFilterService.isRunning()) {
+                context.stopService(serviceIntent);
+            }
         }
     }
 
@@ -44,11 +48,13 @@ public class BlueLightFilterBroadcastReceiverService extends BroadcastReceiver {
                 context.startForegroundService(serviceIntent);
             }
 
-            int days = date.getHour() < 7 ?
-                    0 :
-                    1;
+            if (BlueLightFilterService.isRunning()) {
+                int days = date.getHour() < 7 ?
+                        0 :
+                        1;
 
-            this.scheduleStop(context, days);
+                this.scheduleStop(context, days);
+            }
         } else {
             this.scheduleFilter(context, intent, 0);
         }
@@ -58,10 +64,8 @@ public class BlueLightFilterBroadcastReceiverService extends BroadcastReceiver {
         if (Settings.canDrawOverlays(App.getContext())) {
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-            Intent newStartIntent = new Intent(context, BlueLightFilterBroadcastReceiverService.class);
-
-            int startHour = intent.getIntExtra("HOUR", 20);
-            int startMinute = intent.getIntExtra("MINUTE", 0);
+            int startHour = 20;
+            int startMinute = 0;
 
             long startTime = ZonedDateTime.now()
                     .withHour(startHour)
@@ -69,9 +73,6 @@ public class BlueLightFilterBroadcastReceiverService extends BroadcastReceiver {
                     .plusDays(days)
                     .toInstant()
                     .toEpochMilli();
-
-            newStartIntent.putExtra("HOUR", startHour);
-            newStartIntent.putExtra("MINUTE", startMinute);
 
             PendingIntent startPendingIntent = PendingIntent.getBroadcast(context, (int) startTime, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 

@@ -332,28 +332,26 @@ public class InitialSettingsService {
             AlarmManager alarmManager = (AlarmManager) App.getContext().getSystemService(Context.ALARM_SERVICE);
 
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()) {
-                if (!BlueLightFilterService.isRunning()) {
-                    Intent startIntent = new Intent(App.getContext(), BlueLightFilterBroadcastReceiverService.class);
+                Intent startIntent = new Intent(App.getContext(), BlueLightFilterBroadcastReceiverService.class);
 
-                    long startTime = ZonedDateTime.now()
-                            .withHour(20)
-                            .withMinute(0)
-                            .toInstant()
-                            .toEpochMilli();
+                long startTime = ZonedDateTime.now()
+                        .withHour(20)
+                        .withMinute(0)
+                        .toInstant()
+                        .toEpochMilli();
 
-                    startIntent.putExtra("HOUR", 20);
-                    startIntent.putExtra("MINUTE", 0);
+                startIntent.putExtra("HOUR", 20);
+                startIntent.putExtra("MINUTE", 0);
 
-                    PendingIntent startPendingIntent = PendingIntent.getBroadcast(App.getContext(), (int) startTime, startIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent startPendingIntent = PendingIntent.getBroadcast(App.getContext(), (int) startTime, startIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
-                    alarmManager.setAlarmClock(
-                            new AlarmManager.AlarmClockInfo(
-                                    Math.max(startTime, System.currentTimeMillis()),
-                                    startPendingIntent
-                            ),
-                            startPendingIntent
-                    );
-                }
+                alarmManager.setAlarmClock(
+                        new AlarmManager.AlarmClockInfo(
+                                Math.max(startTime, System.currentTimeMillis()),
+                                startPendingIntent
+                        ),
+                        startPendingIntent
+                );
             }
         }
     }
