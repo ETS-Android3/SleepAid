@@ -219,6 +219,7 @@ public class SleepDiaryQuestionsFragment extends Fragment {
                                 s.getSection() == section &&
                                 !s.getValue().isEmpty())
                         .map(Answer::getValue)
+                        .distinct()
                         .collect(Collectors.toList());
 
                 if (!suggestionsForQuestionAndSection.isEmpty()) {

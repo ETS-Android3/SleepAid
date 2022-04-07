@@ -74,6 +74,7 @@ public class BlueLightFilterService extends Service {
 
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         wm.removeView(mOverlayView);
+        BlueLightFilterService.setIsRunning(false);
     }
 
     public static boolean isRunning() {

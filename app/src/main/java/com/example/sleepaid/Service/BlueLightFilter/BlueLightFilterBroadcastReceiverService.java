@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.provider.Settings;
 
 import com.example.sleepaid.App;
@@ -25,65 +26,57 @@ public class BlueLightFilterBroadcastReceiverService extends BroadcastReceiver {
             return;
         }
 
-        if (intent.getAction() != null && intent.getAction().equals("android.intent.action.MY_PACKAGE_REPLACED")) {
-            this.rescheduleFilter(context);
+        if (intent.getAction() != null &&
+                (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED) ||
+                        intent.getAction().equals(AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED) ||
+                        intent.getAction().equals("android.intent.action.MY_PACKAGE_REPLACED"))) {
+            if (Settings.canDrawOverlays(App.getContext())) {
+                if (ZonedDateTime.now().getHour() >= 20 ||
+                        (ZonedDateTime.now().getHour() <= 7  && ZonedDateTime.now().getMinute() < 30)) {
+                    BlueLightFilterService.setIsRunning(true);
+                    context.startForegroundService(serviceIntent);
+
+                    this.scheduleFilter(context, 1);
+                    this.scheduleStop(context, 1);
+                } else {
+                    this.scheduleFilter(context, 0);
+                }
+            }
+
+            if (ZonedDateTime.now().getHour() <= 7 && BlueLightFilterService.isRunning()) {
+                this.scheduleStop(context, 0);
+            }
+
             return;
         }
 
-        this.scheduleFilter(context, 1);
-        this.scheduleStop(context, 1);
-
         if (Settings.canDrawOverlays(App.getContext())) {
-            if (ZonedDateTime.now().getHour() >= 20 && ZonedDateTime.now().getHour() < 7) {
-                context.startForegroundService(serviceIntent);
-            } else if (BlueLightFilterService.isRunning()) {
-                BlueLightFilterService.setIsRunning(false);
-                context.stopService(serviceIntent);
-            }
-        }
-    }
+            BlueLightFilterService.setIsRunning(true);
+            context.startForegroundService(serviceIntent);
 
-    private void rescheduleFilter(Context context) {
-        ZonedDateTime date = ZonedDateTime.now();
-
-        if (date.getHour() >= 20 || date.getHour() < 7) {
-            if (Settings.canDrawOverlays(App.getContext())) {
-                Intent serviceIntent = new Intent(context, BlueLightFilterService.class);
-                context.startForegroundService(serviceIntent);
-            }
-
-            if (BlueLightFilterService.isRunning()) {
-                int days = date.getHour() < 7 ?
-                        0 :
-                        1;
-
-                this.scheduleStop(context, days);
-            }
-        } else {
-            this.scheduleFilter(context, 0);
+            this.scheduleFilter(context, 1);
+            this.scheduleStop(context, 1);
         }
     }
 
     private void scheduleFilter(Context context, int days) {
-        if (Settings.canDrawOverlays(App.getContext())) {
-            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-            int startHour = 20;
-            int startMinute = 0;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()) {
+            ZonedDateTime startTime = ZonedDateTime.now()
+                    .withHour(20)
+                    .withMinute(0);
 
-            long startTime = ZonedDateTime.now()
-                    .withHour(startHour)
-                    .withMinute(startMinute)
-                    .plusDays(days)
-                    .toInstant()
-                    .toEpochMilli();
+            if (days != 0) {
+                startTime = startTime.plusDays(days);
+            }
 
-            Intent newStartIntent = new Intent(context, BlueLightFilterBroadcastReceiverService.class);
+            Intent startIntent = new Intent(context, BlueLightFilterBroadcastReceiverService.class);
 
-            PendingIntent startPendingIntent = PendingIntent.getBroadcast(context, (int) startTime, newStartIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent startPendingIntent = PendingIntent.getBroadcast(context, (int) startTime.toInstant().toEpochMilli(), startIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
             alarmManager.setAlarmClock(
-                    new AlarmManager.AlarmClockInfo(startTime, startPendingIntent),
+                    new AlarmManager.AlarmClockInfo(startTime.toInstant().toEpochMilli(), startPendingIntent),
                     startPendingIntent
             );
         }
@@ -92,22 +85,25 @@ public class BlueLightFilterBroadcastReceiverService extends BroadcastReceiver {
     private void scheduleStop(Context context, int days) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        Intent stopIntent = new Intent(context, BlueLightFilterBroadcastReceiverService.class);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()) {
+            Intent stopIntent = new Intent(context, BlueLightFilterBroadcastReceiverService.class);
 
-        long stopTime = ZonedDateTime.now()
-                .withHour(7)
-                .withMinute(30)
-                .plusDays(days)
-                .toInstant()
-                .toEpochMilli();
+            ZonedDateTime stopTime = ZonedDateTime.now()
+                    .withHour(7)
+                    .withMinute(30);
 
-        stopIntent.setAction("STOP");
+            if (days != 0) {
+                stopTime = stopTime.plusDays(days);
+            }
 
-        PendingIntent stopPendingIntent = PendingIntent.getBroadcast(context, (int) stopTime, stopIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+            stopIntent.setAction("STOP");
 
-        alarmManager.setAlarmClock(
-                new AlarmManager.AlarmClockInfo(stopTime, stopPendingIntent),
-                stopPendingIntent
-        );
+            PendingIntent stopPendingIntent = PendingIntent.getBroadcast(context, (int) stopTime.toInstant().toEpochMilli(), stopIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
+            alarmManager.setAlarmClock(
+                    new AlarmManager.AlarmClockInfo(stopTime.toInstant().toEpochMilli(), stopPendingIntent),
+                    stopPendingIntent
+            );
+        }
     }
 }
