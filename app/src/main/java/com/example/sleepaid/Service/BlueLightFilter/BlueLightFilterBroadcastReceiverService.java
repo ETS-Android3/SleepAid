@@ -21,7 +21,7 @@ public class BlueLightFilterBroadcastReceiverService extends BroadcastReceiver {
                 BlueLightFilterService.setIsRunning(false);
                 context.stopService(serviceIntent);
             }
-            
+
             return;
         }
 
@@ -37,6 +37,7 @@ public class BlueLightFilterBroadcastReceiverService extends BroadcastReceiver {
             if (ZonedDateTime.now().getHour() >= 20 && ZonedDateTime.now().getHour() < 7) {
                 context.startForegroundService(serviceIntent);
             } else if (BlueLightFilterService.isRunning()) {
+                BlueLightFilterService.setIsRunning(false);
                 context.stopService(serviceIntent);
             }
         }
