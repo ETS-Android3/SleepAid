@@ -68,6 +68,14 @@ public class BlueLightFilterService extends Service {
         return START_REDELIVER_INTENT;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        wm.removeView(mOverlayView);
+    }
+
     public static boolean isRunning() {
         return isRunning;
     }
