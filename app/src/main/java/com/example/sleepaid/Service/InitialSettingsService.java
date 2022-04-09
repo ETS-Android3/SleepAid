@@ -290,11 +290,6 @@ public class InitialSettingsService {
                             }
 
                             this.setupBlueLightFilter();
-
-                            Intent intent = new Intent(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                            NavHostFragment.findNavController(this.fragment).navigate(R.id.finishQuestionnairesAction);
                         },
                         Throwable::printStackTrace
                 );
@@ -312,11 +307,22 @@ public class InitialSettingsService {
                 editor.apply();
 
                 DialogInterface.OnClickListener yesAction = (dialog, whichButton) -> {
+                    this.scheduleBlueLightFilter();
+
+                    Intent intent = new Intent(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                    NavHostFragment.findNavController(this.fragment).navigate(R.id.finishQuestionnairesAction);
+
                     Intent overlayPermissionIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
                     this.fragment.getActivity().startActivity(overlayPermissionIntent);
                 };
 
                 DialogInterface.OnClickListener noAction = (dialog, whichButton) -> {
+                    Intent intent = new Intent(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                    NavHostFragment.findNavController(this.fragment).navigate(R.id.finishQuestionnairesAction);
                 };
 
                 Modal.show(
@@ -329,30 +335,31 @@ public class InitialSettingsService {
                 );
             }
         } else {
-            AlarmManager alarmManager = (AlarmManager) App.getContext().getSystemService(Context.ALARM_SERVICE);
+            this.scheduleBlueLightFilter();
+        }
+    }
 
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()) {
-                Intent startIntent = new Intent(App.getContext(), BlueLightFilterBroadcastReceiverService.class);
+    private void scheduleBlueLightFilter() {
+        AlarmManager alarmManager = (AlarmManager) App.getContext().getSystemService(Context.ALARM_SERVICE);
 
-                long startTime = ZonedDateTime.now()
-                        .withHour(20)
-                        .withMinute(0)
-                        .toInstant()
-                        .toEpochMilli();
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()) {
+            Intent startIntent = new Intent(App.getContext(), BlueLightFilterBroadcastReceiverService.class);
 
-                startIntent.putExtra("HOUR", 20);
-                startIntent.putExtra("MINUTE", 0);
+            long startTime = ZonedDateTime.now()
+                    .withHour(20)
+                    .withMinute(0)
+                    .toInstant()
+                    .toEpochMilli();
 
-                PendingIntent startPendingIntent = PendingIntent.getBroadcast(App.getContext(), (int) startTime, startIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent startPendingIntent = PendingIntent.getBroadcast(App.getContext(), (int) startTime, startIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
-                alarmManager.setAlarmClock(
-                        new AlarmManager.AlarmClockInfo(
-                                Math.max(startTime, System.currentTimeMillis()),
-                                startPendingIntent
-                        ),
-                        startPendingIntent
-                );
-            }
+            alarmManager.setAlarmClock(
+                    new AlarmManager.AlarmClockInfo(
+                            Math.max(startTime, System.currentTimeMillis()),
+                            startPendingIntent
+                    ),
+                    startPendingIntent
+            );
         }
     }
 }
