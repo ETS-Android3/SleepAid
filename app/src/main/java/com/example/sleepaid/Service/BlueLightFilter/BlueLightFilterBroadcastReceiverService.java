@@ -33,12 +33,16 @@ public class BlueLightFilterBroadcastReceiverService extends BroadcastReceiver {
             if (Settings.canDrawOverlays(App.getContext())) {
                 if (ZonedDateTime.now().getHour() >= 20 ||
                         (ZonedDateTime.now().getHour() <= 7  && ZonedDateTime.now().getMinute() < 30)) {
-                    BlueLightFilterService.setIsRunning(true);
-                    context.startForegroundService(serviceIntent);
+                    if (!BlueLightFilterService.isRunning()) {
+                        BlueLightFilterService.setIsRunning(true);
+                        context.startForegroundService(serviceIntent);
 
-                    this.scheduleFilter(context, 1);
-                    this.scheduleStop(context, 1);
-                } else {
+                        this.scheduleFilter(context, 1);
+                        this.scheduleStop(context, 1);
+                    }
+                }
+
+                if (ZonedDateTime.now().getHour() < 20) {
                     this.scheduleFilter(context, 0);
                 }
             }
@@ -50,7 +54,7 @@ public class BlueLightFilterBroadcastReceiverService extends BroadcastReceiver {
             return;
         }
 
-        if (Settings.canDrawOverlays(App.getContext())) {
+        if (Settings.canDrawOverlays(App.getContext()) && !BlueLightFilterService.isRunning()) {
             BlueLightFilterService.setIsRunning(true);
             context.startForegroundService(serviceIntent);
 
