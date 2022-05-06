@@ -129,7 +129,11 @@ public class DataHandler {
                     AssetFileDescriptor afd = context.getResources().openRawResourceFd(resourceId);
                     if (afd == null) return;
 
-                    mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                    mediaPlayer.setDataSource(
+                            afd.getFileDescriptor(),
+                            afd.getStartOffset(),
+                            afd.getLength()
+                    );
                     afd.close();
 
                     mediaPlayer.setAudioAttributes(new AudioAttributes.Builder()

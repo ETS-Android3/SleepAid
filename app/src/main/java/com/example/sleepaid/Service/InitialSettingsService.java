@@ -23,7 +23,6 @@ import com.example.sleepaid.Database.Notification.Notification;
 import com.example.sleepaid.Handler.DataHandler;
 import com.example.sleepaid.R;
 import com.example.sleepaid.Service.BlueLightFilter.BlueLightFilterBroadcastReceiverService;
-import com.example.sleepaid.Service.BlueLightFilter.BlueLightFilterService;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -140,7 +139,9 @@ public class InitialSettingsService {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             answerData -> {
-                                this.alarmList.addAll(AlarmAndNotificationService.createAlarms(2, answerData.get(0)));
+                                if (!answerData.get(0).equals("0")) {
+                                    this.alarmList.addAll(AlarmAndNotificationService.createAlarms(2, answerData.get(0)));
+                                }
 
                                 getNotificationList(wakeupTime, bedtime);
                             },
@@ -181,8 +182,8 @@ public class InitialSettingsService {
         AtomicInteger caffeineAnswered = new AtomicInteger();
         AtomicInteger caffeineScore = new AtomicInteger();
 
-        List<Integer> section1 = Arrays.asList(1, 2, 3, 4, 5, 6, 9, 13);
-        List<Integer> section2 = Arrays.asList(1, 4, 7, 8, 16, 18);
+        List<Integer> section1 = Arrays.asList(1, 2, 3, 4, 7);
+        List<Integer> section2 = Arrays.asList(1, 3, 5, 6, 11);
 
         this.db.answerDao()
                 .loadAllByQuestionnaireIds(new int[]{2})
@@ -235,9 +236,9 @@ public class InitialSettingsService {
     private void createInformationNotifications(int sleepHygieneScore, int caffeineScore) {
         int frequency;
 
-        if (sleepHygieneScore <= 21 && caffeineScore >= 66) {
+        if (sleepHygieneScore <= 17 && caffeineScore >= 66) {
             frequency = 5;
-        } else if (sleepHygieneScore <= 29 && caffeineScore >= 33) {
+        } else if (sleepHygieneScore <= 24 && caffeineScore >= 33) {
             frequency = 3;
         } else {
             frequency = 1;

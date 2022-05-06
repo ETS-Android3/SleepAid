@@ -1,6 +1,5 @@
 package com.example.sleepaid.Database.Alarm;
 
-import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -194,7 +193,12 @@ public class Alarm implements Comparable<Alarm> {
             intent.putExtra("VIBRATE", this.vibrate);
             intent.putExtra("RECURRING", recurring);
 
-            PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, this.id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(
+                    context,
+                    this.id,
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+            );
 
             alarmManager.setAlarmClock(
                     new AlarmManager.AlarmClockInfo(date.toInstant().toEpochMilli(), alarmPendingIntent),

@@ -393,3 +393,4 @@ public class AlarmConfigurationScreenFragment extends Fragment implements View.O
         return vibrateButton.isChecked() ? 1 : 0;
     }
 }
+
